@@ -19,7 +19,7 @@ import { progress as codexProgress } from "./codex.js";
 import { recordVerdictForChallenge, multiplierForCategory, currentChallenge, getProgress as weeklyGet } from "./weekly-challenge.js";
 import { listHistoric, getHistoric } from "./historic-cases.js";
 import { t, getLang } from "./i18n.js";
-import { playHammer, primeAudio } from "./audio.js";
+import { playHammer, primeAudio, startWhispers, stopWhispers } from "./audio.js";
 import { currentChapter, chapterByDate } from "./narrative.js";
 import { shareVerdict } from "./share.js";
 import { isSupported as ttsSupported, readPlaidoiries, stop as stopTTS } from "./tts.js";
@@ -52,6 +52,7 @@ function difficultyDots(d) {
 
 export async function renderTribunal(root) {
   stopTTS();
+  stopWhispers(); // coupe l'ambiance si on revient au dashboard
   clear(root);
   if (typeof window !== "undefined" && window._leprocesFreeCase) return renderCaseFlow(root, "free");
   if (typeof window !== "undefined" && window._leprocesHistoricCase) return renderCaseFlow(root, "historic");
@@ -395,6 +396,7 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
 
   const startBtn = el("button", { class: "btn-primary btn-big", onclick: () => {
     primeAudio(); // user gesture → autorise la lecture future
+    startWhispers(); // 🔉 ambiance de tribunal pendant la lecture
     startBtn.remove();
     speechWrap.classList.remove("hidden");
     const tw1 = new Typewriter(proseText, caseData.prosecutionSpeech, 18);
@@ -524,6 +526,7 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
     if (!chosen) return toast(t("verdict.choose_first"), "error");
     submitBtn.disabled = true;
     submitBtn.classList.add("hammering");
+    stopWhispers(); // silence dans la salle
     playHammer(); // 🔨 son du marteau au prononcé du verdict
     const argument = argInput.value.trim();
     const severity = +slider.value;
