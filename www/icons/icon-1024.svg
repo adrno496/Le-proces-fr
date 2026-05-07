@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#5a1422"/>
+      <stop offset="60%" stop-color="#2a0c12"/>
+      <stop offset="100%" stop-color="#100407"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0d68f"/>
+      <stop offset="50%" stop-color="#c9a961"/>
+      <stop offset="100%" stop-color="#8c7239"/>
+    </linearGradient>
+    <linearGradient id="goldDark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c9a961"/>
+      <stop offset="100%" stop-color="#7a6238"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect x="32" y="32" width="960" height="960" rx="48" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  <rect x="56" y="56" width="912" height="912" rx="40" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.5"/>
+
+  <!-- decorative latin hatching -->
+  <g opacity="0.18" stroke="#c9a961" stroke-width="1.5" fill="none">
+    <path d="M 100 140 H 924"/>
+    <path d="M 100 884 H 924"/>
+  </g>
+
+  <!-- balance / scales -->
+  <g transform="translate(512 460)" stroke="url(#gold)" stroke-linecap="round">
+    <!-- vertical post -->
+    <rect x="-8" y="-220" width="16" height="380" fill="url(#goldDark)" stroke="none"/>
+    <!-- top finial -->
+    <circle cx="0" cy="-230" r="14" fill="url(#gold)"/>
+    <!-- crossbar -->
+    <rect x="-220" y="-186" width="440" height="10" rx="4" fill="url(#goldDark)" stroke="none"/>
+    <!-- chains -->
+    <g stroke="url(#gold)" stroke-width="3" fill="none">
+      <path d="M -180 -180 L -180 -60"/>
+      <path d="M -160 -180 L -200 -60"/>
+      <path d="M  180 -180 L  180 -60"/>
+      <path d="M  160 -180 L  200 -60"/>
+    </g>
+    <!-- left pan -->
+    <g transform="translate(-180 -50)">
+      <ellipse cx="0" cy="0" rx="98" ry="22" fill="url(#gold)"/>
+      <path d="M -98 0 Q 0 80 98 0" fill="url(#goldDark)"/>
+    </g>
+    <!-- right pan -->
+    <g transform="translate(180 -50)">
+      <ellipse cx="0" cy="0" rx="98" ry="22" fill="url(#gold)"/>
+      <path d="M -98 0 Q 0 80 98 0" fill="url(#goldDark)"/>
+    </g>
+    <!-- base -->
+    <rect x="-90" y="160" width="180" height="14" rx="4" fill="url(#gold)" stroke="none"/>
+    <rect x="-130" y="174" width="260" height="10" rx="3" fill="url(#goldDark)" stroke="none"/>
+  </g>
+
+  <!-- title -->
+  <text x="512" y="848" text-anchor="middle"
+        font-family="Newsreader, Georgia, serif"
+        font-style="italic" font-size="72" font-weight="500"
+        fill="url(#gold)" letter-spacing="6">LE PROCÈS</text>
+  <text x="512" y="892" text-anchor="middle"
+        font-family="Newsreader, Georgia, serif"
+        font-size="22" fill="#8c7239" letter-spacing="14">⚜  TRIBUNAL ABSURDE  ⚜</text>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "appId": "app.smartlife.leproces",
+  "appName": "Le Procès",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#1a1410",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#1a1410"
+    }
+  }
+}

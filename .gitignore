@@ -1,0 +1,25 @@
+node_modules/
+android/
+ios/
+.DS_Store
+dist/
+*.log
+.env
+.env.local
+.idea/
+.vscode/
+*.keystore
+
+# Capacitor
+ios/
+android/
+
+# Vercel
+.vercel/
+
+# Pages source images (gardés en local — gros fichiers)
+assets/icon-foreground.png
+assets/icon-background.png
+assets/splash.png
+assets/splash-dark.png
+www/icons/logo-original-1254.png
