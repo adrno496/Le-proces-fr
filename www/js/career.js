@@ -1,15 +1,36 @@
-// Career system: 6 judicial tiers, each unlocking case complexity & visual changes.
+// Career system: 6 judicial tiers. Names are translated via i18n.
 
 import { Storage } from "./storage.js";
+import { t } from "./i18n.js";
 
-export const CAREER_TIERS = [
-  { id: 0, name: "Stagiaire au tribunal", icon: "📋", minVerdicts: 0,  difficultyMax: 2, perks: ["Cas standards"] },
-  { id: 1, name: "Greffier",               icon: "📜", minVerdicts: 5,  difficultyMax: 3, perks: ["Codex débloqué", "Citations rares"] },
-  { id: 2, name: "Juge de proximité",      icon: "⚖",  minVerdicts: 20, difficultyMax: 3, perks: ["Audiences libres × 10/j", "Témoins multiples"] },
-  { id: 3, name: "Juge correctionnel",     icon: "🔨", minVerdicts: 50, difficultyMax: 4, perks: ["Cas pénaux complexes", "Pièces à conviction"] },
-  { id: 4, name: "Conseiller à la Cour",   icon: "🏛", minVerdicts: 100, difficultyMax: 5, perks: ["Procès multi-jours", "Délibérations à 3 juges"] },
-  { id: 5, name: "Magistrat à la Cassation", icon: "👑", minVerdicts: 200, difficultyMax: 5, perks: ["Crée la jurisprudence", "Tous les modes"] },
+const TIER_DEFS = [
+  { id: 0, icon: "📋", minVerdicts: 0,  difficultyMax: 2 },
+  { id: 1, icon: "📜", minVerdicts: 5,  difficultyMax: 3 },
+  { id: 2, icon: "⚖",  minVerdicts: 20, difficultyMax: 3 },
+  { id: 3, icon: "🔨", minVerdicts: 50, difficultyMax: 4 },
+  { id: 4, icon: "🏛", minVerdicts: 100, difficultyMax: 5 },
+  { id: 5, icon: "👑", minVerdicts: 200, difficultyMax: 5 },
 ];
+
+// Build tiers with current language. Re-evaluated each call so language switches are picked up.
+function buildTiers() {
+  return TIER_DEFS.map(d => ({
+    ...d,
+    name: t(`career.${d.id}.name`),
+    perks: [], // perks could be translated separately if needed
+  }));
+}
+
+export const CAREER_TIERS = new Proxy([], {
+  get(_t, prop) {
+    const tiers = buildTiers();
+    if (prop === "length") return tiers.length;
+    if (prop === Symbol.iterator) return tiers[Symbol.iterator].bind(tiers);
+    if (typeof prop === "string" && /^\d+$/.test(prop)) return tiers[+prop];
+    if (Array.prototype[prop]) return Array.prototype[prop].bind(tiers);
+    return tiers[prop];
+  },
+});
 
 export function getCurrentTier(profile) {
   let tier = CAREER_TIERS[0];

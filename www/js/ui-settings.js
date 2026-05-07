@@ -6,6 +6,8 @@ import { PROVIDERS, estimateCostFor100Messages, testApiKey } from "./ai-client.j
 import { THEMES, applyTheme } from "./themes.js";
 import { isSupported as ttsSupported, frenchVoices } from "./tts.js";
 import { requestPermission, scheduleDaily, cancel as cancelNotifs } from "./notifications.js";
+import { t, setLang, getLang, LANGS, LANG_LABELS } from "./i18n.js";
+import { renderBottomNav } from "./app.js";
 
 const AVATARS = ["👨‍⚖", "👩‍⚖", "🧑‍⚖", "🦉", "🦅", "🐈‍⬛", "🐺", "🦊", "🦁", "🐉", "🌟", "📚", "⚖", "🏛", "🔨", "🕊"];
 
@@ -28,15 +30,37 @@ export function renderSettings(root) {
   let apiKey = settings.apiKey || "";
 
   const container = el("div", { class: "panel panel-settings" });
-  container.appendChild(el("h1", { class: "panel-title" }, ["⚙ PARAMÈTRES DU TRIBUNAL"]));
+  container.appendChild(el("h1", { class: "panel-title" }, [t("panel.settings")]));
+
+  // ===== Section Langue (en haut, le plus important) =====
+  const langSection = el("section", { class: "settings-section" });
+  langSection.appendChild(el("h2", { class: "section-title" }, [t("settings.section.language")]));
+  langSection.appendChild(el("div", { class: "step-label" }, [t("settings.language")]));
+  const langGrid = el("div", { class: "theme-row" });
+  for (const code of LANGS) {
+    const isSel = getLang() === code;
+    langGrid.appendChild(el("button", {
+      class: `btn-secondary ${isSel ? "selected" : ""}`,
+      onclick: () => {
+        setLang(code);
+        renderBottomNav(); // re-render bottom nav with new labels
+        renderSettings(root);
+      },
+    }, [`${code === "fr" ? "🇫🇷" : "🇬🇧"} ${LANG_LABELS[code]}`]));
+  }
+  langSection.appendChild(langGrid);
+  if (getLang() === "en") {
+    langSection.appendChild(el("p", { class: "muted", style: { marginTop: "8px", fontSize: "0.85rem" } }, [t("settings.notice_legal")]));
+  }
+  container.appendChild(langSection);
 
   // ====== Section IA ======
   const aiSection = el("section", { class: "settings-section" });
-  aiSection.appendChild(el("h2", { class: "section-title" }, ["INTELLIGENCE ARTIFICIELLE"]));
+  aiSection.appendChild(el("h2", { class: "section-title" }, [t("settings.section.ai")]));
 
   // Step 1: provider grid
   const stepProvider = el("div", { class: "step" });
-  stepProvider.appendChild(el("div", { class: "step-label" }, ["1 · Choisissez votre Provider IA"]));
+  stepProvider.appendChild(el("div", { class: "step-label" }, [t("settings.step.provider")]));
   const providerGrid = el("div", { class: "provider-grid" });
 
   function renderProviderGrid() {
@@ -73,11 +97,11 @@ export function renderSettings(root) {
     clear(apiKeyContainer);
     if (!selectedProvider) return;
     const p = PROVIDERS[selectedProvider];
-    apiKeyContainer.appendChild(el("div", { class: "step-label" }, [`2 · Clé API ${p.name}`]));
+    apiKeyContainer.appendChild(el("div", { class: "step-label" }, [t("settings.step.api_key", { provider: p.name })]));
     const input = el("input", {
       type: "password",
       class: "api-key-input",
-      placeholder: "Collez votre clé API ici",
+      placeholder: t("settings.api_key.placeholder"),
       value: apiKey,
       autocomplete: "off",
       spellcheck: "false",
@@ -104,21 +128,20 @@ export function renderSettings(root) {
     apiKeyContainer.appendChild(el("a", {
       class: "api-link",
       href: p.apiUrl, target: "_blank", rel: "noopener noreferrer",
-    }, [`🔗 Obtenir une clé → ${p.apiHint}`]));
+    }, [`${t("settings.api_key.get")} ${p.apiHint}`]));
 
     const testBtn = el("button", { class: "btn-secondary", onclick: async () => {
-      if (!apiKey) return toast("Entrez une clé d'abord", "error");
-      if (!selectedModel) return toast("Choisissez un modèle d'abord", "error");
-      // Save provisional settings, test, then revert if user cancels
+      if (!apiKey) return toast(t("settings.api_key.placeholder"), "error");
+      if (!selectedModel) return toast(t("settings.step.model"), "error");
       Storage.saveSettings({ provider: selectedProvider, model: selectedModel, apiKey });
       testBtn.disabled = true;
-      testBtn.textContent = "Test en cours...";
+      testBtn.textContent = t("settings.api_key.testing");
       const res = await testApiKey();
       testBtn.disabled = false;
-      testBtn.textContent = "TESTER LA CLÉ";
-      if (res.ok) toast("✓ Clé valide", "success");
-      else toast(res.error || "Échec du test", "error", 5000);
-    }}, ["TESTER LA CLÉ"]);
+      testBtn.textContent = t("settings.api_key.test");
+      if (res.ok) toast(t("settings.api_key.valid"), "success");
+      else toast(res.error || "Erreur", "error", 5000);
+    }}, [t("settings.api_key.test")]);
     apiKeyContainer.appendChild(testBtn);
   }
   aiSection.appendChild(apiKeyContainer);
@@ -129,7 +152,7 @@ export function renderSettings(root) {
     clear(modelContainer);
     if (!selectedProvider) return;
     const p = PROVIDERS[selectedProvider];
-    modelContainer.appendChild(el("div", { class: "step-label" }, ["3 · Choisissez le modèle"]));
+    modelContainer.appendChild(el("div", { class: "step-label" }, [t("settings.step.model")]));
     const list = el("div", { class: "model-list" });
     for (const m of p.models) {
       const isSel = m.id === selectedModel;
@@ -159,7 +182,7 @@ export function renderSettings(root) {
     if (!est) return;
     const monthCost = est.costUSD * 0.30; // ~30 msgs/mois
     const card = el("div", { class: "estimate-card" }, [
-      el("div", { class: "estimate-title" }, ["💰 COÛT ESTIMÉ POUR 100 MESSAGES"]),
+      el("div", { class: "estimate-title" }, [t("settings.step.estimate")]),
       el("div", { class: "estimate-row" }, [el("span", {}, ["Provider"]), el("span", {}, [est.provider])]),
       el("div", { class: "estimate-row" }, [el("span", {}, ["Modèle"]), el("span", {}, [est.model])]),
       el("div", { class: "estimate-row" }, [el("span", {}, ["Tokens envoyés"]), el("span", { class: "mono" }, [`~${est.tokensIn.toLocaleString("fr-FR")}`])]),
@@ -175,39 +198,40 @@ export function renderSettings(root) {
 
   // Step 5: save
   const saveBtn = el("button", { class: "btn-primary btn-big", onclick: async () => {
-    if (!selectedProvider) return toast("Choisissez un provider", "error");
-    if (!apiKey) return toast("Entrez une clé API", "error");
-    if (!selectedModel) return toast("Choisissez un modèle", "error");
+    if (!selectedProvider) return toast(t("settings.step.provider"), "error");
+    if (!apiKey) return toast(t("settings.step.api_key", { provider: "" }), "error");
+    if (!selectedModel) return toast(t("settings.step.model"), "error");
     Storage.saveSettings({ provider: selectedProvider, model: selectedModel, apiKey });
-    toast("Paramètres enregistrés", "success");
+    toast(t("settings.saved"), "success");
     setTimeout(() => navigate("tribunal"), 400);
-  }}, ["ENREGISTRER ET COMMENCER"]);
+  }}, [t("settings.save")]);
   aiSection.appendChild(saveBtn);
 
   container.appendChild(aiSection);
 
   // ====== Section perso ======
   const persoSection = el("section", { class: "settings-section" });
-  persoSection.appendChild(el("h2", { class: "section-title" }, ["PERSONNALISATION"]));
+  persoSection.appendChild(el("h2", { class: "section-title" }, [t("settings.section.perso")]));
 
   // username
   const usernameRow = el("div", { class: "step" }, [
-    el("div", { class: "step-label" }, ["Nom du juge"]),
+    el("div", { class: "step-label" }, [t("settings.username")]),
   ]);
+  const def = t("settings.username_default");
   const usernameInput = el("input", {
     type: "text", class: "text-input", maxlength: "20", value: profile.username,
-    placeholder: "Votre Honneur",
+    placeholder: def,
   });
   usernameInput.addEventListener("change", e => {
-    const v = (e.target.value || "Votre Honneur").slice(0, 20).trim() || "Votre Honneur";
+    const v = (e.target.value || def).slice(0, 20).trim() || def;
     Storage.saveProfile({ username: v });
-    toast("Nom enregistré", "success", 1500);
+    toast(t("settings.saved"), "success", 1500);
   });
   usernameRow.appendChild(usernameInput);
   persoSection.appendChild(usernameRow);
 
   // avatars
-  const avatarRow = el("div", { class: "step" }, [el("div", { class: "step-label" }, ["Avatar"])]);
+  const avatarRow = el("div", { class: "step" }, [el("div", { class: "step-label" }, [t("settings.avatar")])]);
   const avatarGrid = el("div", { class: "avatar-grid" });
   AVATARS.forEach((a, i) => {
     const isSel = profile.avatarId === i;
@@ -225,21 +249,21 @@ export function renderSettings(root) {
 
   // motto
   const mottoRow = el("div", { class: "step" }, [
-    el("div", { class: "step-label" }, ["Devise du juge (optionnelle)"]),
+    el("div", { class: "step-label" }, [t("settings.motto")]),
   ]);
   const mottoInput = el("input", {
     type: "text", class: "text-input", maxlength: "120", value: settings.motto || "",
-    placeholder: "« La justice sans la force est impuissante. »",
+    placeholder: t("settings.motto.placeholder"),
   });
   mottoInput.addEventListener("change", e => {
     Storage.saveSettings({ motto: e.target.value.trim() });
-    toast("Devise enregistrée", "success", 1500);
+    toast(t("settings.saved"), "success", 1500);
   });
   mottoRow.appendChild(mottoInput);
   persoSection.appendChild(mottoRow);
 
   // theme
-  const themeRow = el("div", { class: "step" }, [el("div", { class: "step-label" }, ["Thème (8 disponibles)"])]);
+  const themeRow = el("div", { class: "step" }, [el("div", { class: "step-label" }, [t("settings.theme")])]);
   const themeGrid = el("div", { class: "theme-grid" });
   for (const t of THEMES) {
     const isSel = (settings.theme || "dark") === t.id;
@@ -267,82 +291,82 @@ export function renderSettings(root) {
   // ===== Section Audio (TTS) =====
   if (ttsSupported()) {
     const audioSec = el("section", { class: "settings-section" });
-    audioSec.appendChild(el("h2", { class: "section-title" }, ["AUDIO — VOIX"]));
+    audioSec.appendChild(el("h2", { class: "section-title" }, [t("settings.section.audio")]));
     const ttsToggle = el("button", {
       class: `btn-secondary ${settings.ttsEnabled ? "selected" : ""}`,
       onclick: () => {
         const v = !settings.ttsEnabled;
         Storage.saveSettings({ ttsEnabled: v });
-        toast(v ? "TTS activée" : "TTS désactivée", "success", 1500);
+        toast(t("settings.saved"), "success", 1500);
         renderSettings(root);
       },
-    }, [settings.ttsEnabled ? "🔊 TTS activée — désactiver" : "🔇 Activer la lecture audio des plaidoiries"]);
+    }, [settings.ttsEnabled ? t("settings.tts.on") : t("settings.tts.off")]);
     audioSec.appendChild(ttsToggle);
     const voices = frenchVoices();
     if (voices.length) {
-      audioSec.appendChild(el("div", { class: "muted" }, [`${voices.length} voix française(s) détectée(s) sur ce système.`]));
+      audioSec.appendChild(el("div", { class: "muted" }, [t("settings.tts.voices", { n: voices.length })]));
     } else {
-      audioSec.appendChild(el("div", { class: "muted" }, ["Aucune voix française détectée — la lecture utilisera la voix système par défaut."]));
+      audioSec.appendChild(el("div", { class: "muted" }, [t("settings.tts.no_voice")]));
     }
     container.appendChild(audioSec);
   }
 
   // ===== Section Notifications =====
   const notifSec = el("section", { class: "settings-section" });
-  notifSec.appendChild(el("h2", { class: "section-title" }, ["NOTIFICATIONS"]));
-  notifSec.appendChild(el("p", { class: "muted" }, ["Recevez un rappel quotidien à l'heure de votre choix."]));
+  notifSec.appendChild(el("h2", { class: "section-title" }, [t("settings.section.notifs")]));
+  notifSec.appendChild(el("p", { class: "muted" }, [t("settings.notifs.intro")]));
   const hourInput = el("input", { type: "number", min: "0", max: "23", value: settings.notifHour ?? 18, class: "text-input small-input" });
   const minInput = el("input", { type: "number", min: "0", max: "59", value: settings.notifMinute ?? 0, class: "text-input small-input" });
   notifSec.appendChild(el("div", { class: "input-row" }, [
-    el("label", {}, ["Heure : "]), hourInput, el("span", {}, [":"]), minInput,
+    el("label", {}, [t("settings.notifs.hour")]), hourInput, el("span", {}, [":"]), minInput,
   ]));
   const notifBtn = el("button", {
     class: `btn-primary`,
     onclick: async () => {
       const ok = await requestPermission();
-      if (!ok) return toast("Permission refusée", "error");
+      if (!ok) return toast(t("settings.notifs.denied"), "error");
       const h = +hourInput.value, m = +minInput.value;
       const scheduled = await scheduleDaily(h, m);
-      if (scheduled) toast(`Rappel programmé à ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`, "success", 3000);
-      else toast("Notifications non disponibles sur ce navigateur", "error");
+      if (scheduled) toast(t("settings.notifs.scheduled", { time: `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}` }), "success", 3000);
+      else toast(t("settings.notifs.unavailable"), "error");
     },
-  }, [settings.notifsEnabled ? "Reprogrammer le rappel quotidien" : "Activer le rappel quotidien"]);
+  }, [settings.notifsEnabled ? t("settings.notifs.reschedule") : t("settings.notifs.activate")]);
   notifSec.appendChild(notifBtn);
   if (settings.notifsEnabled) {
     notifSec.appendChild(el("button", {
-      class: "btn-secondary", onclick: async () => { await cancelNotifs(); toast("Rappel désactivé", "info"); renderSettings(root); },
-    }, ["Désactiver"]));
+      class: "btn-secondary", onclick: async () => { await cancelNotifs(); toast(t("settings.notifs.off"), "info"); renderSettings(root); },
+    }, [t("settings.notifs.deactivate")]));
   }
   container.appendChild(notifSec);
 
   // ===== Section Expert =====
   const expertSec = el("section", { class: "settings-section" });
-  expertSec.appendChild(el("h2", { class: "section-title" }, ["MODE EXPERT"]));
-  expertSec.appendChild(el("p", { class: "muted" }, ["Plaidoiries plus longues, pièces à conviction additionnelles, vocabulaire technique. Pour juristes confirmés et étudiants."]));
+  expertSec.appendChild(el("h2", { class: "section-title" }, [t("settings.section.expert")]));
+  expertSec.appendChild(el("p", { class: "muted" }, [t("settings.expert.intro")]));
   expertSec.appendChild(el("button", {
     class: `btn-secondary ${settings.expertMode ? "selected" : ""}`,
     onclick: () => {
       const v = !settings.expertMode;
       Storage.saveSettings({ expertMode: v });
-      toast(v ? "Mode expert activé" : "Mode standard", "success");
+      toast(t("settings.saved"), "success");
       renderSettings(root);
     },
-  }, [settings.expertMode ? "✓ Mode expert activé" : "Activer le mode expert"]));
+  }, [settings.expertMode ? t("settings.expert.on") : t("settings.expert.off")]));
   container.appendChild(expertSec);
 
   // Reset section
   const dangerSection = el("section", { class: "settings-section" });
-  dangerSection.appendChild(el("h2", { class: "section-title" }, ["ZONE SENSIBLE"]));
+  dangerSection.appendChild(el("h2", { class: "section-title" }, [t("settings.section.danger")]));
   dangerSection.appendChild(el("button", {
     class: "btn-danger",
     onclick: async () => {
-      if (!confirm("Effacer toutes les données locales (cas, verdicts, profil) ? Cette action est irréversible.")) return;
+      if (!confirm(t("settings.danger.confirm"))) return;
       await Storage.clearHistory();
       Storage._resetAll();
-      toast("Données effacées", "success");
+      toast(t("settings.danger.done"), "success");
       setTimeout(() => navigate("settings"), 500);
     },
-  }, ["EFFACER TOUTES LES DONNÉES"]));
+  }, [t("settings.danger.btn")]));
   container.appendChild(dangerSection);
 
   // initial sub-renders

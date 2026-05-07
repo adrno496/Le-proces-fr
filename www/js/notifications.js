@@ -1,6 +1,7 @@
 // Notifications: Capacitor Local Notifications when available, fallback Web Notifications API.
 
 import { Storage } from "./storage.js";
+import { t } from "./i18n.js";
 
 export async function isAvailable() {
   if (typeof window === "undefined") return false;
@@ -35,8 +36,8 @@ export async function scheduleDaily(hour = 18, minute = 0) {
     await plugin.schedule({
       notifications: [{
         id: 100,
-        title: "⚖ L'audience reprend",
-        body: "Le tribunal vous attend pour l'affaire du jour.",
+        title: t("notif.daily.title"),
+        body: t("notif.daily.body"),
         schedule: { on: { hour, minute }, every: "day", allowWhileIdle: true },
       }],
     });
@@ -56,7 +57,7 @@ function scheduleInPageReminder(hour, minute) {
   if (_webTimer) clearTimeout(_webTimer);
   const fire = () => {
     if (Notification.permission === "granted") {
-      new Notification("⚖ L'audience reprend", { body: "Le tribunal vous attend pour l'affaire du jour." });
+      new Notification(t("notif.daily.title"), { body: t("notif.daily.body") });
     }
     scheduleInPageReminder(hour, minute); // reschedule next day
   };

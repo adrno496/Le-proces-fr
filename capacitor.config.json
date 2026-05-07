@@ -1,6 +1,6 @@
 {
-  "appId": "app.smartlife.leproces",
-  "appName": "Le Procès",
+  "appId": "app.smartlife.thejudge",
+  "appName": "The Judge",
   "webDir": "www",
   "server": { "androidScheme": "https" },
   "plugins": {

@@ -2,6 +2,7 @@
 
 import { Storage } from "./storage.js";
 import { CATEGORIES, CATEGORY_LABELS } from "./case-engine.js";
+import { t } from "./i18n.js";
 
 function isoWeekKey(d = new Date()) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -20,12 +21,13 @@ function hash(s) {
 export function currentChallenge() {
   const wk = isoWeekKey();
   const cat = CATEGORIES[hash(wk) % CATEGORIES.length];
+  const catLabel = t(`cat.${cat}`);
   return {
     week: wk,
     category: cat,
-    label: `Semaine ${CATEGORY_LABELS[cat]}`,
+    label: t("weekly.label", { cat: catLabel }),
     target: 5,
-    description: `Tranchez 5 affaires de catégorie « ${CATEGORY_LABELS[cat]} » cette semaine. Bonus XP × 2 sur chaque verdict de la catégorie.`,
+    description: t("weekly.description", { cat: catLabel }),
   };
 }
 

@@ -17,15 +17,18 @@ export function formatCost(usd) {
   return Math.round(usd) + "$";
 }
 
-const DAYS = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-const MONTHS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+// Day/month labels are translated via i18n.js
+import { t, getLang } from "./i18n.js";
 
 export function formatDate(dateStr) {
   // dateStr: "YYYY-MM-DD"
   const [y, m, d] = dateStr.split("-").map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
-  const dayName = DAYS[dt.getUTCDay()];
-  return `${dayName} ${d} ${MONTHS[m - 1]} ${y}`;
+  const dayName = t(`day.${dt.getUTCDay()}`);
+  const monthName = t(`month.${m - 1}`);
+  // EN: "Monday May 6, 2026" — FR: "Lundi 6 mai 2026"
+  if (getLang() === "en") return `${dayName} ${monthName} ${d}, ${y}`;
+  return `${dayName} ${d} ${monthName} ${y}`;
 }
 
 export function getTodayDateStr(now = new Date()) {
@@ -36,15 +39,15 @@ export function getTodayDateStr(now = new Date()) {
 }
 
 export function formatRelativeDate(dateStr, today = getTodayDateStr()) {
-  if (dateStr === today) return "Aujourd'hui";
+  if (dateStr === today) return t("date.today");
   const [y1, m1, d1] = dateStr.split("-").map(Number);
   const [y2, m2, d2] = today.split("-").map(Number);
   const a = Date.UTC(y1, m1 - 1, d1);
   const b = Date.UTC(y2, m2 - 1, d2);
   const diffDays = Math.round((b - a) / 86400000);
-  if (diffDays === 1) return "Hier";
-  if (diffDays === 2) return "Avant-hier";
-  if (diffDays > 2 && diffDays <= 7) return `Il y a ${diffDays} jours`;
+  if (diffDays === 1) return t("date.yesterday");
+  if (diffDays === 2) return t("date.day_before");
+  if (diffDays > 2 && diffDays <= 7) return t("date.days_ago", { n: diffDays });
   return formatDate(dateStr);
 }
 

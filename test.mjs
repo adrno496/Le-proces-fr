@@ -1,9 +1,13 @@
-// Tests for Le Procès — runs under `node test.mjs`.
+// Tests for The Judge — runs under `node test.mjs`.
 // Uses node:test (built-in) and node:assert.
 // All modules must be Node-importable (no DOM required).
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
+
+// Force French for date/format tests (default lang)
+import { setLang } from "./www/js/i18n.js";
+setLang("fr");
 
 // === format.js ===
 import {

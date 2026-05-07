@@ -7,13 +7,14 @@ import { renderProfile } from "./ui-profile.js";
 import { renderHistory } from "./ui-history.js";
 import { renderCosts } from "./ui-costs.js";
 import { applyTheme } from "./themes.js";
+import { t, setLang, getLang } from "./i18n.js";
 
 const PANELS = {
-  tribunal: { id: "tribunal", label: "Tribunal", icon: "⚖", render: renderTribunal },
-  history: { id: "history", label: "Archives", icon: "📜", render: renderHistory },
-  profile: { id: "profile", label: "Profil", icon: "👤", render: renderProfile },
-  costs: { id: "costs", label: "Coûts IA", icon: "💰", render: renderCosts },
-  settings: { id: "settings", label: "Réglages", icon: "⚙", render: renderSettings },
+  tribunal: { id: "tribunal", labelKey: "nav.tribunal", icon: "⚖", render: renderTribunal },
+  history:  { id: "history",  labelKey: "nav.archives", icon: "📜", render: renderHistory },
+  profile:  { id: "profile",  labelKey: "nav.profile",  icon: "👤", render: renderProfile },
+  costs:    { id: "costs",    labelKey: "nav.costs",    icon: "💰", render: renderCosts },
+  settings: { id: "settings", labelKey: "nav.settings", icon: "⚙", render: renderSettings },
 };
 
 let currentPanel = "tribunal";
@@ -74,7 +75,7 @@ export function getCurrentPanel() {
   return currentPanel;
 }
 
-function renderBottomNav() {
+export function renderBottomNav() {
   const nav = document.getElementById("bottom-nav");
   if (!nav) return;
   clear(nav);
@@ -82,7 +83,7 @@ function renderBottomNav() {
     nav.appendChild(
       el("button", { class: "nav-btn", "data-panel": p.id, onclick: () => navigate(p.id) }, [
         el("span", { class: "nav-icon" }, [p.icon]),
-        el("span", { class: "nav-label" }, [p.label]),
+        el("span", { class: "nav-label" }, [t(p.labelKey)]),
       ]),
     );
   }
@@ -90,8 +91,9 @@ function renderBottomNav() {
 
 async function bootstrap() {
   await Storage.init();
-  // Increment session count once per page load
   Storage.resetSessionCost();
+  // Initialize language (auto-detect from browser if not set)
+  setLang(Storage.getSettings().language || getLang());
   renderBottomNav();
   const settings = Storage.getSettings();
   applyTheme(settings.theme || "dark");

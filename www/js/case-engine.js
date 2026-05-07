@@ -90,17 +90,44 @@ export function evaluateVerdict(caseData, userVerdict, userSeverity) {
   const lawyerStrength = followedProsec ? caseData.prosecutionQuality : caseData.defenseQuality;
   score += Math.min(20, lawyerStrength * 4);
   score = Math.max(0, Math.min(100, Math.round(score)));
+  // Async i18n via dynamic require pattern: importer is sync at top to avoid circular issues; we just use t() if available.
   let label;
-  if (aligned && score >= 85) label = "Verdict exemplaire";
-  else if (aligned && score >= 65) label = "Bon jugement";
-  else if (aligned) label = "Conclusion juste mais perfectible";
-  else if (score >= 50) label = "Choix défendable malgré la vérité contraire";
-  else label = "Verdict éloigné des faits";
+  // Fallback labels are FR; will be replaced by t() at display time
+  if (aligned && score >= 85) label = "truth.label.exemplary";
+  else if (aligned && score >= 65) label = "truth.label.good";
+  else if (aligned) label = "truth.label.ok";
+  else if (score >= 50) label = "truth.label.defendable";
+  else label = "truth.label.off";
   const bonusXp = aligned ? 10 + Math.floor(score / 20) : 0;
   return { aligned, score, label, bonusXp };
 }
 
-function buildSystemPrompt(category) {
+async function buildSystemPrompt(category) {
+  const { getLang } = await import("./i18n.js");
+  const lang = getLang();
+  if (lang === "en") {
+    return `You are a legal-fiction writer for a realistic court mobile game.
+Generate a plausible court case in the category: ${category}.
+
+STRICT RULES:
+- Serious, professional courtroom tone. Precise but accessible legal vocabulary.
+- Realistic and plausible facts. No absurdity, no surrealism, no fantasy.
+- Anonymous: initials or fictional names (Mr. D., Ms. L.). No real persons, brands, or identifiable famous cases.
+- No graphic violence, sexual content, child victims, partisan politics.
+- The verdict must be ambiguous: both sides have solid legal or factual arguments.
+- Cite 1-2 statutes or principles (US/UK common law, GDPR, contract law, criminal code…) when relevant, without inventing.
+- Difficulty = legal complexity (1 = obvious, 5 = serious doctrinal knot).
+
+RESPOND IN VALID JSON ONLY (no markdown, no backticks):
+{
+  "title": "Case title, 5-12 words, descriptive",
+  "context": "Facts of the case, 1-2 factual sentences (~40 words)",
+  "prosecutionSpeech": "Prosecution/plaintiff pleading, 120-150 words, firm tone with legal grounds",
+  "defenseSpeech": "Defense/defendant pleading, 120-150 words, measured tone with legal grounds",
+  "category": "${category}",
+  "difficulty": 3
+}`;
+  }
   return `Tu es scénariste juridique pour un jeu mobile de procès réalistes.
 Génère un cas de tribunal plausible inspiré du droit français, dans la catégorie : ${category}.
 
@@ -115,10 +142,10 @@ RÈGLES STRICTES :
 
 RÉPONDS UNIQUEMENT EN JSON VALIDE (pas de markdown, pas de backticks) :
 {
-  "title": "Titre du procès, 5-12 mots, descriptif (ex: 'Licenciement pour faute grave après publication')",
+  "title": "Titre du procès, 5-12 mots, descriptif",
   "context": "Faits de l'affaire, 1-2 phrases factuelles (~40 mots)",
-  "prosecutionSpeech": "Réquisitoire/plaidoirie de l'accusation ou demandeur, 120-150 mots, ton ferme et motivé en droit",
-  "defenseSpeech": "Plaidoirie de la défense ou défendeur, 120-150 mots, ton mesuré et motivé en droit",
+  "prosecutionSpeech": "Réquisitoire de l'accusation, 120-150 mots, ton ferme et motivé en droit",
+  "defenseSpeech": "Plaidoirie de la défense, 120-150 mots, ton mesuré et motivé en droit",
   "category": "${category}",
   "difficulty": 3
 }`;
@@ -149,7 +176,7 @@ export function parseCaseJSON(content, category) {
 }
 
 async function generateCase(category, dateStr) {
-  const systemPrompt = buildSystemPrompt(category);
+  const systemPrompt = await buildSystemPrompt(category);
   try {
     const { content } = await callAI(
       [{ role: "user", content: `Date du procès : ${dateStr}. Catégorie : ${category}. Génère le cas.` }],

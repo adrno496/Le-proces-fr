@@ -4,11 +4,12 @@ import { el, clear, toast, navigate } from "./app.js";
 import { Storage } from "./storage.js";
 import { PROVIDERS, estimateCostFor100Messages } from "./ai-client.js";
 import { formatTokens, formatCost } from "./format.js";
+import { t } from "./i18n.js";
 
 export function renderCosts(root) {
   clear(root);
   const container = el("div", { class: "panel panel-costs" });
-  container.appendChild(el("h1", { class: "panel-title" }, ["💰 CONSOMMATION IA"]));
+  container.appendChild(el("h1", { class: "panel-title" }, [t("panel.costs")]));
 
   const settings = Storage.getSettings();
   const costs = Storage.getCosts();

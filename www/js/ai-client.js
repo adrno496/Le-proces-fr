@@ -2,6 +2,7 @@
 
 import { Storage } from "./storage.js";
 import { getTodayDateStr } from "./format.js";
+import { t } from "./i18n.js";
 
 export const PROVIDERS = {
   groq: {
@@ -153,17 +154,17 @@ export function computeCost(model, tokensIn, tokensOut) {
 }
 
 export function errorMessage(status) {
-  if (status === 401 || status === 403) return "Clé API invalide. Vérifiez vos paramètres.";
-  if (status === 429) return "Limite d'utilisation atteinte. Attendez ou changez de provider.";
-  if (status >= 500) return "Erreur serveur IA. Réessayez dans quelques instants.";
-  if (status === 0) return "L'IA met trop de temps à répondre. Vérifiez votre connexion.";
-  return `Erreur réseau (${status}).`;
+  if (status === 401 || status === 403) return t("ai.error.invalid_key");
+  if (status === 429) return t("ai.error.rate_limit");
+  if (status >= 500) return t("ai.error.server");
+  if (status === 0) return t("ai.error.timeout");
+  return t("ai.error.network", { status });
 }
 
 export async function callAI(messages, { systemPrompt, maxTokens = 1000, signal } = {}) {
   const settings = Storage.getSettings();
-  if (!settings.apiKey) throw new Error("Aucune clé API configurée. Ouvrez les paramètres.");
-  if (!settings.provider || !settings.model) throw new Error("Aucun modèle sélectionné.");
+  if (!settings.apiKey) throw new Error(t("ai.error.no_key"));
+  if (!settings.provider || !settings.model) throw new Error(t("ai.error.no_model"));
 
   const provider = PROVIDERS[settings.provider];
   const model = getModel(settings.provider, settings.model);
@@ -187,7 +188,7 @@ export async function callAI(messages, { systemPrompt, maxTokens = 1000, signal 
   } catch (e) {
     clearTimeout(timer);
     if (e.name === "AbortError") throw new Error(errorMessage(0));
-    throw new Error("Connexion impossible à l'IA. Vérifiez votre réseau.");
+    throw new Error(t("ai.error.connect"));
   }
   clearTimeout(timer);
 

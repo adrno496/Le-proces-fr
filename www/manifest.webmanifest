@@ -1,14 +1,14 @@
 {
-  "name": "Le Procès",
-  "short_name": "Le Procès",
-  "description": "Jeu de tribunal réaliste — verdicts, plaidoiries, codex juridique. 100 % local.",
+  "name": "The Judge",
+  "short_name": "The Judge",
+  "description": "Realistic court game — verdicts, pleadings, legal codex. 100% local.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1a1410",
   "theme_color": "#1a1410",
-  "lang": "fr",
+  "lang": "en",
   "icons": [
     { "src": "icons/favicon-48.png",  "sizes": "48x48",   "type": "image/png" },
     { "src": "icons/favicon-96.png",  "sizes": "96x96",   "type": "image/png" },

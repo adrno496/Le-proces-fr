@@ -5,6 +5,7 @@ import { Storage, levelFromXp } from "./storage.js";
 import { ACHIEVEMENTS, CATEGORY_LABELS } from "./case-engine.js";
 import { CABINET_ITEMS, getCabinet, progress as cabinetProgress } from "./cabinet.js";
 import { CODEX_ENTRIES, getCodex, progress as codexProgress, isUnlocked, explainMore } from "./codex.js";
+import { t } from "./i18n.js";
 import { computeReputation } from "./reputation.js";
 import { getCurrentTier, getNextTier, tierProgress, CAREER_TIERS } from "./career.js";
 import { getPrecedents } from "./jurisprudence.js";
@@ -26,14 +27,14 @@ export function renderProfile(root) {
   const container = el("div", { class: "panel panel-profile" });
   container.appendChild(el("div", { class: "panel-title-with-logo" }, [
     el("img", { src: "icons/logo.png", alt: "", class: "title-logo" }),
-    el("h1", { class: "panel-title" }, ["PROFIL DU JUGE"]),
+    el("h1", { class: "panel-title" }, [t("panel.profile")]),
   ]));
 
   // ===== Header =====
   container.appendChild(el("div", { class: "profile-header" }, [
     el("div", { class: "profile-avatar" }, [AVATARS[profile.avatarId] || "👨‍⚖"]),
     el("div", { class: "profile-identity" }, [
-      el("div", { class: "profile-name" }, [`Maître ${profile.username}`]),
+      el("div", { class: "profile-name" }, [t("profile.master", { name: profile.username })]),
       el("div", { class: "profile-level" }, [`${tier.icon} ${tier.name}`]),
       el("div", { class: "reputation-tag" }, [`${reputation.icon} ${reputation.label}`]),
       el("div", { class: "xp-bar" }, [
@@ -50,14 +51,14 @@ export function renderProfile(root) {
   // ===== Tabs =====
   const tabs = el("div", { class: "tabs-row" });
   const TABS = [
-    { id: "stats",          label: "📊 Stats" },
-    { id: "career",         label: "🏛 Carrière" },
-    { id: "reputation",     label: "👁 Réputation" },
-    { id: "cabinet",        label: "🏠 Cabinet" },
-    { id: "codex",          label: "📖 Codex" },
-    { id: "jurisprudence",  label: "📚 Jurisprudence" },
-    { id: "parties",        label: "👥 Parties" },
-    { id: "achievements",   label: "🏆 Succès" },
+    { id: "stats",          label: t("profile.tab.stats") },
+    { id: "career",         label: t("profile.tab.career") },
+    { id: "reputation",     label: t("profile.tab.reputation") },
+    { id: "cabinet",        label: t("profile.tab.cabinet") },
+    { id: "codex",          label: t("profile.tab.codex") },
+    { id: "jurisprudence",  label: t("profile.tab.jurisprudence") },
+    { id: "parties",        label: t("profile.tab.parties") },
+    { id: "achievements",   label: t("profile.tab.achievements") },
   ];
   TABS.forEach(t => tabs.appendChild(el("button", {
     class: `tab-btn ${activeTab === t.id ? "active" : ""}`,
@@ -99,27 +100,36 @@ function renderStats(wrap, profile, lvl) {
   const codP = codexProgress();
   const achs = Storage.getAchievements().length;
 
+  let topCategoryLabel = "—";
+  if (topCount > 0) topCategoryLabel = t(`cat.${topCategory.toLowerCase()}`) || topCategory;
+  // re-derive topCategory key for translation
+  let topCatKey = "—", topCatCount = 0;
+  for (const [c, n] of Object.entries(profile.categoryCounts || {})) {
+    if (n > topCatCount) { topCatCount = n; topCatKey = c; }
+  }
+  const topCatTranslated = topCatCount > 0 ? t(`cat.${topCatKey}`) : "—";
+
   const grid = el("div", { class: "stats-grid" });
   const rows = [
-    ["🔥 Streak actuel",         `${profile.streak || 0} jours`],
-    ["🏆 Plus long streak",      `${profile.longestStreak || 0} jours`],
-    ["📊 Total verdicts",        String(total)],
-    ["⭐ XP total",              String(profile.totalXp || 0)],
-    ["🎯 Score moyen de jugement", `${avgJudgmentScore} / 100`],
-    ["📐 Alignement avec la vérité", `${alignmentRate} %`],
-    ["⚖ Taux de culpabilité",    `${guiltyRate} %`],
-    ["💬 Arguments motivés",     String(profile.argumentsWritten || 0)],
-    ["❓ Questions aux témoins", String(profile.questionsAsked || 0)],
-    ["🎭 Catégorie favorite",    `${topCategory}${topCount ? ` (${topCount})` : ""}`],
-    ["🎯 Difficulté moyenne",    `${avgDifficulty} / 5`],
-    ["📚 Précédents créés",      String(profile.precedentsCreated || 0)],
-    ["🎲 Audiences libres",      String(profile.freeAudiencesCount || 0)],
-    ["📜 Procès historiques",    `${(profile.historicJudged || []).length} / 40`],
-    ["🏠 Cabinet collecté",      `${cabP.unlocked} / ${cabP.total} (${cabP.pct} %)`],
-    ["📖 Codex débloqué",        `${codP.unlocked} / ${codP.total} (${codP.pct} %)`],
-    ["🏆 Succès débloqués",      `${achs} / ${ACHIEVEMENTS.length}`],
-    ["📤 Verdict partagé",       profile.shared ? "✓" : "—"],
-    ["🔊 TTS écouté",            profile.ttsListened ? "✓" : "—"],
+    [t("profile.stat.streak_current"),  `${profile.streak || 0}`],
+    [t("profile.stat.streak_best"),     `${profile.longestStreak || 0}`],
+    [t("profile.stat.total_verdicts"),  String(total)],
+    [t("profile.stat.total_xp"),        String(profile.totalXp || 0)],
+    [t("profile.stat.judgment_score"),  `${avgJudgmentScore} / 100`],
+    [t("profile.stat.alignment"),       `${alignmentRate} %`],
+    [t("profile.stat.guilty_rate"),     `${guiltyRate} %`],
+    [t("profile.stat.arguments"),       String(profile.argumentsWritten || 0)],
+    [t("profile.stat.questions"),       String(profile.questionsAsked || 0)],
+    [t("profile.stat.fav_category"),    `${topCatTranslated}${topCatCount ? ` (${topCatCount})` : ""}`],
+    [t("profile.stat.avg_difficulty"),  `${avgDifficulty} / 5`],
+    [t("profile.stat.precedents"),      String(profile.precedentsCreated || 0)],
+    [t("profile.stat.free_audiences"),  String(profile.freeAudiencesCount || 0)],
+    [t("profile.stat.historic"),        `${(profile.historicJudged || []).length} / 40`],
+    [t("profile.stat.cabinet"),         `${cabP.unlocked} / ${cabP.total} (${cabP.pct} %)`],
+    [t("profile.stat.codex"),           `${codP.unlocked} / ${codP.total} (${codP.pct} %)`],
+    [t("profile.stat.achievements"),    `${achs} / ${ACHIEVEMENTS.length}`],
+    [t("profile.stat.shared"),          profile.shared ? "✓" : "—"],
+    [t("profile.stat.tts"),             profile.ttsListened ? "✓" : "—"],
   ];
   for (const [k, v] of rows) {
     grid.appendChild(el("div", { class: "stat-row" }, [

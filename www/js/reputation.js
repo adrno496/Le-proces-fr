@@ -1,11 +1,11 @@
-// Judge reputation: derived from verdict patterns, surfaces a "judicial profile".
+// Judge reputation: derived from verdict patterns. Labels are translated.
 
 import { Storage } from "./storage.js";
+import { t } from "./i18n.js";
 
-// Returns reputation snapshot from current profile data.
 export function computeReputation(profile) {
   const total = profile.totalVerdicts || 0;
-  if (total < 5) return { label: "Juge sans réputation", icon: "❓", desc: "Pas encore assez de verdicts pour dégager une tendance.", traits: [] };
+  if (total < 5) return { label: t("rep.none"), icon: "❓", desc: t("rep.none.desc"), traits: [] };
 
   const guiltyRate = (profile.guiltyCount || 0) / total;
   const argRate = (profile.argumentsWritten || 0) / total;
@@ -13,25 +13,24 @@ export function computeReputation(profile) {
   const avgSeverity = profile.severitySum ? profile.severitySum / total : 3;
 
   const traits = [];
-  if (guiltyRate >= 0.65) traits.push({ id: "severe", label: "Sévère", desc: `${Math.round(guiltyRate * 100)} % de culpabilité` });
-  else if (guiltyRate <= 0.35) traits.push({ id: "clement", label: "Clément", desc: `${Math.round((1 - guiltyRate) * 100)} % de relaxe` });
-  else traits.push({ id: "equilibre", label: "Équilibré", desc: "Verdicts partagés" });
+  if (guiltyRate >= 0.65) traits.push({ id: "severe", label: t("rep.trait.severe"), desc: `${Math.round(guiltyRate * 100)}%` });
+  else if (guiltyRate <= 0.35) traits.push({ id: "clement", label: t("rep.trait.lenient"), desc: `${Math.round((1 - guiltyRate) * 100)}%` });
+  else traits.push({ id: "equilibre", label: t("rep.trait.balanced"), desc: "" });
 
-  if (argRate >= 0.5) traits.push({ id: "motive", label: "Motivé", desc: "Argumente un cas sur deux ou plus" });
-  if (qRate >= 1.0) traits.push({ id: "investigateur", label: "Investigateur", desc: "Interroge en moyenne 1+ témoin par cas" });
-  if (avgSeverity >= 4) traits.push({ id: "rigoureux", label: "Rigoureux", desc: "Sanctions hautes" });
-  if (avgSeverity <= 2) traits.push({ id: "indulgent", label: "Indulgent", desc: "Sanctions basses" });
+  if (argRate >= 0.5) traits.push({ id: "motive", label: t("rep.trait.motivated"), desc: "" });
+  if (qRate >= 1.0) traits.push({ id: "investigateur", label: t("rep.trait.investigator"), desc: "" });
+  if (avgSeverity >= 4) traits.push({ id: "rigoureux", label: t("rep.trait.rigorous"), desc: "" });
+  if (avgSeverity <= 2) traits.push({ id: "indulgent", label: t("rep.trait.indulgent"), desc: "" });
 
-  // Master label = combinaison
   let label, icon;
-  if (traits.find(t => t.id === "severe") && traits.find(t => t.id === "motive")) { label = "Le Procureur de fer"; icon = "🛡"; }
-  else if (traits.find(t => t.id === "clement") && traits.find(t => t.id === "motive")) { label = "L'Avocat de cœur"; icon = "🕊"; }
-  else if (traits.find(t => t.id === "equilibre") && traits.find(t => t.id === "investigateur")) { label = "Le Magistrat curieux"; icon = "🔎"; }
-  else if (traits.find(t => t.id === "rigoureux")) { label = "Le Juge inflexible"; icon = "⚒"; }
-  else if (traits.find(t => t.id === "indulgent")) { label = "Le Juge bienveillant"; icon = "🤲"; }
-  else { label = "Le Juge attentif"; icon = "⚖"; }
+  if (traits.find(x => x.id === "severe") && traits.find(x => x.id === "motive")) { label = t("rep.iron"); icon = "🛡"; }
+  else if (traits.find(x => x.id === "clement") && traits.find(x => x.id === "motive")) { label = t("rep.heart"); icon = "🕊"; }
+  else if (traits.find(x => x.id === "equilibre") && traits.find(x => x.id === "investigateur")) { label = t("rep.curious"); icon = "🔎"; }
+  else if (traits.find(x => x.id === "rigoureux")) { label = t("rep.inflexible"); icon = "⚒"; }
+  else if (traits.find(x => x.id === "indulgent")) { label = t("rep.benevolent"); icon = "🤲"; }
+  else { label = t("rep.attentive"); icon = "⚖"; }
 
-  return { label, icon, desc: `Profil dérivé de ${total} verdicts.`, traits, stats: { guiltyRate, argRate, qRate, avgSeverity } };
+  return { label, icon, desc: "", traits, stats: { guiltyRate, argRate, qRate, avgSeverity } };
 }
 
 // Used by case-engine to bias case generation toward the player's reputation

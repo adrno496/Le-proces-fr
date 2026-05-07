@@ -17,6 +17,9 @@ import { recordOutcome } from "./parties.js";
 import { maybeReward, progress as cabinetProgress } from "./cabinet.js";
 import { progress as codexProgress } from "./codex.js";
 import { recordVerdictForChallenge, multiplierForCategory, currentChallenge, getProgress as weeklyGet } from "./weekly-challenge.js";
+import { listHistoric, getHistoric } from "./historic-cases.js";
+import { t, getLang } from "./i18n.js";
+import { playHammer, primeAudio } from "./audio.js";
 import { currentChapter, chapterByDate } from "./narrative.js";
 import { shareVerdict } from "./share.js";
 import { isSupported as ttsSupported, readPlaidoiries, stop as stopTTS } from "./tts.js";
@@ -77,7 +80,7 @@ async function renderDashboard(root) {
   container.appendChild(el("div", { class: "dash-hero" }, [
     el("img", { src: "icons/logo.png", alt: "", class: "dash-logo" }),
     el("div", { class: "dash-hero-text" }, [
-      el("h1", {}, [`Maître ${profile.username || "Votre Honneur"}`]),
+      el("h1", {}, [t("profile.master", { name: profile.username || t("settings.username_default") })]),
       el("div", { class: "dash-tier" }, [`${tier.icon} ${tier.name}`]),
       el("div", { class: "dash-rep" }, [`${reputation.icon} ${reputation.label}`]),
       el("div", { class: "xp-bar dash-xp" }, [
@@ -100,50 +103,51 @@ async function renderDashboard(root) {
     setTimeout(() => loadDailyCase(root), 50);
   }}, [
     el("div", { class: "card-icon" }, ["⚖"]),
-    el("div", { class: "card-title" }, ["Audience du jour"]),
+    el("div", { class: "card-title" }, [t("card.daily.title")]),
     el("div", { class: "card-body" }, [
       verdictToday
-        ? `✅ Verdict prononcé · ${verdictToday.verdict === "guilty" ? "Coupable" : "Non-coupable"}`
-        : settings.apiKey ? "Cas généré par IA" : "Cas hors-ligne disponible",
+        ? `${t("card.daily.judged")} · ${verdictToday.verdict === "guilty" ? t("card.daily.guilty") : t("card.daily.innocent")}`
+        : settings.apiKey ? t("card.daily.ai") : t("card.daily.offline"),
     ]),
-    el("div", { class: "card-cta" }, [verdictToday ? "Revoir →" : "Tenir l'audience →"]),
+    el("div", { class: "card-cta" }, [verdictToday ? t("card.daily.review") : t("card.daily.cta")]),
   ]);
   grid.appendChild(dailyCard);
 
   // CARD 2 : Audience libre
   const freeCard = el("button", { class: "dash-card dash-free", onclick: () => startFreeAudience(root) }, [
     el("div", { class: "card-icon" }, ["🎲"]),
-    el("div", { class: "card-title" }, ["Audience libre"]),
-    el("div", { class: "card-body" }, ["Un cas généré à la demande, dans une catégorie aléatoire."]),
-    el("div", { class: "card-cta" }, ["Lancer →"]),
+    el("div", { class: "card-title" }, [t("card.free.title")]),
+    el("div", { class: "card-body" }, [t("card.free.body")]),
+    el("div", { class: "card-cta" }, [t("card.free.cta")]),
   ]);
   grid.appendChild(freeCard);
 
   // CARD 3 : Procès historiques
-  const histCard = el("button", { class: "dash-card dash-hist", onclick: () => navigate("history") }, [
+  const histCount = (profile.historicJudged || []).length;
+  const histCard = el("button", { class: "dash-card dash-hist", onclick: () => showHistoricModal(root) }, [
     el("div", { class: "card-icon" }, ["📜"]),
-    el("div", { class: "card-title" }, ["Procès historiques"]),
-    el("div", { class: "card-body" }, [`${(profile.historicJudged || []).length} / 10 jugés. Calas, Dreyfus, Outreau...`]),
-    el("div", { class: "card-cta" }, ["Voir →"]),
+    el("div", { class: "card-title" }, [t("card.historic.title")]),
+    el("div", { class: "card-body" }, [t("card.historic.body", { judged: histCount })]),
+    el("div", { class: "card-cta" }, [t("card.historic.cta")]),
   ]);
   grid.appendChild(histCard);
 
   // CARD 4 : Défi de la semaine
   const wpct = Math.round((wpCur / ch.target) * 100);
-  const weeklyCard = el("button", { class: "dash-card dash-weekly", onclick: () => navigate("history") }, [
+  const weeklyCard = el("button", { class: "dash-card dash-weekly", onclick: () => showWeeklyModal(root) }, [
     el("div", { class: "card-icon" }, ["📅"]),
-    el("div", { class: "card-title" }, ["Défi de la semaine"]),
-    el("div", { class: "card-body" }, [`${ch.label} · × 2 XP — ${wpCur}/${ch.target}`]),
+    el("div", { class: "card-title" }, [t("card.weekly.title")]),
+    el("div", { class: "card-body" }, [t("card.weekly.summary", { label: ch.label, cur: wpCur, target: ch.target })]),
     el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${wpct}%` } })]),
-    el("div", { class: "card-cta" }, ["Détails →"]),
+    el("div", { class: "card-cta" }, [t("card.weekly.cta")]),
   ]);
   grid.appendChild(weeklyCard);
 
   // CARD 5 : Catégories
   const catCard = el("div", { class: "dash-card dash-categories" }, [
     el("div", { class: "card-icon" }, ["🎭"]),
-    el("div", { class: "card-title" }, ["Catégories disponibles"]),
-    el("div", { class: "muted" }, ["Cliquez sur une catégorie pour tenir une audience libre."]),
+    el("div", { class: "card-title" }, [t("card.categories.title")]),
+    el("div", { class: "muted" }, [t("card.categories.help")]),
     el("div", { class: "cat-chips" },
       Object.keys(CATEGORY_LABELS).map(k => el("button", {
         class: "cat-chip", onclick: async (e) => {
@@ -171,11 +175,79 @@ async function renderDashboard(root) {
   // No API key warning
   if (!settings.apiKey) {
     container.appendChild(el("div", { class: "dash-warning" }, [
-      el("strong", {}, ["ℹ Mode hors-ligne"]),
-      el("p", {}, ["Aucune clé API configurée — l'app utilise un pool de 110 cas locaux. Vous pouvez à tout moment configurer une IA dans les paramètres pour des cas générés en temps réel."]),
-      el("button", { class: "btn-secondary", onclick: () => navigate("settings") }, ["⚙ Paramètres IA"]),
+      el("strong", {}, ["ℹ " + t("nav.settings")]),
+      el("p", {}, [t("app.no_key_msg")]),
+      el("button", { class: "btn-secondary", onclick: () => navigate("settings") }, ["⚙ " + t("nav.settings")]),
     ]));
   }
+  if (getLang() === "en") {
+    container.appendChild(el("p", { class: "muted", style: { textAlign: "center", marginTop: "8px", fontSize: "0.78rem" } }, [t("app.legal_notice")]));
+  }
+}
+
+// Modal "Procès historiques" — accessible depuis le dashboard
+function showHistoricModal(root) {
+  const profile = Storage.getProfile();
+  const judged = profile.historicJudged || [];
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large modal-historic" });
+  modal.appendChild(el("h2", {}, [`📜 ${t("card.historic.title")} (${judged.length} / 40)`]));
+  modal.appendChild(el("p", { class: "muted" }, [t("app.legal_notice")]));
+  const list = el("div", { class: "history-list" });
+  listHistoric().forEach(c => {
+    const done = judged.includes(c.id);
+    const dot = "●".repeat(c.difficulty) + "○".repeat(5 - c.difficulty);
+    list.appendChild(el("div", { class: `history-card ${done ? "done" : ""}` }, [
+      el("div", { class: "history-date mono" }, [c.era]),
+      el("div", { class: "history-title" }, [c.title]),
+      el("div", { class: "history-meta" }, [
+        el("span", {}, [`${CATEGORY_ICONS[c.category] || ""} ${CATEGORY_LABELS[c.category] || c.category}`]),
+        el("span", {}, [`Difficulté ${dot}`]),
+        done ? el("span", { class: "verdict-tag" }, ["✓ Jugé"]) : null,
+      ]),
+      el("button", { class: "btn-primary", onclick: () => {
+        window._leprocesHistoricCase = getHistoric(c.id);
+        overlay.remove();
+        renderTribunal(root);
+      }}, [done ? t("btn.reread") : t("btn.judge")]),
+    ]));
+  });
+  modal.appendChild(list);
+  modal.appendChild(el("button", { class: "btn-secondary", onclick: () => overlay.remove() }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Modal "Défi de la semaine" — détails + bouton de lancement
+function showWeeklyModal(root) {
+  const ch = currentChallenge();
+  const wp = weeklyGet();
+  const cur = wp.week === ch.week ? wp.completed : 0;
+  const pct = Math.round((cur / ch.target) * 100);
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-weekly" });
+  modal.appendChild(el("h2", {}, [`📅 ${ch.label}`]));
+  modal.appendChild(el("div", { class: "muted mono" }, [`Semaine ISO ${ch.week}`]));
+  modal.appendChild(el("p", {}, [ch.description]));
+  modal.appendChild(el("div", { class: "xp-bar weekly-bar-large" }, [
+    el("div", { class: "xp-bar-fill", style: { width: `${pct}%` } }),
+    el("div", { class: "xp-bar-label" }, [`${cur} / ${ch.target} verdicts`]),
+  ]));
+  if (cur >= ch.target) {
+    modal.appendChild(el("div", { class: "weekly-done" }, ["✅ Défi accompli — bravo Maître."]));
+  } else {
+    modal.appendChild(el("button", { class: "btn-primary btn-big", onclick: async () => {
+      overlay.remove();
+      toast(`⚖ Génération d'une audience ${CATEGORY_LABELS[ch.category]}...`, "info", 1500);
+      try {
+        window._leprocesFreeCase = await generateFreeCase({ category: ch.category });
+        renderTribunal(root);
+      } catch (e) { toast(e.message || "Erreur", "error", 4000); }
+    }}, [`⚖ Tenir une audience ${CATEGORY_LABELS[ch.category]}`]));
+  }
+  modal.appendChild(el("button", { class: "btn-secondary", onclick: () => overlay.remove() }, ["FERMER"]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 }
 
 // =====================================================================
@@ -189,7 +261,7 @@ async function renderCaseFlow(root, kind) {
   container.appendChild(el("button", { class: "btn-back", onclick: () => {
     if (typeof window !== "undefined") { window._leprocesFreeCase = null; window._leprocesHistoricCase = null; }
     renderTribunal(root);
-  }}, ["← Tableau de bord"]));
+  }}, [t("btn.back")]));
 
   let caseData;
   if (kind === "free")     caseData = window._leprocesFreeCase;
@@ -218,7 +290,7 @@ async function loadDailyCase(root) {
   })();
   clear(container);
   // Bouton retour
-  container.appendChild(el("button", { class: "btn-back", onclick: () => renderTribunal(root) }, ["← Tableau de bord"]));
+  container.appendChild(el("button", { class: "btn-back", onclick: () => renderTribunal(root) }, [t("btn.back")]));
   const today = getTodayDateStr();
   const settings = Storage.getSettings();
 
@@ -278,17 +350,17 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
 
   const header = el("div", { class: "case-header" }, [
     el("div", { class: "case-date" }, [
-      ctx.kind === "free" ? "⚖ AUDIENCE LIBRE" :
-      ctx.kind === "historic" ? `📜 PROCÈS HISTORIQUE — ${caseData.era || ""}` :
+      ctx.kind === "free" ? t("case.free") :
+      ctx.kind === "historic" ? `${t("case.historic")}${caseData.era ? " — " + caseData.era : ""}` :
       formatDate(today).toUpperCase()
     ]),
-    el("div", { class: "case-number" }, [`DOSSIER N° ${caseData.caseNumber}`]),
+    el("div", { class: "case-number" }, [`${t("case.dossier")} ${caseData.caseNumber}`]),
     el("hr", { class: "rule-double" }),
     el("h1", { class: "case-title" }, [caseData.title]),
     el("hr", { class: "rule-double" }),
     el("div", { class: "case-meta" }, [
-      el("span", { class: "case-meta-item" }, [`${CATEGORY_ICONS[caseData.category] || ""} ${CATEGORY_LABELS[caseData.category] || caseData.category}`]),
-      el("span", { class: "case-meta-item" }, [`Difficulté ${difficultyDots(caseData.difficulty || 3)}`]),
+      el("span", { class: "case-meta-item" }, [`${CATEGORY_ICONS[caseData.category] || ""} ${t(`cat.${caseData.category}`) || caseData.category}`]),
+      el("span", { class: "case-meta-item" }, [`${t("case.difficulty")} ${difficultyDots(caseData.difficulty || 3)}`]),
       caseData.multiplier && caseData.multiplier !== 1 ? el("span", { class: "case-meta-item gold" }, [`× ${caseData.multiplier} XP`]) : null,
     ]),
     el("div", { class: "case-context" }, [caseData.context]),
@@ -310,18 +382,19 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
   // Affichage des plaidoiries — avec niveau d'avocat visible
   const speechWrap = el("div", { class: "speech-stage hidden" });
   const proseHeader = el("div", { class: "speech-header" }, [
-    el("h3", { class: "speech-title" }, [`⚔ ACCUSATION  ${"★".repeat(caseData.prosecutionQuality || 3)}${"☆".repeat(5 - (caseData.prosecutionQuality || 3))}`]),
-    ttsSupported() ? el("button", { class: "btn-icon", title: "Écouter en TTS",
+    el("h3", { class: "speech-title" }, [`${t("speech.prosecution")}  ${"★".repeat(caseData.prosecutionQuality || 3)}${"☆".repeat(5 - (caseData.prosecutionQuality || 3))}`]),
+    ttsSupported() ? el("button", { class: "btn-icon", title: t("speech.tts_listen"),
       onclick: () => listenSpeeches(caseData) }, ["🔊"]) : null,
   ]);
   const proseText = el("div", { class: "speech-text" });
   const defHeader = el("div", { class: "speech-header" }, [
-    el("h3", { class: "speech-title" }, [`🛡 DÉFENSE  ${"★".repeat(caseData.defenseQuality || 3)}${"☆".repeat(5 - (caseData.defenseQuality || 3))}`]),
+    el("h3", { class: "speech-title" }, [`${t("speech.defense")}  ${"★".repeat(caseData.defenseQuality || 3)}${"☆".repeat(5 - (caseData.defenseQuality || 3))}`]),
   ]);
   const defText = el("div", { class: "speech-text" });
   speechWrap.append(proseHeader, proseText, defHeader, defText);
 
   const startBtn = el("button", { class: "btn-primary btn-big", onclick: () => {
+    primeAudio(); // user gesture → autorise la lecture future
     startBtn.remove();
     speechWrap.classList.remove("hidden");
     const tw1 = new Typewriter(proseText, caseData.prosecutionSpeech, 18);
@@ -333,7 +406,7 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
       defText.addEventListener("click", () => tw2.finish(), { once: true });
     }, Math.min(caseData.prosecutionSpeech.length * 18 + 500, 4500));
     setTimeout(() => renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx), 2000);
-  }}, ["📋 OUVRIR L'AUDIENCE"]);
+  }}, [t("speech.open_hearing")]);
   container.appendChild(startBtn);
   container.appendChild(speechWrap);
 }
@@ -428,30 +501,30 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
 
   // Verdict block
   const verdictWrap = el("section", { class: "verdict-section" });
-  verdictWrap.appendChild(el("h3", { class: "section-subtitle" }, ["🔨 VOTRE VERDICT"]));
+  verdictWrap.appendChild(el("h3", { class: "section-subtitle" }, [t("verdict.title")]));
   let chosen = null;
-  const guiltyBtn = el("button", { class: "verdict-btn verdict-guilty", onclick: () => { chosen = "guilty"; updateBtns(); } }, ["⚖ COUPABLE"]);
-  const innocentBtn = el("button", { class: "verdict-btn verdict-innocent", onclick: () => { chosen = "innocent"; updateBtns(); } }, ["🕊 NON-COUPABLE"]);
+  const guiltyBtn = el("button", { class: "verdict-btn verdict-guilty", onclick: () => { chosen = "guilty"; updateBtns(); } }, [t("verdict.guilty")]);
+  const innocentBtn = el("button", { class: "verdict-btn verdict-innocent", onclick: () => { chosen = "innocent"; updateBtns(); } }, [t("verdict.innocent")]);
   function updateBtns() {
     guiltyBtn.classList.toggle("selected", chosen === "guilty");
     innocentBtn.classList.toggle("selected", chosen === "innocent");
   }
   verdictWrap.appendChild(el("div", { class: "verdict-row" }, [guiltyBtn, innocentBtn]));
 
-  const sevLabel = el("div", { class: "slider-label" }, ["Sévérité : Modérée (3)"]);
+  const sevLabel = el("div", { class: "slider-label" }, [`${t("verdict.severity")} : ${t("verdict.severity_3")} (3)`]);
   const slider = el("input", { type: "range", min: "1", max: "5", value: "3", class: "slider" });
   slider.addEventListener("input", e => {
     const v = +e.target.value;
-    const labels = ["", "Avertissement", "Légère", "Modérée", "Sévère", "Maximale"];
-    sevLabel.textContent = `Sévérité : ${labels[v]} (${v})`;
+    sevLabel.textContent = `${t("verdict.severity")} : ${t(`verdict.severity_${v}`)} (${v})`;
   });
   verdictWrap.append(sevLabel, slider);
-  const argInput = el("textarea", { class: "text-input textarea", maxlength: "500", placeholder: "Argumentez votre verdict (motivation = bonus XP)" });
+  const argInput = el("textarea", { class: "text-input textarea", maxlength: "500", placeholder: t("verdict.argument_placeholder") });
   verdictWrap.appendChild(argInput);
   const submitBtn = el("button", { class: "btn-primary btn-big hammer-btn", onclick: async () => {
-    if (!chosen) return toast("Choisissez d'abord coupable ou non-coupable", "error");
+    if (!chosen) return toast(t("verdict.choose_first"), "error");
     submitBtn.disabled = true;
     submitBtn.classList.add("hammering");
+    playHammer(); // 🔨 son du marteau au prononcé du verdict
     const argument = argInput.value.trim();
     const severity = +slider.value;
     const verdictRec = await submitVerdict(caseData, today, chosen, severity, argument, qaState.length, ctx);
@@ -459,10 +532,10 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
       // Reset transient mode + show recap inline
       if (typeof window !== "undefined") { window._leprocesFreeCase = null; window._leprocesHistoricCase = null; }
       clear(container);
-      container.appendChild(el("button", { class: "btn-back", onclick: () => renderTribunal(root) }, ["← Tableau de bord"]));
+      container.appendChild(el("button", { class: "btn-back", onclick: () => renderTribunal(root) }, [t("btn.back")]));
       renderVerdictRecap(container, caseData, verdictRec, root, ctx.kind || "daily");
     }, 1100);
-  }}, ["🔨 PRONONCER LE VERDICT"]);
+  }}, [t("verdict.submit")]);
   verdictWrap.appendChild(submitBtn);
   container.appendChild(verdictWrap);
 }
@@ -511,7 +584,7 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
     lastVerdictDate: today,
     streak: newStreak,
     longestStreak: Math.max(profile.longestStreak || 0, newStreak),
-    totalVerdicts: (profile.totalVerdicts || 0) + (ctx.kind === "free" ? 0 : 1),
+    totalVerdicts: (profile.totalVerdicts || 0) + 1,
     totalXp: (profile.totalXp || 0) + xp,
     argumentsWritten: (profile.argumentsWritten || 0) + (argument.length > 0 ? 1 : 0),
     categoryCounts: { ...(profile.categoryCounts || {}) },
@@ -586,7 +659,7 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
     if (!Storage.hasAchievement(id)) { Storage.addAchievement(id); newly.push(id); }
   }
 
-  toast(`+${xp} XP · ${evaluation.label}`, evaluation.aligned ? "success" : "info", 4000);
+  toast(t("verdict.gained", { xp, label: t(evaluation.label) || evaluation.label }), evaluation.aligned ? "success" : "info", 4000);
   setTimeout(() => {
     if (newCodexIds.length) {
       const ent = entryById(newCodexIds[0]);
@@ -628,18 +701,16 @@ function renderVerdictRecap(container, caseData, verdict, root, kind) {
 
   // RÉVÉLATION DE LA VÉRITÉ
   const truthBox = el("div", { class: `truth-box ${evaluation.aligned ? "aligned" : "diverged"}` });
-  truthBox.appendChild(el("div", { class: "truth-title" }, ["📖 RÉVÉLATION DU DOSSIER"]));
+  truthBox.appendChild(el("div", { class: "truth-title" }, [t("truth.title")]));
   truthBox.appendChild(el("div", { class: "truth-line" }, [
-    `Selon les éléments réels du dossier, le prévenu était `,
-    el("strong", {}, [caseData.truth === "guilty" ? "COUPABLE" : "NON-COUPABLE"]),
-    ` (clarté : ${"●".repeat(caseData.truthClarity || 3)}${"○".repeat(5 - (caseData.truthClarity || 3))}).`,
+    `${caseData.truth === "guilty" ? t("truth.line_guilty") : t("truth.line_innocent")} (${t("truth.clarity")} : ${"●".repeat(caseData.truthClarity || 3)}${"○".repeat(5 - (caseData.truthClarity || 3))}).`,
   ]));
   truthBox.appendChild(el("div", { class: "truth-eval" }, [
-    `${evaluation.aligned ? "🎯" : "🤔"} ${evaluation.label} — Score de jugement : ${evaluation.score}/100`,
+    `${evaluation.aligned ? "🎯" : "🤔"} ${t(evaluation.label) || evaluation.label} — ${t("truth.score")} : ${evaluation.score}/100`,
   ]));
   truthBox.appendChild(el("div", { class: "truth-lawyers" }, [
-    el("div", {}, [`Niveau accusation : ${"★".repeat(caseData.prosecutionQuality || 3)}${"☆".repeat(5 - (caseData.prosecutionQuality || 3))}`]),
-    el("div", {}, [`Niveau défense   : ${"★".repeat(caseData.defenseQuality || 3)}${"☆".repeat(5 - (caseData.defenseQuality || 3))}`]),
+    el("div", {}, [`${t("truth.lawyer_p")} : ${"★".repeat(caseData.prosecutionQuality || 3)}${"☆".repeat(5 - (caseData.prosecutionQuality || 3))}`]),
+    el("div", {}, [`${t("truth.lawyer_d")}   : ${"★".repeat(caseData.defenseQuality || 3)}${"☆".repeat(5 - (caseData.defenseQuality || 3))}`]),
   ]));
   recap.appendChild(truthBox);
 
@@ -676,12 +747,12 @@ function renderVerdictRecap(container, caseData, verdict, root, kind) {
       try {
         await shareVerdict(caseData, verdict, profile);
         Storage.saveProfile({ shared: true });
-        toast("Verdict partagé", "success");
-      } catch { toast("Échec du partage", "error"); }
-    }}, ["📤 Partager"]),
-    el("button", { class: "btn-secondary", onclick: () => navigate("history") }, ["📜 Archives"]),
-    el("button", { class: "btn-secondary", onclick: () => startFreeAudience(root) }, ["🎲 Audience libre"]),
-    el("button", { class: "btn-secondary", onclick: () => renderTribunal(root) }, ["⚖ Tableau de bord"]),
+        toast(t("toast.verdict_shared"), "success");
+      } catch { toast(t("toast.share_failed"), "error"); }
+    }}, [t("btn.share")]),
+    el("button", { class: "btn-secondary", onclick: () => navigate("history") }, [t("btn.archives")]),
+    el("button", { class: "btn-secondary", onclick: () => startFreeAudience(root) }, [t("btn.free_audience")]),
+    el("button", { class: "btn-secondary", onclick: () => renderTribunal(root) }, [t("btn.dashboard")]),
   ]);
   recap.appendChild(actions);
 
