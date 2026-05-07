@@ -396,6 +396,12 @@ const STRINGS = {
   // ===== Misc =====
   "misc.copy":         { fr: "Coller", en: "Paste" },
   "misc.show":         { fr: "Afficher", en: "Show" },
+
+  // ===== Hard refresh =====
+  "refresh.title":     { fr: "Vider le cache et recharger", en: "Clear cache and reload" },
+  "refresh.toast":     { fr: "🔄 Vidage du cache...", en: "🔄 Clearing cache..." },
+  "refresh.done":      { fr: "✓ Cache vidé. Rechargement...", en: "✓ Cache cleared. Reloading..." },
+  "refresh.note":      { fr: "Vos données (verdicts, profil) ne sont pas effacées.", en: "Your data (verdicts, profile) is preserved." },
 };
 
 let _lang = null;

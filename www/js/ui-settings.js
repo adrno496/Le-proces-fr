@@ -7,7 +7,7 @@ import { THEMES, applyTheme } from "./themes.js";
 import { isSupported as ttsSupported, frenchVoices } from "./tts.js";
 import { requestPermission, scheduleDaily, cancel as cancelNotifs } from "./notifications.js";
 import { t, setLang, getLang, LANGS, LANG_LABELS } from "./i18n.js";
-import { renderBottomNav } from "./app.js";
+import { renderBottomNav, refreshHardRefreshButton } from "./app.js";
 
 const AVATARS = ["👨‍⚖", "👩‍⚖", "🧑‍⚖", "🦉", "🦅", "🐈‍⬛", "🐺", "🦊", "🦁", "🐉", "🌟", "📚", "⚖", "🏛", "🔨", "🕊"];
 
@@ -43,7 +43,8 @@ export function renderSettings(root) {
       class: `btn-secondary ${isSel ? "selected" : ""}`,
       onclick: () => {
         setLang(code);
-        renderBottomNav(); // re-render bottom nav with new labels
+        renderBottomNav();
+        refreshHardRefreshButton();
         renderSettings(root);
       },
     }, [`${code === "fr" ? "🇫🇷" : "🇬🇧"} ${LANG_LABELS[code]}`]));

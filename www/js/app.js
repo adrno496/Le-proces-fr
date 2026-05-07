@@ -89,12 +89,61 @@ export function renderBottomNav() {
   }
 }
 
+// Floating "Hard refresh" button — visible on every page (top-right).
+// Clears HTTP/PWA caches + Service Worker + reloads with a cache-buster.
+// Does NOT touch localStorage / IndexedDB (user's game data is preserved).
+function renderHardRefreshButton() {
+  let btn = document.getElementById("hard-refresh-btn");
+  if (btn) return;
+  btn = el("button", {
+    id: "hard-refresh-btn",
+    class: "hard-refresh-btn",
+    title: t("refresh.title"),
+    "aria-label": t("refresh.title"),
+    onclick: async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.classList.add("spinning");
+      toast(t("refresh.toast") + " " + t("refresh.note"), "info", 2500);
+      try {
+        // Clear Cache Storage API (PWA / Service Worker caches)
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        // Unregister all Service Workers
+        if ("serviceWorker" in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+      } catch (e) { console.warn("[hard-refresh] partial:", e); }
+      toast(t("refresh.done"), "success", 1500);
+      setTimeout(() => {
+        // Bust HTTP cache by appending a versioning query param
+        const url = new URL(window.location.href);
+        url.searchParams.set("_v", String(Date.now()));
+        window.location.replace(url.toString());
+      }, 700);
+    },
+  }, ["🔄"]);
+  document.body.appendChild(btn);
+}
+
+export function refreshHardRefreshButton() {
+  const btn = document.getElementById("hard-refresh-btn");
+  if (btn) {
+    btn.title = t("refresh.title");
+    btn.setAttribute("aria-label", t("refresh.title"));
+  }
+}
+
 async function bootstrap() {
   await Storage.init();
   Storage.resetSessionCost();
   // Initialize language (auto-detect from browser if not set)
   setLang(Storage.getSettings().language || getLang());
   renderBottomNav();
+  renderHardRefreshButton();
   const settings = Storage.getSettings();
   applyTheme(settings.theme || "dark");
   navigate("tribunal");
