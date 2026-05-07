@@ -6,6 +6,7 @@ import { renderSettings } from "./ui-settings.js";
 import { renderProfile } from "./ui-profile.js";
 import { renderHistory } from "./ui-history.js";
 import { renderCosts } from "./ui-costs.js";
+import { renderCodex } from "./ui-codex.js";
 import { applyTheme } from "./themes.js";
 import { t, setLang, getLang } from "./i18n.js";
 import { shouldShowOnboarding, showOnboarding } from "./onboarding.js";
@@ -16,8 +17,10 @@ const PANELS = {
   tribunal: { id: "tribunal", labelKey: "nav.tribunal", icon: "⚖", render: renderTribunal },
   history:  { id: "history",  labelKey: "nav.archives", icon: "📜", render: renderHistory },
   profile:  { id: "profile",  labelKey: "nav.profile",  icon: "👤", render: renderProfile },
-  costs:    { id: "costs",    labelKey: "nav.costs",    icon: "💰", render: renderCosts },
+  codex:    { id: "codex",    labelKey: "nav.codex",    icon: "📖", render: renderCodex },
   settings: { id: "settings", labelKey: "nav.settings", icon: "⚙", render: renderSettings },
+  // costs reste accessible mais pas dans la nav (appelée depuis Settings)
+  costs:    { id: "costs",    labelKey: "nav.costs",    icon: "💰", render: renderCosts, hidden: true },
 };
 
 let currentPanel = "tribunal";
@@ -83,6 +86,7 @@ export function renderBottomNav() {
   if (!nav) return;
   clear(nav);
   for (const p of Object.values(PANELS)) {
+    if (p.hidden) continue;
     nav.appendChild(
       el("button", { class: "nav-btn", "data-panel": p.id, onclick: () => navigate(p.id) }, [
         el("span", { class: "nav-icon" }, [p.icon]),

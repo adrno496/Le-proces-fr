@@ -56,7 +56,7 @@ export function renderProfile(root) {
     { id: "career",         label: t("profile.tab.career") },
     { id: "reputation",     label: t("profile.tab.reputation") },
     { id: "cabinet",        label: t("profile.tab.cabinet") },
-    { id: "codex",          label: t("profile.tab.codex") },
+    // Codex retiré (déplacé dans la navbar)
     { id: "jurisprudence",  label: t("profile.tab.jurisprudence") },
     { id: "parties",        label: t("profile.tab.parties") },
     { id: "achievements",   label: t("profile.tab.achievements") },
@@ -74,12 +74,13 @@ export function renderProfile(root) {
 
 function renderTabContent(profile, achievements, lvl, tier, reputation) {
   const wrap = el("div", { class: "tab-content" });
+  // "codex" tab removed → bascule sur stats si encore stocké
+  if (activeTab === "codex") activeTab = "stats";
   switch (activeTab) {
     case "stats":         return renderStats(wrap, profile, lvl);
     case "career":        return renderCareer(wrap, profile, tier);
     case "reputation":    return renderReputation(wrap, reputation);
     case "cabinet":       return renderCabinet(wrap, profile);
-    case "codex":         return renderCodex(wrap);
     case "jurisprudence": return renderJurisprudence(wrap);
     case "parties":       return renderParties(wrap);
     case "achievements":  return renderAchievements(wrap, achievements);

@@ -1567,6 +1567,102 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   animation-duration: 0.001ms !important;
   transition-duration: 0.001ms !important;
 }
+/* ============================================================
+   MODE BADGE (Settings)
+   ============================================================ */
+.current-mode-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--gold);
+  border-radius: 99px;
+  margin-bottom: 12px;
+  font-size: 0.92rem;
+}
+.current-mode-badge strong { color: var(--gold); margin-left: 4px; }
+.mode-card-active {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--innocent);
+  font-weight: 700;
+}
+
+/* ============================================================
+   TWIST MODAL (rebondissement IA)
+   ============================================================ */
+.twist-overlay { background: rgba(0,0,0,0.92); }
+.modal-twist {
+  text-align: center;
+  max-width: 480px;
+  background: linear-gradient(135deg, #2a0c12, #1a1410);
+  border: 2px solid var(--bordeaux-light);
+  box-shadow: 0 0 60px var(--bordeaux-glow);
+  animation: twist-shake 0.5s ease-out;
+}
+@keyframes twist-shake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-6px, 4px); }
+  40%  { transform: translate(6px, -4px); }
+  60%  { transform: translate(-3px, 2px); }
+  80%  { transform: translate(3px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+.twist-flash {
+  font-size: 5rem;
+  animation: twist-flash 1s ease-out;
+}
+@keyframes twist-flash {
+  0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+  40%  { transform: scale(1.4) rotate(0deg); opacity: 1; }
+  60%  { transform: scale(0.9) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.twist-tag {
+  display: inline-block;
+  background: var(--bordeaux);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  margin: 8px 0;
+}
+.twist-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--gold);
+  margin: 12px 0;
+}
+.twist-narrative {
+  font-family: var(--font-display);
+  line-height: 1.7;
+  color: var(--text-primary);
+  text-align: left;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.4);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 16px 0;
+}
+.twist-evidence-hint {
+  font-size: 0.88rem;
+  margin: 8px 0;
+}
+
+/* New twist evidence card flagged with shimmer */
+.evidence-card.evidence-twist {
+  border-color: var(--gold);
+  animation: evidence-twist-pulse 1.5s ease-out;
+  background: linear-gradient(135deg, var(--bg-surface), rgba(201,169,97,0.15));
+}
+@keyframes evidence-twist-pulse {
+  0%   { transform: scale(0.6); opacity: 0; box-shadow: 0 0 0 var(--gold-glow); }
+  60%  { transform: scale(1.05); opacity: 1; box-shadow: 0 0 24px var(--gold-glow); }
+  100% { transform: scale(1); box-shadow: 0 0 8px var(--gold-glow); }
+}
+
 [data-high-contrast] {
   --bg-deep: #000000;
   --bg-surface: #0d0d0d;

@@ -9,6 +9,8 @@ import { t } from "./i18n.js";
 export function renderCosts(root) {
   clear(root);
   const container = el("div", { class: "panel panel-costs" });
+  // Bouton retour Réglages (puisque costs n'est plus dans la navbar)
+  container.appendChild(el("button", { class: "btn-back", onclick: () => navigate("settings") }, ["← " + t("nav.settings")]));
   container.appendChild(el("h1", { class: "panel-title" }, [t("panel.costs")]));
 
   const settings = Storage.getSettings();

@@ -19,6 +19,7 @@ const STRINGS = {
   "nav.tribunal": { fr: "Tribunal", en: "Court" },
   "nav.archives": { fr: "Archives", en: "Archives" },
   "nav.profile":  { fr: "Profil",   en: "Profile" },
+  "nav.codex":    { fr: "Codex",    en: "Codex" },
   "nav.costs":    { fr: "Coûts IA", en: "AI Costs" },
   "nav.settings": { fr: "Réglages", en: "Settings" },
 
@@ -207,6 +208,7 @@ const STRINGS = {
   "settings.section.expert":        { fr: "MODE EXPERT", en: "EXPERT MODE" },
   "settings.section.language":      { fr: "LANGUE / LANGUAGE", en: "LANGUAGE / LANGUE" },
   "settings.section.danger":        { fr: "ZONE SENSIBLE", en: "DANGER ZONE" },
+  "settings.costs.see_details":     { fr: "Voir le détail des appels IA →", en: "See AI call details →" },
 
   "settings.step.provider":     { fr: "1 · Choisissez votre Provider IA", en: "1 · Choose your AI provider" },
   "settings.step.api_key":      { fr: "2 · Clé API {provider}", en: "2 · API key {provider}" },
@@ -436,6 +438,11 @@ const STRINGS = {
   "mode.expert":          { fr: "⚖ Expert", en: "⚖ Expert" },
   "mode.expert.short":    { fr: "Diplômé, professionnel du droit", en: "Graduate, legal professional" },
   "mode.expert.desc":     { fr: "Plaidoiries longues, vocabulaire technique précis, jurisprudence Cass. citée, cas-doctrine. Pour juristes confirmés.", en: "Long pleadings, technical vocabulary, cited case law, doctrinal nodes. For seasoned lawyers." },
+  "mode.current":         { fr: "Mode actuel", en: "Current mode" },
+  "mode.changed":         { fr: "Mode changé", en: "Mode changed" },
+  "mode.active":          { fr: "Actif", en: "Active" },
+  "mode.regen_confirm":   { fr: "Voulez-vous régénérer le cas du jour pour qu'il s'adapte à votre nouveau niveau ?", en: "Regenerate today's case to fit your new level?" },
+  "mode.regen_hint":      { fr: "Le nouveau mode s'appliquera au prochain cas. Cliquez sur 🔄 pour rafraîchir tout de suite.", en: "New mode applies to the next case. Click 🔄 to refresh now." },
 
   // ===== Nouvelles catégories grand public =====
   "cat.dilemmes":         { fr: "Dilemmes moraux",      en: "Moral dilemmas" },
@@ -640,6 +647,19 @@ const STRINGS = {
   // ===== Saga =====
   "saga.cta":              { fr: "Continuer →", en: "Continue →" },
   "saga.play":             { fr: "Jouer cet acte", en: "Play this act" },
+
+  // ===== Rebondissement IA =====
+  "twist.generic":         { fr: "⚡ REBONDISSEMENT", en: "⚡ PLOT TWIST" },
+  "twist.type.evidence":          { fr: "⚡ NOUVELLE PIÈCE",         en: "⚡ NEW EVIDENCE" },
+  "twist.type.witness_retraction":{ fr: "⚡ RÉTRACTATION DE TÉMOIN", en: "⚡ WITNESS RETRACTION" },
+  "twist.type.surprise_witness":  { fr: "⚡ TÉMOIN-SURPRISE",        en: "⚡ SURPRISE WITNESS" },
+  "twist.type.revelation":        { fr: "⚡ RÉVÉLATION",             en: "⚡ REVELATION" },
+  "twist.type.contradiction":     { fr: "⚡ CONTRADICTION",          en: "⚡ CONTRADICTION" },
+  "twist.continue":               { fr: "Reprendre l'audience →", en: "Resume hearing →" },
+  "twist.new_evidence_added":     { fr: "Pièce ajoutée au dossier", en: "Evidence added to file" },
+
+  // ===== Citation codex en audience =====
+  "flavor.codex_cited":           { fr: "L'avocat cite", en: "The lawyer cites" },
 };
 
 let _lang = null;

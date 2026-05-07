@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v2"; // bumped for new logo
+const CACHE_NAME = "thejudge-v5"; // bumped: codex moved to navbar (replaces costs)
 const PRECACHE = [
   "./",
   "index.html",

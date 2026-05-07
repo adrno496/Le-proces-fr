@@ -33,6 +33,7 @@ import { buildChallengeLink, readChallengeFromURL, clearChallengeFromURL } from 
 import { fireConfetti } from "./confetti.js";
 import { SAGAS, getSagaProgress, recordSagaVerdict, getNextSagaChapter } from "./sagas.js";
 import { activeSeason } from "./seasons.js";
+import { maybeTwist } from "./ia-audience.js";
 import { currentChapter, chapterByDate, shouldShowChapter, markChapterSeen } from "./narrative.js";
 import { shareVerdict, shareEmojiVerdict } from "./share.js";
 import { isSupported as ttsSupported, readPlaidoiries, stop as stopTTS } from "./tts.js";
@@ -101,8 +102,8 @@ async function renderDashboard(root) {
   const profile = Storage.getProfile();
   const today = getTodayDateStr();
 
-  // Display current chapter (one-shot per month)
-  if (shouldShowChapter()) {
+  // Display current chapter (one-shot per month) — uniquement APRÈS onboarding
+  if (settings.onboarded && shouldShowChapter()) {
     setTimeout(() => showChapterModal(), 600);
   }
   const tier = getCurrentTier(profile);
@@ -322,6 +323,44 @@ function showChapterModal() {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
   function close() { markChapterSeen(); overlay.remove(); }
+}
+
+// Modal "Rebondissement IA" — appelé pendant l'audience quand l'IA injecte un twist
+function showTwistModal(twist, caseData, container) {
+  vibrate(HAPTIC.milestone);
+  const overlay = el("div", { class: "modal-overlay twist-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) close(); } });
+  const modal = el("div", { class: "modal modal-twist" });
+  modal.appendChild(el("div", { class: "twist-flash" }, ["⚡"]));
+  modal.appendChild(el("div", { class: "twist-tag" }, [t(`twist.type.${twist.type}`) || t("twist.generic")]));
+  modal.appendChild(el("h2", { class: "twist-title" }, [twist.title]));
+  modal.appendChild(el("p", { class: "twist-narrative" }, [twist.narrative]));
+  if (twist.type === "evidence" && twist.evidenceLabel) {
+    modal.appendChild(el("div", { class: "twist-evidence-hint muted" }, [
+      "📎 " + t("twist.new_evidence_added") + " : " + twist.evidenceLabel,
+    ]));
+  }
+  modal.appendChild(el("button", { class: "btn-primary", onclick: () => close() }, [t("twist.continue")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  function close() {
+    overlay.remove();
+    // Refresh evidence section if a new piece was added
+    if (twist.type === "evidence") {
+      const evSection = container.querySelector(".evidence-section");
+      if (evSection) {
+        // Trigger a re-render of the evidence section by re-adding the new card
+        const grid = evSection.querySelector(".evidence-grid");
+        const newPiece = caseData.evidence[caseData.evidence.length - 1];
+        if (grid && newPiece && newPiece.isTwist) {
+          const card = el("button", { class: "evidence-card evidence-twist", onclick: () => openEvidenceModal(newPiece, card) }, [
+            el("div", { class: "ev-icon" }, ["⚡"]),
+            el("div", { class: "ev-label" }, [newPiece.label]),
+          ]);
+          grid.appendChild(card);
+        }
+      }
+    }
+  }
 }
 
 // Modal "Saga"
@@ -671,6 +710,7 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
   if (caseData.partyFlavor) flavors.push(caseData.partyFlavor);
   if (caseData.repFlavor) flavors.push(caseData.repFlavor);
   if (caseData.precedent) flavors.push(`📚 Jurisprudence personnelle citée : « ${caseData.precedent.title} ».`);
+  if (caseData.codexCitation) flavors.push(`📖 ${t("flavor.codex_cited")} : ${caseData.codexCitation.label} — ${caseData.codexCitation.body.slice(0, 120)}...`);
   if (flavors.length) {
     const fl = el("div", { class: "flavor-section" });
     flavors.forEach(f => fl.appendChild(el("div", { class: "flavor-line" }, [f])));
@@ -788,12 +828,18 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
       ans.textContent = `🗣 ${answer}`;
       const profile = Storage.getProfile();
       Storage.saveProfile({ questionsAsked: (profile.questionsAsked || 0) + 1 });
+
+      // 🎬 Audience IA : possibilité d'un rebondissement adaptatif
+      try {
+        const twist = await maybeTwist(caseData, qaState);
+        if (twist) showTwistModal(twist, caseData, container);
+      } catch {} // silence — twist optionnel
     } catch (e) {
       row.querySelector(".qa-answer").textContent = `⚠ ${e.message}`;
       toast(e.message, "error");
     }
     askBtn.disabled = false;
-    askBtn.textContent = "INTERROGER";
+    askBtn.textContent = t("witness.ask");
   });
   qaWrap.appendChild(el("div", { class: "input-row" }, [qaInput, askBtn]));
   container.appendChild(qaWrap);

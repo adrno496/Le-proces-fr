@@ -153,21 +153,206 @@ export const CODEX_ENTRIES = [
   { id: "hist-leonetti",  code: "Histoire", label: "Loi Leonetti (2005)",             body: "Loi sur la fin de vie — interdit l'obstination déraisonnable, autorise l'arrêt des soins, encadre la sédation profonde. Modifiée en 2016 (Claeys-Leonetti)." },
   { id: "hist-1881",      code: "Histoire", label: "Loi 1881 (presse)",               body: "Loi sur la liberté de la presse — fonde le régime de la diffamation, de l'injure, de la provocation. Procédure spéciale exigeante (citation précise, prescription 3 mois)." },
   { id: "hist-1980",      code: "Histoire", label: "Loi du 23 décembre 1980 (viol)",  body: "Loi qui requalifie le viol en crime (cour d'assises) et étend la définition pour intégrer toute pénétration de toute nature, sur autrui ou sur soi-même." },
+  // ====== Étoffement vers 200 entrées ======
+  // Pénal supplémentaire
+  { id: "cp-132-72",  code: "Pénal", label: "Article 132-72 (Préméditation)", body: "La préméditation est le dessein formé avant l'action de commettre un crime ou un délit déterminé." },
+  { id: "cp-225-1",   code: "Pénal", label: "Article 225-1 (Discrimination)", body: "Constitue une discrimination toute distinction opérée entre les personnes physiques sur le fondement de leur origine, sexe, situation de famille, état de santé, religion, etc." },
+  { id: "cp-227-1",   code: "Pénal", label: "Article 227-1 (Délaissement de mineur)", body: "Le délaissement d'un mineur de quinze ans est puni de sept ans d'emprisonnement et 100 000 euros d'amende." },
+  { id: "cp-322-1",   code: "Pénal", label: "Article 322-1 (Destruction de biens)", body: "La destruction, dégradation ou détérioration d'un bien appartenant à autrui est punie de 30 000 euros d'amende et deux ans d'emprisonnement." },
+  { id: "cp-432-11",  code: "Pénal", label: "Article 432-11 (Corruption passive)", body: "Le fait, par une personne dépositaire de l'autorité publique, de solliciter ou agréer des dons est puni de dix ans et d'une amende d'un million d'euros." },
+  { id: "cp-433-2",   code: "Pénal", label: "Article 433-2 (Corruption active)", body: "Le fait, par une personne, de proposer ou de céder à toute sollicitation est puni de dix ans d'emprisonnement et d'une amende d'un million d'euros." },
+  { id: "cp-222-22",  code: "Pénal", label: "Article 222-22 (Agression sexuelle)", body: "Constitue une agression sexuelle toute atteinte sexuelle commise avec violence, contrainte, menace ou surprise." },
+  { id: "cp-223-1",   code: "Pénal", label: "Article 223-1 (Mise en danger)", body: "Le fait d'exposer directement autrui à un risque immédiat de mort ou de blessures par la violation manifestement délibérée d'une obligation est puni d'un an et 15 000 euros." },
+  { id: "cp-323-1",   code: "Pénal", label: "Article 323-1 (Cybercriminalité)", body: "Le fait d'accéder ou de se maintenir frauduleusement dans un système de traitement automatisé de données est puni de trois ans et 100 000 euros." },
+  { id: "cp-450-1",   code: "Pénal", label: "Article 450-1 (Association de malfaiteurs)", body: "Constitue une association de malfaiteurs tout groupement formé en vue de la préparation d'un ou plusieurs crimes." },
+
+  // Civil supplémentaire
+  { id: "cc-9",       code: "Civil", label: "Article 9 (Vie privée)", body: "Chacun a droit au respect de sa vie privée. Les juges peuvent prescrire toutes mesures pour empêcher ou faire cesser une atteinte." },
+  { id: "cc-1101",    code: "Civil", label: "Article 1101 (Définition contrat)", body: "Le contrat est un accord de volontés entre deux ou plusieurs personnes destiné à créer, modifier, transmettre ou éteindre des obligations." },
+  { id: "cc-1109",    code: "Civil", label: "Article 1109 (Vices du consentement)", body: "Il n'y a point de consentement valable si le consentement n'a été donné que par erreur, ou s'il a été extorqué par violence ou surpris par dol." },
+  { id: "cc-1131",    code: "Civil", label: "Article 1131 (Cause illicite)", body: "L'obligation sans cause, ou sur une fausse cause, ou sur une cause illicite, ne peut avoir aucun effet." },
+  { id: "cc-1217",    code: "Civil", label: "Article 1217 (Inexécution contractuelle)", body: "La partie envers laquelle l'engagement n'a pas été exécuté peut refuser ou suspendre son obligation, demander l'exécution forcée, obtenir réduction du prix, résoudre le contrat." },
+  { id: "cc-2224",    code: "Civil", label: "Article 2224 (Prescription)", body: "Les actions personnelles ou mobilières se prescrivent par cinq ans à compter du jour où le titulaire a connu les faits." },
+  { id: "cc-2232",    code: "Civil", label: "Article 2232 (Délai butoir)", body: "Le report du point de départ, la suspension ou l'interruption de la prescription ne peut avoir pour effet de porter le délai de la prescription extinctive au-delà de vingt ans." },
+  { id: "cc-1304",    code: "Civil", label: "Article 1304 (Conditions)", body: "L'obligation est conditionnelle lorsqu'elle dépend d'un événement futur et incertain." },
+  { id: "cc-1641",    code: "Civil", label: "Article 1641 bis (Garantie biens d'occasion)", body: "Le vendeur est tenu de la garantie à raison des défauts cachés y compris pour les biens d'occasion sauf clause expresse." },
+
+  // Famille supplémentaire
+  { id: "cc-371-1",   code: "Famille", label: "Article 371-1 (Autorité parentale)", body: "L'autorité parentale est un ensemble de droits et de devoirs ayant pour finalité l'intérêt de l'enfant. Elle appartient aux parents jusqu'à la majorité." },
+  { id: "cc-388-1",   code: "Famille", label: "Article 388-1 (Audition de l'enfant)", body: "Dans toute procédure le concernant, le mineur capable de discernement peut être entendu par le juge." },
+  { id: "cc-228",     code: "Famille", label: "Article 228 (Devoirs du mariage)", body: "Les époux se doivent mutuellement respect, fidélité, secours, assistance." },
+  { id: "cc-203",     code: "Famille", label: "Article 203 (Obligation alimentaire)", body: "Les époux contractent ensemble l'obligation de nourrir, entretenir et élever leurs enfants." },
+  { id: "cc-271",     code: "Famille", label: "Article 271 (Critères prestation compensatoire)", body: "Le juge prend en considération la durée du mariage, l'âge et l'état de santé des époux, la qualification professionnelle." },
+
+  // Travail supplémentaire
+  { id: "ct-l3121-1", code: "Travail", label: "Article L3121-1 (Durée du travail)", body: "La durée du travail effectif est le temps pendant lequel le salarié est à la disposition de l'employeur et se conforme à ses directives." },
+  { id: "ct-l3121-27", code: "Travail", label: "Article L3121-27 (Durée légale)", body: "La durée légale de travail effectif des salariés à temps complet est fixée à trente-cinq heures par semaine." },
+  { id: "ct-l1235-3", code: "Travail", label: "Article L1235-3 (Barème Macron)", body: "Le juge accorde au salarié une indemnité, à la charge de l'employeur, dont le montant est compris entre des montants minimaux et maximaux fixés selon l'ancienneté." },
+  { id: "ct-l3221-2", code: "Travail", label: "Article L3221-2 (Égalité salariale)", body: "Tout employeur assure, pour un même travail ou pour un travail de valeur égale, l'égalité de rémunération entre les femmes et les hommes." },
+  { id: "ct-l1153-1", code: "Travail", label: "Article L1153-1 (Harcèlement sexuel)", body: "Aucun salarié ne doit subir des faits de harcèlement sexuel, propos ou comportements à connotation sexuelle non désirés." },
+  { id: "ct-l1233-3", code: "Travail", label: "Article L1233-3 (Licenciement économique)", body: "Constitue un licenciement pour motif économique le licenciement effectué par un employeur pour des motifs non inhérents à la personne du salarié." },
+  { id: "ct-l4121-1", code: "Travail", label: "Article L4121-1 (Sécurité au travail)", body: "L'employeur prend les mesures nécessaires pour assurer la sécurité et protéger la santé physique et mentale des travailleurs." },
+
+  // Conso supplémentaire
+  { id: "ccons-l312-1", code: "Conso.", label: "Article L312-1 (Crédit affecté)", body: "Le crédit consenti pour financer un bien ou service spécifique est lié à l'opération principale : l'annulation de l'une entraîne celle de l'autre." },
+  { id: "ccons-l132-1", code: "Conso.", label: "Article L132-1 (Sanction clauses abusives)", body: "Les clauses abusives sont réputées non écrites." },
+  { id: "ccons-l111-1", code: "Conso.", label: "Article L111-1 (Information précontractuelle)", body: "Avant la conclusion d'un contrat, le professionnel communique au consommateur les caractéristiques essentielles du bien ou du service." },
+  { id: "ccons-l622-3", code: "Conso.", label: "Article L622-3 (Surendettement)", body: "Le débiteur surendetté peut bénéficier d'une procédure de rétablissement personnel s'il est dans une situation irrémédiablement compromise." },
+  { id: "ccons-l242-1", code: "Conso.", label: "Article L242-1 (Garantie commerciale)", body: "La garantie commerciale s'entend de tout engagement contractuel d'un professionnel à l'égard du consommateur." },
+
+  // Numérique supplémentaire
+  { id: "rgpd-17",    code: "RGPD", label: "Article 17 (Droit à l'oubli)", body: "La personne concernée a le droit d'obtenir l'effacement de données la concernant lorsque ces données ne sont plus nécessaires." },
+  { id: "rgpd-32",    code: "RGPD", label: "Article 32 (Sécurité du traitement)", body: "Le responsable de traitement met en œuvre les mesures techniques et organisationnelles appropriées afin de garantir un niveau de sécurité adapté au risque." },
+  { id: "rgpd-33",    code: "RGPD", label: "Article 33 (Notification de violation)", body: "En cas de violation de données, le responsable du traitement la notifie à l'autorité de contrôle dans les meilleurs délais et au plus tard 72 heures." },
+  { id: "rgpd-83",    code: "RGPD", label: "Article 83 (Sanctions)", body: "Les violations du règlement font l'objet d'amendes administratives pouvant s'élever jusqu'à 20 millions d'euros ou 4 % du chiffre d'affaires annuel." },
+  { id: "lcen-9",     code: "Numérique", label: "LCEN art. 9 (Identification des éditeurs)", body: "Les éditeurs de services en ligne mettent à disposition des informations permettant leur identification." },
+  { id: "rgpd-35",    code: "RGPD", label: "Article 35 (Analyse d'impact)", body: "Lorsqu'un traitement est susceptible d'engendrer un risque élevé, le responsable doit effectuer une analyse d'impact relative à la protection des données." },
+
+  // Routier supplémentaire
+  { id: "cr-l234-1",  code: "Routier", label: "Article L234-1 (Conduite en état d'ivresse)", body: "Le fait de conduire un véhicule sous l'empire d'un état alcoolique caractérisé est puni de deux ans d'emprisonnement et 4 500 euros d'amende." },
+  { id: "cr-l324-2",  code: "Routier", label: "Article L324-2 (Défaut d'assurance)", body: "Le fait de conduire un véhicule sans être couvert par une assurance est puni de 3 750 euros d'amende et de la suspension du permis." },
+  { id: "cr-r412-6",  code: "Routier", label: "Article R412-6 (Téléphone au volant)", body: "L'usage d'un téléphone tenu en main par le conducteur est interdit. Sanction : 135 € + retrait de 3 points." },
+  { id: "cr-r413-14", code: "Routier", label: "Article R413-14 (Excès de vitesse)", body: "Le dépassement de la vitesse maximale autorisée constitue une contravention dont la classe varie selon le dépassement." },
+
+  // Environnement supplémentaire
+  { id: "cenv-l512-1", code: "Environnement", label: "Article L512-1 (ICPE)", body: "Les installations classées pour la protection de l'environnement sont soumises à autorisation préalable selon leur dangerosité." },
+  { id: "cenv-l341-1", code: "Environnement", label: "Article L341-1 (Sites classés)", body: "Le classement des sites consiste en l'inscription sur une liste, en raison du caractère artistique, historique, scientifique ou pittoresque." },
+  { id: "cenv-l229-5", code: "Environnement", label: "Article L229-5 (Quotas carbone)", body: "Les exploitants soumis au système d'échange de quotas remettent un nombre de quotas correspondant à leurs émissions." },
+
+  // Propriété intellectuelle supplémentaire
+  { id: "cpi-l111-1", code: "Prop. intel.", label: "Article L111-1 (Droit d'auteur)", body: "L'auteur d'une œuvre de l'esprit jouit, du seul fait de sa création, d'un droit de propriété incorporelle exclusif et opposable à tous." },
+  { id: "cpi-l132-1", code: "Prop. intel.", label: "Article L132-1 (Cession de droits)", body: "Le contrat d'édition est celui par lequel l'auteur d'une œuvre de l'esprit cède à des conditions déterminées le droit de la fabriquer ou faire fabriquer." },
+  { id: "cpi-l611-10", code: "Prop. intel.", label: "Article L611-10 (Brevetabilité)", body: "Sont brevetables les inventions nouvelles impliquant une activité inventive et susceptibles d'application industrielle." },
+
+  // Procédure pénale
+  { id: "cpp-1",      code: "Procédure", label: "Article 1 CPP (Action publique)", body: "L'action publique pour l'application des peines est mise en mouvement et exercée par les magistrats ou par les fonctionnaires auxquels elle est confiée." },
+  { id: "cpp-preliminaire", code: "Procédure", label: "Article préliminaire CPP", body: "La procédure pénale doit être équitable et contradictoire et préserver l'équilibre des droits des parties." },
+  { id: "cpp-138",    code: "Procédure", label: "Article 138 CPP (Contrôle judiciaire)", body: "Le contrôle judiciaire peut être ordonné si la personne mise en examen encourt une peine d'emprisonnement." },
+  { id: "cpp-144",    code: "Procédure", label: "Article 144 CPP (Détention provisoire)", body: "La détention provisoire ne peut être ordonnée que pour conserver les preuves, empêcher pression sur témoins ou renouvellement de l'infraction." },
+
+  // Procédure civile
+  { id: "cpc-15",     code: "Procédure", label: "Article 15 CPC (Contradictoire)", body: "Les parties doivent se faire connaître mutuellement en temps utile les moyens de fait et de droit sur lesquels elles fondent leurs prétentions." },
+  { id: "cpc-9",      code: "Procédure", label: "Article 9 CPC (Charge de la preuve)", body: "Il incombe à chaque partie de prouver conformément à la loi les faits nécessaires au succès de sa prétention." },
+  { id: "cpc-700",    code: "Procédure", label: "Article 700 CPC (Frais irrépétibles)", body: "Le juge condamne la partie tenue aux dépens à payer à l'autre partie une somme qu'il détermine, au titre des frais exposés non compris dans les dépens." },
+
+  // Constitutionnel
+  { id: "constit-66", code: "Constitutionnel", label: "Article 66 Constitution", body: "Nul ne peut être arbitrairement détenu. L'autorité judiciaire, gardienne de la liberté individuelle, assure le respect de ce principe." },
+  { id: "ddhc-2",     code: "Constitutionnel", label: "Article 2 DDHC (Droits naturels)", body: "Le but de toute association politique est la conservation des droits naturels et imprescriptibles de l'homme." },
+  { id: "ddhc-7",     code: "Constitutionnel", label: "Article 7 DDHC (Légalité des peines)", body: "Nul homme ne peut être accusé, arrêté ni détenu que dans les cas déterminés par la loi." },
+  { id: "ddhc-8",     code: "Constitutionnel", label: "Article 8 DDHC (Nécessité des peines)", body: "La loi ne doit établir que des peines strictement et évidemment nécessaires." },
+  { id: "ddhc-9",     code: "Constitutionnel", label: "Article 9 DDHC (Présomption innocence)", body: "Tout homme étant présumé innocent jusqu'à ce qu'il ait été déclaré coupable." },
+  { id: "ddhc-11",    code: "Constitutionnel", label: "Article 11 DDHC (Liberté d'expression)", body: "La libre communication des pensées et des opinions est un des droits les plus précieux de l'Homme." },
+
+  // Droits humains internationaux
+  { id: "cesdh-3",    code: "CESDH", label: "Article 3 CESDH (Interdiction torture)", body: "Nul ne peut être soumis à la torture ni à des peines ou traitements inhumains ou dégradants." },
+  { id: "cesdh-5",    code: "CESDH", label: "Article 5 CESDH (Droit à la liberté)", body: "Toute personne a droit à la liberté et à la sûreté." },
+  { id: "cesdh-6",    code: "CESDH", label: "Article 6 CESDH (Procès équitable)", body: "Toute personne a droit à ce que sa cause soit entendue équitablement, publiquement et dans un délai raisonnable." },
+  { id: "cesdh-8",    code: "CESDH", label: "Article 8 CESDH (Vie privée)", body: "Toute personne a droit au respect de sa vie privée et familiale, de son domicile et de sa correspondance." },
+  { id: "cesdh-10",   code: "CESDH", label: "Article 10 CESDH (Liberté d'expression)", body: "Toute personne a droit à la liberté d'expression. Ce droit comprend la liberté d'opinion et la liberté de recevoir ou communiquer des informations." },
+  { id: "cesdh-14",   code: "CESDH", label: "Article 14 CESDH (Non-discrimination)", body: "La jouissance des droits doit être assurée, sans distinction aucune, fondée notamment sur le sexe, la race, la couleur, la langue, la religion." },
+
+  // Droit des affaires
+  { id: "ccom-l225-1", code: "Affaires", label: "Article L225-1 (SA)", body: "La société anonyme est la société dont le capital est divisé en actions et qui est constituée entre des associés qui ne supportent les pertes qu'à concurrence de leurs apports." },
+  { id: "ccom-l223-1", code: "Affaires", label: "Article L223-1 (SARL)", body: "La société à responsabilité limitée est instituée par une ou plusieurs personnes qui ne supportent les pertes qu'à concurrence de leurs apports." },
+  { id: "ccom-l631-1", code: "Affaires", label: "Article L631-1 (Redressement judiciaire)", body: "La procédure de redressement judiciaire est ouverte à tout débiteur en cessation de paiements." },
+  { id: "ccom-l442-1", code: "Affaires", label: "Article L442-1 (Pratiques restrictives)", body: "Engage la responsabilité de son auteur le fait, dans le cadre de la négociation commerciale, d'obtenir un avantage manifestement disproportionné." },
+
+  // Notions complémentaires (procédure et concepts)
+  { id: "concept-saisine", code: "Notion", label: "Saisine", body: "Acte par lequel un juge est saisi d'une affaire, c'est-à-dire investi du pouvoir de la juger." },
+  { id: "concept-jugement", code: "Notion", label: "Jugement", body: "Décision rendue par une juridiction de premier degré (par opposition à arrêt rendu en appel ou Cassation)." },
+  { id: "concept-arret",   code: "Notion", label: "Arrêt", body: "Décision rendue par une juridiction supérieure (cour d'appel, Cour de cassation, Conseil d'État)." },
+  { id: "concept-pourvoi", code: "Notion", label: "Pourvoi en cassation", body: "Recours dirigé contre une décision rendue en dernier ressort, devant la Cour de cassation, pour erreur de droit." },
+  { id: "concept-appel",   code: "Notion", label: "Appel", body: "Recours formé contre une décision de première instance pour la faire rejuger par une juridiction supérieure." },
+  { id: "concept-cassation", code: "Notion", label: "Cassation", body: "Annulation d'une décision pour mauvaise application du droit, par la Cour de cassation." },
+  { id: "concept-revision", code: "Notion", label: "Révision", body: "Procédure exceptionnelle qui permet de rejuger une affaire pénale après condamnation définitive si un fait nouveau survient." },
+  { id: "concept-amnistie", code: "Notion", label: "Amnistie", body: "Acte législatif qui efface une condamnation et interdit toute poursuite ultérieure pour les faits visés." },
+  { id: "concept-grace",   code: "Notion", label: "Grâce", body: "Mesure individuelle par laquelle le chef de l'État dispense d'exécuter tout ou partie d'une peine." },
+  { id: "concept-clemence", code: "Notion", label: "Clémence", body: "Esprit de modération du juge ou du législateur qui adoucit une sanction face à des circonstances atténuantes." },
+  { id: "concept-recours", code: "Notion", label: "Recours", body: "Action en justice visant à contester une décision (recours administratif, juridictionnel, gracieux)." },
+  { id: "concept-recevabilite", code: "Notion", label: "Recevabilité", body: "Caractère d'une demande en justice qui remplit les conditions de forme exigées pour être examinée au fond." },
+  { id: "concept-fond",   code: "Notion", label: "Fond du droit", body: "Examen de la substance d'une demande, par opposition à son examen formel (recevabilité)." },
+  { id: "concept-litige", code: "Notion", label: "Litige", body: "Différend entre deux ou plusieurs personnes qui peut donner lieu à un procès." },
+  { id: "concept-debouter", code: "Notion", label: "Débouter", body: "Rejeter la demande d'une partie au procès, pour défaut de fondement." },
+  { id: "concept-condamner", code: "Notion", label: "Condamner", body: "Prononcer une sanction contre une partie reconnue coupable ou responsable." },
+  { id: "concept-relaxer", code: "Notion", label: "Relaxer", body: "Décision du tribunal correctionnel qui déclare un prévenu non coupable." },
+  { id: "concept-acquit", code: "Notion", label: "Acquitter", body: "Idem, en cour d'assises (pour un crime). Synonyme : acquittement." },
+  { id: "concept-conciliation", code: "Notion", label: "Conciliation", body: "Procédure amiable où un tiers (conciliateur) aide à trouver un accord, évitant le procès." },
+  { id: "concept-mediation", code: "Notion", label: "Médiation", body: "Procédure par laquelle un tiers aide les parties à négocier une solution acceptable." },
+  { id: "concept-arbitrage", code: "Notion", label: "Arbitrage", body: "Procédure où les parties soumettent leur litige à un tiers (arbitre) qui rend une décision exécutoire." },
+  { id: "concept-tribunal", code: "Notion", label: "Tribunal", body: "Juridiction de première instance qui juge les affaires civiles ou pénales selon sa compétence." },
+  { id: "concept-cour",   code: "Notion", label: "Cour", body: "Juridiction supérieure (cour d'appel, cour d'assises, Cour de cassation, Cour des comptes)." },
+  { id: "concept-juge",   code: "Notion", label: "Juge", body: "Magistrat chargé de dire le droit et de trancher les litiges." },
+  { id: "concept-procureur", code: "Notion", label: "Procureur", body: "Magistrat du parquet qui représente la société et requiert l'application de la loi." },
+  { id: "concept-avocat", code: "Notion", label: "Avocat", body: "Auxiliaire de justice qui conseille les parties et plaide leur cause devant les juridictions." },
+  { id: "concept-prejudice-moral", code: "Notion", label: "Préjudice moral", body: "Souffrance psychologique ou atteinte à la réputation, indemnisable par dommages-intérêts." },
+  { id: "concept-bonfoi", code: "Notion", label: "Bonne foi (présomption)", body: "Présomption de l'article 2274 du Code civil : la bonne foi est toujours présumée." },
+  { id: "concept-mauvaisefoi", code: "Notion", label: "Mauvaise foi", body: "État de celui qui agit avec connaissance de l'illicéité ou avec intention de nuire." },
+  { id: "concept-causalite", code: "Notion", label: "Lien de causalité", body: "Relation directe et certaine entre un fait et un dommage, condition de la responsabilité civile." },
+  { id: "concept-imputation", code: "Notion", label: "Imputabilité", body: "Capacité d'une personne à être tenue pour responsable d'un acte (notamment en raison de sa lucidité)." },
+  { id: "concept-grief", code: "Notion", label: "Grief", body: "Argument soulevé contre une décision, sur le fond ou sur la forme." },
+  { id: "concept-debat", code: "Notion", label: "Débat contradictoire", body: "Phase orale du procès où les parties échangent leurs arguments en présence du juge." },
+
+  // Procédures spéciales
+  { id: "proc-comparution", code: "Procédure", label: "Comparution immédiate", body: "Procédure rapide qui permet de juger une personne immédiatement après sa garde à vue." },
+  { id: "proc-flagrance", code: "Procédure", label: "Flagrance", body: "Constatation d'une infraction au moment où elle se commet ou immédiatement après." },
+  { id: "proc-plaisant", code: "Procédure", label: "Plaider coupable (CRPC)", body: "Comparution sur reconnaissance préalable de culpabilité — procédure simplifiée pour délits." },
+  { id: "proc-instruction", code: "Procédure", label: "Instruction", body: "Phase d'enquête menée par un juge d'instruction pour rassembler les preuves d'un crime ou délit complexe." },
+  { id: "proc-garde", code: "Procédure", label: "Garde à vue", body: "Mesure de privation de liberté d'une personne soupçonnée pendant une enquête (24h, prolongeable)." },
+
+  // Histoire du droit étoffée
+  { id: "hist-coderom", code: "Histoire", label: "Code de Justinien (529)", body: "Compilation du droit romain qui inspire encore tous les codes civils continentaux." },
+  { id: "hist-magna",  code: "Histoire", label: "Magna Carta (1215)", body: "Charte arrachée au roi d'Angleterre — première limitation du pouvoir royal et des droits des sujets." },
+  { id: "hist-1215",   code: "Histoire", label: "Habeas Corpus (1679)", body: "Loi anglaise garantissant qu'aucune personne ne peut être détenue sans cause légale." },
+  { id: "hist-tribCC", code: "Histoire", label: "Conseil constitutionnel (1958)", body: "Création de la juridiction qui contrôle la conformité des lois à la Constitution française." },
+  { id: "hist-CEDH",   code: "Histoire", label: "CEDH (1959)", body: "Création de la Cour européenne des droits de l'homme à Strasbourg." },
+  { id: "hist-Roe",    code: "Histoire", label: "Roe v. Wade (1973)", body: "Décision de la Cour suprême américaine reconnaissant un droit constitutionnel à l'avortement (renversée en 2022)." },
+  { id: "hist-Brown",  code: "Histoire", label: "Brown v. Board (1954)", body: "Cour suprême américaine déclare anticonstitutionnelle la ségrégation scolaire." },
+  { id: "hist-veil",   code: "Histoire", label: "Loi Veil (1975)", body: "Légalisation de l'IVG en France, présentée par Simone Veil — débat civilisationnel majeur." },
+  { id: "hist-pacs",   code: "Histoire", label: "PACS (1999)", body: "Création du Pacte civil de solidarité — étape vers la reconnaissance des couples homosexuels." },
+  { id: "hist-mariage_pour_tous", code: "Histoire", label: "Mariage pour tous (2013)", body: "Loi Taubira ouvrant le mariage aux couples de même sexe en France." },
+
+  // Maximes et adages classiques
+  { id: "adage-nullum", code: "Adage", label: "Nullum crimen sine lege", body: "Pas de crime sans loi — la loi pénale doit être préexistante au fait reproché." },
+  { id: "adage-actori", code: "Adage", label: "Actori incumbit probatio", body: "À celui qui agit incombe la preuve — c'est le demandeur qui doit prouver." },
+  { id: "adage-resipsa", code: "Adage", label: "Res ipsa loquitur", body: "La chose parle d'elle-même — la preuve résulte des faits eux-mêmes (common law)." },
+  { id: "adage-lexposterior", code: "Adage", label: "Lex posterior derogat priori", body: "La loi postérieure déroge à la loi antérieure." },
+  { id: "adage-inclaris", code: "Adage", label: "In claris non fit interpretatio", body: "Ce qui est clair ne s'interprète pas — règle d'interprétation des textes clairs." },
+  { id: "adage-ubilex", code: "Adage", label: "Ubi lex non distinguit", body: "Là où la loi ne distingue pas, on ne doit pas distinguer." },
+  { id: "adage-nemoauditur", code: "Adage", label: "Nemo auditur propriam turpitudinem allegans", body: "Nul ne peut se prévaloir de sa propre turpitude (déjà mentionné, mais maxime universelle)." },
+  { id: "adage-pacta", code: "Adage", label: "Pacta sunt servanda", body: "Les conventions doivent être tenues — pierre angulaire du droit des contrats." },
+  { id: "adage-audi", code: "Adage", label: "Audi alteram partem", body: "Entendre l'autre partie — fondement du contradictoire." },
+  { id: "adage-falsus", code: "Adage", label: "Falsus in uno, falsus in omnibus", body: "Faux en une chose, faux en toutes — un témoin pris en mensonge perd toute crédibilité." },
+
+  // Branches spécialisées
+  { id: "esp-droit_fiscal", code: "Branche", label: "Droit fiscal", body: "Branche du droit régissant les impôts, taxes et contributions perçus par l'État et les collectivités." },
+  { id: "esp-droit_admin", code: "Branche", label: "Droit administratif", body: "Branche régissant l'organisation et le fonctionnement de l'administration et ses rapports avec les particuliers." },
+  { id: "esp-droit_inter", code: "Branche", label: "Droit international", body: "Ensemble des règles régissant les relations entre États et organisations internationales." },
+  { id: "esp-droit_eur", code: "Branche", label: "Droit de l'Union européenne", body: "Corpus juridique propre à l'UE, composé du droit primaire (traités) et dérivé (règlements, directives)." },
+  { id: "esp-droit_social", code: "Branche", label: "Droit social", body: "Englobe le droit du travail et le droit de la sécurité sociale." },
+  { id: "esp-droit_const", code: "Branche", label: "Droit constitutionnel", body: "Branche régissant l'organisation des pouvoirs publics et garantissant les droits fondamentaux." },
 ];
 
 // Codex entry pulled from a category-tag mapping (chaque verdict débloque potentiellement une entrée).
 const TAG_TO_ENTRIES = {
-  penal:        ["cp-311-1", "cp-122-7", "cp-121-3", "cp-122-5", "cp-222-13", "cp-321-1", "cp-433-5", "cp-441-1", "cp-223-6", "cp-313-1", "concept-doute", "concept-charge", "concept-non-bis", "concept-contradictoire"],
-  civil:        ["cc-1240", "cc-1242", "cc-1103", "cc-1112-1", "cc-1641", "cc-1359", "cc-815", "cc-832", "concept-prop", "concept-resjudicata", "concept-prescr"],
-  famille:      ["cc-373-2-11", "cc-371-2", "cc-360", "cc-361", "cc-901", "cc-909", "concept-equite", "hist-leonetti"],
-  travail:      ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1226-2", "ct-l1237-11", "concept-prop"],
-  consommation: ["ccons-l217-7", "ccons-l212-1", "ccons-l221-18", "ccons-l216-1", "ccons-l341-1"],
+  penal:        ["cp-311-1", "cp-122-7", "cp-121-3", "cp-122-5", "cp-222-13", "cp-321-1", "cp-433-5", "cp-441-1", "cp-223-6", "cp-313-1", "cp-132-72", "cp-225-1", "cp-227-1", "cp-322-1", "cp-432-11", "cp-433-2", "cp-222-22", "cp-223-1", "cp-323-1", "cp-450-1", "cpp-1", "cpp-138", "cpp-144", "ddhc-7", "ddhc-8", "ddhc-9", "concept-doute", "concept-charge", "concept-non-bis", "concept-contradictoire", "adage-nullum", "adage-actori", "proc-comparution", "proc-flagrance", "proc-instruction", "proc-garde"],
+  civil:        ["cc-1240", "cc-1242", "cc-1103", "cc-1112-1", "cc-1641", "cc-1359", "cc-815", "cc-832", "cc-9", "cc-1101", "cc-1109", "cc-1131", "cc-1217", "cc-2224", "cc-2232", "cc-1304", "cpc-15", "cpc-9", "cpc-700", "concept-prop", "concept-resjudicata", "concept-prescr", "adage-pacta", "adage-audi", "concept-causalite"],
+  famille:      ["cc-373-2-11", "cc-371-2", "cc-360", "cc-361", "cc-901", "cc-909", "cc-371-1", "cc-388-1", "cc-228", "cc-203", "cc-271", "concept-equite", "hist-leonetti", "hist-veil", "hist-pacs", "hist-mariage_pour_tous"],
+  travail:      ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1226-2", "ct-l1237-11", "ct-l3121-1", "ct-l3121-27", "ct-l1235-3", "ct-l3221-2", "ct-l1153-1", "ct-l1233-3", "ct-l4121-1", "concept-prop", "esp-droit_social"],
+  consommation: ["ccons-l217-7", "ccons-l212-1", "ccons-l221-18", "ccons-l216-1", "ccons-l341-1", "ccons-l312-1", "ccons-l132-1", "ccons-l111-1", "ccons-l622-3", "ccons-l242-1"],
   voisinage:    ["ccons-l113-8", "loi-2021-29", "cc-1242"],
-  routier:      ["cr-r415-5", "cr-r415-7", "cr-l231-1", "cr-l235-1", "cr-l324-2"],
-  numerique:    ["rgpd-6", "rgpd-7", "cp-226-4-1", "cmf-l133-19", "lcen-6"],
-  environnement: ["cenv-l216-6", "cenv-l411-1", "cc-1247"],
-  propriete_intellectuelle: ["cpi-l335-3", "cpi-l112-1", "cpi-l122-5", "cpi-l713-2"],
-  ubuesque:     ["concept-equite", "concept-aliquid", "concept-fumus"],
+  routier:      ["cr-r415-5", "cr-r415-7", "cr-l231-1", "cr-l235-1", "cr-l324-2", "cr-l234-1", "cr-r412-6", "cr-r413-14"],
+  numerique:    ["rgpd-6", "rgpd-7", "rgpd-17", "rgpd-32", "rgpd-33", "rgpd-83", "rgpd-35", "cp-226-4-1", "cp-323-1", "cmf-l133-19", "lcen-6", "lcen-9"],
+  environnement: ["cenv-l216-6", "cenv-l411-1", "cc-1247", "cenv-l512-1", "cenv-l341-1", "cenv-l229-5"],
+  propriete_intellectuelle: ["cpi-l335-3", "cpi-l112-1", "cpi-l122-5", "cpi-l713-2", "cpi-l111-1", "cpi-l132-1", "cpi-l611-10"],
+  // Catégories grand public — citent des notions et adages
+  dilemmes:        ["concept-equite", "concept-doute", "concept-charge", "adage-nullum", "ddhc-2", "cesdh-3"],
+  couple_famille:  ["cc-228", "cc-203", "cc-371-1", "concept-equite", "hist-mariage_pour_tous"],
+  ado_parents:     ["cc-371-1", "cc-388-1", "concept-equite"],
+  boulot:          ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1153-1", "ct-l3221-2"],
+  resto:           ["ccons-l111-1", "ccons-l212-1"],
+  animaux:         ["cc-1242", "ccons-l113-8"],
+  quotidien:       ["concept-equite", "ddhc-2", "ddhc-11"],
+  ubuesque:     ["concept-equite", "concept-aliquid", "concept-fumus", "adage-falsus"],
 };
 
 export function getCodex() {
@@ -222,6 +407,26 @@ export function searchCodex(query) {
 export function progress() {
   const c = getCodex();
   return { unlocked: c.unlocked.length, total: CODEX_ENTRIES.length, pct: Math.round((c.unlocked.length / CODEX_ENTRIES.length) * 100) };
+}
+
+// Pioche une entrée codex débloquée, dans la catégorie du cas, à mentionner pendant l'audience.
+// Retourne null si rien à citer.
+export function pickEntryToCite(category) {
+  const codex = getCodex();
+  if (!codex.unlocked.length) return null;
+  const candidates = TAG_TO_ENTRIES[category] || [];
+  const unlockedInCategory = candidates.filter(id => codex.unlocked.includes(id));
+  if (!unlockedInCategory.length) {
+    // Sinon, pioche aléatoire parmi tout débloqué
+    return null;
+  }
+  // Eviter de toujours mentionner la même : utiliser un compteur d'usage
+  const usage = Storage.getKey("codex_cited", {});
+  const sorted = [...unlockedInCategory].sort((a, b) => (usage[a] || 0) - (usage[b] || 0));
+  const chosen = sorted[0];
+  usage[chosen] = (usage[chosen] || 0) + 1;
+  Storage.setKey("codex_cited", usage);
+  return entryById(chosen);
 }
 
 // Demande IA pour approfondir une entrée du codex (libre, hors quota daily)

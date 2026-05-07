@@ -101,6 +101,12 @@ export function showOnboarding({ onComplete } = {}) {
 
   function finish() {
     Storage.saveSettings({ mode: chosenMode, onboarded: true });
+    // Marquer le chapitre du mois courant comme déjà vu — évite un modal en cascade
+    try {
+      const m = new Date().getMonth() + 1;
+      localStorage.setItem("leproces_narrative_seen", JSON.stringify({ month: m }));
+      // Idem synthèse hebdo : déjà gérée dans bootstrap (skipped si onboarding)
+    } catch {}
     overlay.classList.add("onb-fade-out");
     setTimeout(() => {
       overlay.remove();

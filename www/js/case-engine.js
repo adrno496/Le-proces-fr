@@ -7,6 +7,7 @@ import { getTodayDateStr, dayOfYear, caseNumber } from "./format.js";
 import { maxAllowedDifficulty } from "./career.js";
 import { reputationFlavor } from "./reputation.js";
 import { citeForCategory } from "./jurisprudence.js";
+import { pickEntryToCite } from "./codex.js";
 import { pickOrCreateDefendant, flavorForReturning } from "./parties.js";
 import { FALLBACK_POOL, pickFallbackCase } from "./fallback-pool.js";
 
@@ -395,6 +396,7 @@ export async function getDailyCase({ forceRegenerate = false } = {}) {
   const partyFlavor = flavorForReturning(defendant);
   const repFlavor = reputationFlavor(profile);
   const precedent = citeForCategory(category);
+  const codexCitation = pickEntryToCite(category);
   const evidence = generateEvidence(category, today);
   const witnesses = generateWitnesses(profile, special);
   const full = {
@@ -409,6 +411,7 @@ export async function getDailyCase({ forceRegenerate = false } = {}) {
     partyFlavor,
     repFlavor,
     precedent: precedent ? { id: precedent.id, title: precedent.title, summary: (precedent.argument || "").slice(0, 160) } : null,
+    codexCitation: codexCitation ? { id: codexCitation.id, label: codexCitation.label, body: codexCitation.body } : null,
     evidence,
     witnesses,
   };

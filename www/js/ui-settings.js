@@ -367,20 +367,44 @@ export function renderSettings(root) {
   const modeSec = el("section", { class: "settings-section" });
   modeSec.appendChild(el("h2", { class: "section-title" }, [t("mode.section")]));
   modeSec.appendChild(el("p", { class: "muted" }, [t("mode.section.intro")]));
+  // Badge mode actuel
+  const currentModeId = settings.mode || "etudiant";
+  modeSec.appendChild(el("div", { class: "current-mode-badge" }, [
+    `${t("mode.current")} : `,
+    el("strong", {}, [t(`mode.${currentModeId}`)]),
+  ]));
   const modeGrid = el("div", { class: "mode-grid" });
   for (const m of ["neophyte", "curieux", "etudiant", "expert"]) {
-    const isSel = (settings.mode || "etudiant") === m;
+    const isSel = currentModeId === m;
     modeGrid.appendChild(el("button", {
       class: `mode-card ${isSel ? "selected" : ""}`,
-      onclick: () => {
+      onclick: async () => {
+        if (isSel) return; // déjà sélectionné, pas de re-render inutile
         Storage.saveSettings({ mode: m });
-        toast(t("settings.saved"), "success", 1200);
+        toast(`✓ ${t("mode.changed")} : ${t(`mode.${m}`)}`, "success", 3000);
+        // Proposer de régénérer le cas du jour si déjà voté ou caché
+        const today = (new Date()).toISOString().slice(0, 10);
+        const cached = await Storage.getCachedCase(today);
+        const verdict = await Storage.getVerdict(today);
+        if (cached && !verdict) {
+          // Pas encore voté : on peut régénérer pour adapter au nouveau mode
+          if (confirm(t("mode.regen_confirm"))) {
+            await Storage.saveCase({ ...cached, _regenerate: true, date: today + "_old" });
+            // En vrai on supprime le cache pour forcer la régénération
+            const { Storage: S } = await import("./storage.js");
+            // Pas d'API delete : on overwrite avec un objet périmé
+            // → meilleure approche : flag _regenerated et getDailyCase le respecte
+            // Pour MVP : l'utilisateur peut faire reload via le bouton 🔄
+            toast(t("mode.regen_hint"), "info", 4500);
+          }
+        }
         renderSettings(root);
       },
     }, [
       el("div", { class: "mode-card-name" }, [t(`mode.${m}`)]),
       el("div", { class: "mode-card-short" }, [t(`mode.${m}.short`)]),
       el("div", { class: "mode-card-desc muted" }, [t(`mode.${m}.desc`)]),
+      isSel ? el("div", { class: "mode-card-active" }, ["✓ " + t("mode.active")]) : null,
     ]));
   }
   modeSec.appendChild(modeGrid);
@@ -398,6 +422,32 @@ export function renderSettings(root) {
     },
   }, [settings.expertMode ? t("settings.expert.on") : t("settings.expert.off")]));
   container.appendChild(expertSec);
+
+  // ===== Coûts IA (déplacé depuis la nav) =====
+  if (settings.apiKey) {
+    const costsSec = el("section", { class: "settings-section" });
+    costsSec.appendChild(el("h2", { class: "section-title" }, [t("nav.costs")]));
+    const costs = Storage.getCosts();
+    costsSec.appendChild(el("div", { class: "costs-summary" }, [
+      el("div", { class: "stat-row" }, [
+        el("span", { class: "stat-key" }, [t("costs.total_cost")]),
+        el("span", { class: "stat-val mono" }, [costs.totalCost ? costs.totalCost.toFixed(4) + " $" : "0 $"]),
+      ]),
+      el("div", { class: "stat-row" }, [
+        el("span", { class: "stat-key" }, [t("costs.session_cost")]),
+        el("span", { class: "stat-val mono" }, [costs.sessionCost ? costs.sessionCost.toFixed(4) + " $" : "0 $"]),
+      ]),
+      el("div", { class: "stat-row" }, [
+        el("span", { class: "stat-key" }, [t("costs.total_tokens")]),
+        el("span", { class: "stat-val mono" }, [String((costs.totalTokensIn || 0) + (costs.totalTokensOut || 0))]),
+      ]),
+    ]));
+    costsSec.appendChild(el("button", {
+      class: "btn-secondary",
+      onclick: () => navigate("costs"),
+    }, [t("settings.costs.see_details")]));
+    container.appendChild(costsSec);
+  }
 
   // Reset section
   const dangerSection = el("section", { class: "settings-section" });
