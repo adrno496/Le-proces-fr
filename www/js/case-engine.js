@@ -105,9 +105,17 @@ export function evaluateVerdict(caseData, userVerdict, userSeverity) {
 async function buildSystemPrompt(category) {
   const { getLang } = await import("./i18n.js");
   const lang = getLang();
+  const mode = Storage.getSettings().mode || "standard";
+  const lengthHint = mode === "novice" ? "Plaidoiries de 70-90 mots, vocabulaire simple. Évite le jargon."
+                   : mode === "expert" ? "Plaidoiries de 160-200 mots, vocabulaire technique précis."
+                   : "Plaidoiries de 120-150 mots.";
+  const lengthHintEN = mode === "novice" ? "Pleadings of 70-90 words, simple vocabulary. Avoid jargon."
+                     : mode === "expert" ? "Pleadings of 160-200 words, precise technical vocabulary."
+                     : "Pleadings of 120-150 words.";
   if (lang === "en") {
     return `You are a legal-fiction writer for a realistic court mobile game.
 Generate a plausible court case in the category: ${category}.
+${lengthHintEN}
 
 STRICT RULES:
 - Serious, professional courtroom tone. Precise but accessible legal vocabulary.
@@ -130,6 +138,7 @@ RESPOND IN VALID JSON ONLY (no markdown, no backticks):
   }
   return `Tu es scénariste juridique pour un jeu mobile de procès réalistes.
 Génère un cas de tribunal plausible inspiré du droit français, dans la catégorie : ${category}.
+${lengthHint}
 
 RÈGLES STRICTES :
 - Ton sérieux et professionnel, registre prétoire. Vocabulaire juridique précis mais compréhensible.

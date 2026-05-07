@@ -46,7 +46,12 @@ export function getNextTier(profile) {
 }
 
 export function maxAllowedDifficulty(profile) {
-  return getCurrentTier(profile).difficultyMax;
+  const careerCap = getCurrentTier(profile).difficultyMax;
+  const settings = Storage.getSettings();
+  // Mode Découverte écrase la difficulté à la baisse (jamais à la hausse)
+  if (settings.mode === "novice") return Math.min(careerCap, 2);
+  if (settings.mode === "expert") return Math.max(careerCap, 4);
+  return careerCap;
 }
 
 export function tierProgress(profile) {

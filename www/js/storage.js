@@ -17,6 +17,9 @@ const KEYS = {
   weekly: "leproces_weekly",
   narrative: "leproces_narrative",
   notifs: "leproces_notifs",
+  quests: "leproces_quests",
+  summary_seen: "leproces_summary_seen",
+  narrative_seen: "leproces_narrative_seen",
 };
 
 function lsGet(key) {
@@ -50,6 +53,12 @@ const DEFAULT_SETTINGS = {
   notifMinute: 0,
   expertMode: false,
   freeAudienceLimit: 10,
+  language: null,
+  onboarded: false,
+  mode: "standard", // "novice" | "standard" | "expert"
+  volume: { ambient: 0.25, gavel: 0.85, tts: 1.0, master: 1.0 },
+  reduceMotion: false,
+  highContrast: false,
 };
 
 const DEFAULT_PROFILE = {

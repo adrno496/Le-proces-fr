@@ -4,7 +4,8 @@ import { el, clear, navigate, toast } from "./app.js";
 import { Storage, levelFromXp } from "./storage.js";
 import { ACHIEVEMENTS, CATEGORY_LABELS } from "./case-engine.js";
 import { CABINET_ITEMS, getCabinet, progress as cabinetProgress } from "./cabinet.js";
-import { CODEX_ENTRIES, getCodex, progress as codexProgress, isUnlocked, explainMore } from "./codex.js";
+import { computeHeatmap } from "./heatmap.js";
+import { CODEX_ENTRIES, getCodex, progress as codexProgress, isUnlocked, explainMore, searchCodex, legifranceUrl } from "./codex.js";
 import { t } from "./i18n.js";
 import { computeReputation } from "./reputation.js";
 import { getCurrentTier, getNextTier, tierProgress, CAREER_TIERS } from "./career.js";
@@ -138,6 +139,21 @@ function renderStats(wrap, profile, lvl) {
     ]));
   }
   wrap.appendChild(grid);
+
+  // Heatmap d'activité (12 dernières semaines)
+  wrap.appendChild(el("h3", { class: "section-title", style: { marginTop: "20px" } }, [t("heatmap.title")]));
+  const hm = el("div", { class: "heatmap-wrap" });
+  wrap.appendChild(hm);
+  computeHeatmap().then(({ cells }) => {
+    // Layout: 12 columns × 7 rows. Cells arrived row-major (oldest first).
+    const grid = el("div", { class: "heatmap-grid" });
+    cells.forEach(c => {
+      const cell = el("div", { class: `heatmap-cell heatmap-l${c.level}`, title: `${c.key} — ${t("heatmap.day", { n: c.count })}` });
+      grid.appendChild(cell);
+    });
+    hm.appendChild(grid);
+  });
+
   return wrap;
 }
 
@@ -202,47 +218,73 @@ function renderCabinet(wrap, profile) {
 function renderCodex(wrap) {
   const prog = codexProgress();
   wrap.appendChild(el("div", { class: "section-header" }, [
-    el("h3", {}, ["📖 Codex juridique"]),
+    el("h3", {}, [t("profile.codex.title")]),
     el("span", { class: "muted" }, [`${prog.unlocked} / ${prog.total} (${prog.pct} %)`]),
   ]));
-  wrap.appendChild(el("p", { class: "muted" }, [
-    "Articles de loi et notions débloqués au fil des verdicts. Cliquez « 📚 En savoir plus » sur une entrée pour demander à l'IA de l'expliquer dans son contexte.",
-  ]));
-  const grouped = {};
-  CODEX_ENTRIES.forEach(e => { (grouped[e.code] = grouped[e.code] || []).push(e); });
-  for (const [code, entries] of Object.entries(grouped)) {
-    wrap.appendChild(el("h4", { class: "codex-section" }, [code]));
-    entries.forEach(e => {
-      const ok = isUnlocked(e.id);
-      const card = el("div", { class: `codex-entry ${ok ? "unlocked" : "locked"}` });
-      card.appendChild(el("div", { class: "codex-label" }, [ok ? e.label : "🔒 Verrouillé"]));
-      card.appendChild(el("div", { class: "codex-body" }, [ok ? e.body : "Jugez davantage de cas de ce domaine pour débloquer."]));
-      if (ok) {
-        const moreBox = el("div", { class: "codex-more hidden" });
-        const moreBtn = el("button", { class: "btn-secondary codex-more-btn", onclick: async () => {
-          if (!Storage.getSettings().apiKey) {
-            return toast("Configurez une clé API dans les paramètres pour activer cette fonction.", "error", 4000);
+  wrap.appendChild(el("p", { class: "muted" }, [t("profile.codex.intro")]));
+
+  // Search input
+  const search = el("input", {
+    type: "search",
+    class: "text-input codex-search-input",
+    placeholder: t("codex.search"),
+  });
+  const list = el("div", { class: "codex-list" });
+  search.addEventListener("input", e => render(e.target.value));
+  wrap.appendChild(search);
+  wrap.appendChild(list);
+
+  function render(query = "") {
+    while (list.firstChild) list.removeChild(list.firstChild);
+    const filtered = searchCodex(query);
+    if (!filtered.length) {
+      list.appendChild(el("p", { class: "muted" }, [t("codex.no_results")]));
+      return;
+    }
+    const grouped = {};
+    filtered.forEach(e => { (grouped[e.code] = grouped[e.code] || []).push(e); });
+    for (const [code, entries] of Object.entries(grouped)) {
+      list.appendChild(el("h4", { class: "codex-section" }, [code]));
+      entries.forEach(e => {
+        const ok = isUnlocked(e.id);
+        const card = el("div", { class: `codex-entry ${ok ? "unlocked" : "locked"}` });
+        card.appendChild(el("div", { class: "codex-label" }, [ok ? e.label : t("profile.codex.locked")]));
+        card.appendChild(el("div", { class: "codex-body" }, [ok ? e.body : t("profile.codex.locked_desc")]));
+        if (ok) {
+          const url = legifranceUrl(e.id);
+          if (url) {
+            card.appendChild(el("a", {
+              class: "codex-legifrance-link",
+              href: url, target: "_blank", rel: "noopener noreferrer",
+            }, [t("codex.legifrance")]));
           }
-          moreBtn.disabled = true;
-          moreBtn.textContent = "⏳ Consultation de l'expert...";
-          moreBox.classList.remove("hidden");
-          moreBox.textContent = "...";
-          try {
-            const text = await explainMore(e);
-            moreBox.textContent = text;
-            moreBtn.textContent = "📚 Approfondi ✓";
-          } catch (err) {
-            moreBox.textContent = "⚠ " + (err.message || "Erreur de consultation");
-            moreBtn.disabled = false;
-            moreBtn.textContent = "📚 Réessayer";
-          }
-        }}, ["📚 En savoir plus (IA)"]);
-        card.appendChild(moreBtn);
-        card.appendChild(moreBox);
-      }
-      wrap.appendChild(card);
-    });
+          const moreBox = el("div", { class: "codex-more hidden" });
+          const moreBtn = el("button", { class: "btn-secondary codex-more-btn", onclick: async () => {
+            if (!Storage.getSettings().apiKey) {
+              return toast(t("profile.codex.need_key"), "error", 4000);
+            }
+            moreBtn.disabled = true;
+            moreBtn.textContent = t("profile.codex.consulting");
+            moreBox.classList.remove("hidden");
+            moreBox.textContent = "...";
+            try {
+              const text = await explainMore(e);
+              moreBox.textContent = text;
+              moreBtn.textContent = t("profile.codex.deepened");
+            } catch (err) {
+              moreBox.textContent = "⚠ " + (err.message || "Erreur");
+              moreBtn.disabled = false;
+              moreBtn.textContent = t("profile.codex.retry");
+            }
+          }}, [t("profile.codex.more")]);
+          card.appendChild(moreBtn);
+          card.appendChild(moreBox);
+        }
+        list.appendChild(card);
+      });
+    }
   }
+  render("");
   return wrap;
 }
 

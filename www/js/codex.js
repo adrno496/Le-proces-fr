@@ -2,6 +2,72 @@
 
 import { Storage } from "./storage.js";
 
+// Map from codex id → Légifrance URL when the article exists publicly.
+// Format URL: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI...
+// We provide a search URL when we don't know the exact LEGIARTI id (still works).
+const LEGIFRANCE_BASE = "https://www.legifrance.gouv.fr/search/all?searchField=ALL&query=";
+function legifranceFor(id) {
+  // Map common ids → search query
+  const map = {
+    "cp-311-1":   "Article 311-1 Code pénal",
+    "cp-122-7":   "Article 122-7 Code pénal",
+    "cp-121-3":   "Article 121-3 Code pénal",
+    "cp-122-5":   "Article 122-5 Code pénal",
+    "cp-222-13":  "Article 222-13 Code pénal",
+    "cp-321-1":   "Article 321-1 Code pénal",
+    "cp-433-5":   "Article 433-5 Code pénal",
+    "cp-441-1":   "Article 441-1 Code pénal",
+    "cp-223-6":   "Article 223-6 Code pénal",
+    "cp-313-1":   "Article 313-1 Code pénal",
+    "cp-226-4-1": "Article 226-4-1 Code pénal",
+    "cc-1240":    "Article 1240 Code civil",
+    "cc-1242":    "Article 1242 Code civil",
+    "cc-1103":    "Article 1103 Code civil",
+    "cc-1112-1":  "Article 1112-1 Code civil",
+    "cc-1641":    "Article 1641 Code civil",
+    "cc-1359":    "Article 1359 Code civil",
+    "cc-815":     "Article 815 Code civil",
+    "cc-832":     "Article 832 Code civil",
+    "cc-1247":    "Article 1247 Code civil",
+    "cc-373-2-11": "Article 373-2-11 Code civil",
+    "cc-371-2":   "Article 371-2 Code civil",
+    "cc-360":     "Article 360 Code civil",
+    "cc-361":     "Article 361 Code civil",
+    "cc-901":     "Article 901 Code civil",
+    "cc-909":     "Article 909 Code civil",
+    "ct-l1121-1": "Article L1121-1 Code travail",
+    "ct-l1232-1": "Article L1232-1 Code travail",
+    "ct-l1152-1": "Article L1152-1 Code travail",
+    "ct-l1226-2": "Article L1226-2 Code travail",
+    "ct-l1237-11":"Article L1237-11 Code travail",
+    "ccons-l217-7":  "Article L217-7 Code consommation",
+    "ccons-l212-1":  "Article L212-1 Code consommation",
+    "ccons-l221-18": "Article L221-18 Code consommation",
+    "ccons-l216-1":  "Article L216-1 Code consommation",
+    "ccons-l341-1":  "Article L341-1 Code consommation",
+    "ccons-l113-8":  "Article L113-8 Code construction habitation",
+    "cr-r415-5":  "Article R415-5 Code route",
+    "cr-r415-7":  "Article R415-7 Code route",
+    "cr-l231-1":  "Article L231-1 Code route",
+    "cr-l235-1":  "Article L235-1 Code route",
+    "cr-l324-2":  "Article L324-2 Code route",
+    "cenv-l216-6": "Article L216-6 Code environnement",
+    "cenv-l411-1": "Article L411-1 Code environnement",
+    "cpi-l335-3": "Article L335-3 Code propriété intellectuelle",
+    "cpi-l112-1": "Article L112-1 Code propriété intellectuelle",
+    "cpi-l122-5": "Article L122-5 Code propriété intellectuelle",
+    "cpi-l713-2": "Article L713-2 Code propriété intellectuelle",
+    "cmf-l133-19": "Article L133-19 Code monétaire financier",
+    "loi-1989-6": "Article 6 loi 6 juillet 1989",
+    "loi-2021-29": "Loi 29 janvier 2021 patrimoine sensoriel",
+    "rgpd-6":     "Article 6 RGPD règlement 2016/679",
+    "rgpd-7":     "Article 7 RGPD règlement 2016/679",
+    "lcen-6":     "Article 6 loi confiance économie numérique",
+  };
+  if (map[id]) return LEGIFRANCE_BASE + encodeURIComponent(map[id]);
+  return null;
+}
+
 // Curated set of legal entries (articles + notions) — pedagogical companion to the cases.
 export const CODEX_ENTRIES = [
   // ===== Pénal =====
@@ -137,6 +203,20 @@ export function unlockForCategory(category) {
 
 export function entryById(id) {
   return CODEX_ENTRIES.find(e => e.id === id);
+}
+
+export function legifranceUrl(id) {
+  return legifranceFor(id);
+}
+
+// Search across label + body + code (case-insensitive, accents-insensitive)
+export function searchCodex(query) {
+  const q = (query || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  if (!q) return CODEX_ENTRIES;
+  return CODEX_ENTRIES.filter(e => {
+    const hay = (e.label + " " + e.body + " " + e.code).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    return hay.includes(q);
+  });
 }
 
 export function progress() {

@@ -1140,3 +1140,201 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Avoid the floating button overlapping content : add a tiny padding-right reservation on top of panel-title */
 .panel-title { padding-right: 50px; }
+
+/* ============================================================
+   ONBOARDING
+   ============================================================ */
+.onb-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  animation: fadein 0.3s;
+}
+.onb-overlay.onb-fade-out { opacity: 0; transition: opacity 0.2s; }
+.onb-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 480px; width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.onb-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 20px; }
+.onb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.15s; }
+.onb-dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+.onb-dot.done   { background: var(--text-tertiary); }
+.onb-emoji { font-size: 3.5rem; margin-bottom: 8px; }
+.onb-title { font-family: var(--font-display); font-style: italic; color: var(--gold); margin: 8px 0; font-size: 1.4rem; }
+.onb-body { color: var(--text-secondary); line-height: 1.6; margin: 8px 0 16px; }
+.onb-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+.onb-actions > button { flex: 1; max-width: 180px; }
+.onb-mode-grid { display: grid; gap: 8px; margin: 16px 0; }
+.onb-mode-btn {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+  color: var(--text-primary);
+}
+.onb-mode-btn:hover { border-color: var(--gold-glow); }
+.onb-mode-btn.selected { border-color: var(--gold); background: var(--bg-overlay); }
+.onb-mode-name { font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.onb-mode-desc { font-size: 0.82rem; color: var(--text-secondary); }
+
+/* ============================================================
+   MODE GRID (Settings)
+   ============================================================ */
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+@media (max-width: 540px) { .mode-grid { grid-template-columns: 1fr; } }
+.mode-card {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: left;
+  color: var(--text-primary);
+}
+.mode-card.selected { border-color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+.mode-card-name { font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.mode-card-desc { font-size: 0.82rem; }
+
+/* ============================================================
+   QUESTS
+   ============================================================ */
+.quest-list { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.quest-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.quest-item.done { border-color: var(--innocent); background: rgba(74,122,65,0.08); }
+.quest-desc { font-weight: 600; }
+.quest-progress { color: var(--gold); margin: 4px 0; font-size: 0.9rem; }
+
+.dash-quests .card-icon { color: #ffb74d; }
+
+/* ============================================================
+   CODEX SEARCH + LEGIFRANCE
+   ============================================================ */
+.codex-search-input {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+}
+.codex-list { display: flex; flex-direction: column; }
+.codex-legifrance-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--gold);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.codex-legifrance-link:hover { text-decoration: underline; }
+
+/* ============================================================
+   HEATMAP
+   ============================================================ */
+.heatmap-wrap {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  overflow-x: auto;
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 14px);
+  grid-auto-flow: column;
+  grid-auto-columns: 14px;
+  gap: 3px;
+  min-width: 220px;
+}
+.heatmap-cell {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-subtle);
+}
+.heatmap-cell.heatmap-l1 { background: rgba(201,169,97,0.25); border-color: rgba(201,169,97,0.4); }
+.heatmap-cell.heatmap-l2 { background: rgba(201,169,97,0.50); border-color: rgba(201,169,97,0.6); }
+.heatmap-cell.heatmap-l3 { background: rgba(201,169,97,0.75); border-color: rgba(201,169,97,0.85); }
+.heatmap-cell.heatmap-l4 { background: var(--gold); border-color: var(--gold-light); box-shadow: 0 0 4px var(--gold-glow); }
+
+/* ============================================================
+   WEEKLY SUMMARY MODAL
+   ============================================================ */
+.modal-summary {
+  text-align: left;
+  max-width: 460px;
+}
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.summary-list li {
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background: var(--bg-elevated);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-display);
+}
+
+/* ============================================================
+   STREAK NEXT
+   ============================================================ */
+.dash-streak-next {
+  font-size: 0.78rem;
+  color: var(--gold-light);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ============================================================
+   VOLUME SLIDERS
+   ============================================================ */
+.vol-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+}
+.vol-label { color: var(--text-secondary); font-size: 0.9rem; }
+.vol-value { color: var(--gold); font-size: 0.85rem; min-width: 48px; text-align: right; }
+
+/* ============================================================
+   CHAPTER MODAL
+   ============================================================ */
+.modal-chapter {
+  text-align: center;
+  max-width: 480px;
+  background: linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+}
+.modal-chapter .chapter-num {
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+.modal-chapter .chapter-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  margin: 12px 0;
+}
+.modal-chapter .chapter-hook {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}

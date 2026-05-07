@@ -8,6 +8,8 @@ import { renderHistory } from "./ui-history.js";
 import { renderCosts } from "./ui-costs.js";
 import { applyTheme } from "./themes.js";
 import { t, setLang, getLang } from "./i18n.js";
+import { shouldShowOnboarding, showOnboarding } from "./onboarding.js";
+import { showSummaryIfDue } from "./weekly-summary.js";
 
 const PANELS = {
   tribunal: { id: "tribunal", labelKey: "nav.tribunal", icon: "⚖", render: renderTribunal },
@@ -147,6 +149,11 @@ async function bootstrap() {
   const settings = Storage.getSettings();
   applyTheme(settings.theme || "dark");
   navigate("tribunal");
+  if (shouldShowOnboarding()) {
+    setTimeout(() => showOnboarding({ onComplete: () => navigate("tribunal") }), 400);
+  } else {
+    setTimeout(() => showSummaryIfDue().catch(() => {}), 800);
+  }
 }
 
 if (typeof window !== "undefined") {

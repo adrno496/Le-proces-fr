@@ -289,6 +289,27 @@ export function renderSettings(root) {
 
   container.appendChild(persoSection);
 
+  // ===== Section Volumes audio =====
+  const volSec = el("section", { class: "settings-section" });
+  volSec.appendChild(el("h2", { class: "section-title" }, [t("vol.section")]));
+  const vol = settings.volume || { ambient: 0.25, gavel: 0.85, tts: 1.0, master: 1.0 };
+  for (const key of ["master", "ambient", "gavel", "tts"]) {
+    const row = el("div", { class: "vol-row" });
+    row.appendChild(el("div", { class: "vol-label" }, [t(`vol.${key}`)]));
+    const valueLabel = el("span", { class: "vol-value mono" }, [`${Math.round((vol[key] ?? 0) * 100)} %`]);
+    const slider = el("input", { type: "range", min: "0", max: "100", value: String(Math.round((vol[key] ?? 0) * 100)), class: "slider" });
+    slider.addEventListener("input", e => {
+      const v = +e.target.value / 100;
+      const newVol = { ...(Storage.getSettings().volume || vol), [key]: v };
+      Storage.saveSettings({ volume: newVol });
+      valueLabel.textContent = `${Math.round(v * 100)} %`;
+    });
+    row.appendChild(slider);
+    row.appendChild(valueLabel);
+    volSec.appendChild(row);
+  }
+  container.appendChild(volSec);
+
   // ===== Section Audio (TTS) =====
   if (ttsSupported()) {
     const audioSec = el("section", { class: "settings-section" });
@@ -342,6 +363,27 @@ export function renderSettings(root) {
 
   // ===== Section Expert =====
   const expertSec = el("section", { class: "settings-section" });
+  // ===== Mode Découverte (Novice / Standard / Expert) =====
+  const modeSec = el("section", { class: "settings-section" });
+  modeSec.appendChild(el("h2", { class: "section-title" }, [t("mode.section")]));
+  const modeGrid = el("div", { class: "mode-grid" });
+  for (const m of ["novice", "standard", "expert"]) {
+    const isSel = (settings.mode || "standard") === m;
+    modeGrid.appendChild(el("button", {
+      class: `mode-card ${isSel ? "selected" : ""}`,
+      onclick: () => {
+        Storage.saveSettings({ mode: m });
+        toast(t("settings.saved"), "success", 1200);
+        renderSettings(root);
+      },
+    }, [
+      el("div", { class: "mode-card-name" }, [t(`mode.${m}`)]),
+      el("div", { class: "mode-card-desc muted" }, [t(`mode.${m}.desc`)]),
+    ]));
+  }
+  modeSec.appendChild(modeGrid);
+  container.appendChild(modeSec);
+
   expertSec.appendChild(el("h2", { class: "section-title" }, [t("settings.section.expert")]));
   expertSec.appendChild(el("p", { class: "muted" }, [t("settings.expert.intro")]));
   expertSec.appendChild(el("button", {

@@ -24,3 +24,20 @@ export function chapterByDate(dateStr) {
   const m = parseInt(dateStr.split("-")[1], 10);
   return CHAPTERS.find(c => c.month === m) || CHAPTERS[0];
 }
+
+// Determine if the current chapter has not been seen yet.
+export function shouldShowChapter() {
+  if (typeof window === "undefined") return false;
+  const now = new Date();
+  const m = now.getMonth() + 1;
+  try {
+    const seen = JSON.parse(localStorage.getItem("leproces_narrative_seen") || "{}");
+    return seen.month !== m;
+  } catch { return true; }
+}
+
+export function markChapterSeen() {
+  if (typeof localStorage === "undefined") return;
+  const now = new Date();
+  localStorage.setItem("leproces_narrative_seen", JSON.stringify({ month: now.getMonth() + 1 }));
+}

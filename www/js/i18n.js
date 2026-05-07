@@ -402,6 +402,80 @@ const STRINGS = {
   "refresh.toast":     { fr: "🔄 Vidage du cache...", en: "🔄 Clearing cache..." },
   "refresh.done":      { fr: "✓ Cache vidé. Rechargement...", en: "✓ Cache cleared. Reloading..." },
   "refresh.note":      { fr: "Vos données (verdicts, profil) ne sont pas effacées.", en: "Your data (verdicts, profile) is preserved." },
+
+  // ===== Onboarding =====
+  "onb.title":         { fr: "Bienvenue à la cour", en: "Welcome to the court" },
+  "onb.skip":          { fr: "Passer", en: "Skip" },
+  "onb.next":          { fr: "Suivant →", en: "Next →" },
+  "onb.start":         { fr: "Commencer", en: "Get started" },
+  "onb.step.1.title":  { fr: "Vous êtes le juge.", en: "You are the judge." },
+  "onb.step.1.body":   { fr: "Chaque jour, une nouvelle affaire vous est confiée. Lisez les plaidoiries, examinez les pièces, interrogez les témoins, puis prononcez votre verdict.", en: "Each day, a new case is presented to you. Read the pleadings, examine the evidence, question witnesses, then deliver your verdict." },
+  "onb.step.2.title":  { fr: "Aucun verdict n'est mauvais.", en: "No verdict is wrong." },
+  "onb.step.2.body":   { fr: "Chaque affaire a une vérité cachée. Vos décisions sont évaluées sur 100, mais un choix défendable face à une vérité contraire est respecté.", en: "Each case has a hidden truth. Your decisions are scored out of 100, but a defendable choice against the truth is still respected." },
+  "onb.step.3.title":  { fr: "Une carrière, un univers.", en: "A career, a universe." },
+  "onb.step.3.body":   { fr: "Verdicts → XP → carrière. Argumentez vos décisions pour créer des précédents personnels. Débloquez 72 articles de droit et 30 objets de cabinet. 100 % local, vos données restent chez vous.", en: "Verdicts → XP → career. Reason your decisions to create personal precedents. Unlock 72 legal articles and 30 chamber items. 100% local — your data stays on your device." },
+  "onb.step.4.title":  { fr: "Choisissez votre niveau", en: "Pick your level" },
+  "onb.step.4.body":   { fr: "Vous pouvez ajuster ce niveau à tout moment dans les Réglages.", en: "You can change this level any time in Settings." },
+
+  // ===== Mode Découverte =====
+  "mode.section":      { fr: "NIVEAU DE JEU", en: "GAME LEVEL" },
+  "mode.novice":       { fr: "Novice", en: "Novice" },
+  "mode.novice.desc":  { fr: "Audiences plus courtes, vocabulaire simplifié, indices visuels. Parfait pour découvrir.", en: "Shorter hearings, simpler vocabulary, visual hints. Great for discovering." },
+  "mode.standard":     { fr: "Standard", en: "Standard" },
+  "mode.standard.desc":{ fr: "Niveau par défaut, plaidoiries complètes, droit français.", en: "Default level, full pleadings, real legal scenarios." },
+  "mode.expert":       { fr: "Expert", en: "Expert" },
+  "mode.expert.desc":  { fr: "Plaidoiries plus longues, vocabulaire technique, plus de pièces. Pour juristes.", en: "Longer pleadings, technical vocabulary, more evidence. For lawyers." },
+
+  // ===== Quests =====
+  "quests.title":      { fr: "🎯 Quêtes hebdomadaires", en: "🎯 Weekly quests" },
+  "quests.intro":      { fr: "Trois quêtes chaque semaine. Récompense × 1.5 XP à la complétion.", en: "Three quests each week. ×1.5 XP reward on completion." },
+  "quests.completed":  { fr: "✅ Accomplie", en: "✅ Done" },
+  "quests.progress":   { fr: "{cur} / {target}", en: "{cur} / {target}" },
+  "quests.q1":         { fr: "Juger {n} affaires de catégorie {cat}", en: "Judge {n} {cat} cases" },
+  "quests.q2":         { fr: "Argumenter {n} verdicts (≥ 60 caractères)", en: "Argue {n} verdicts (≥60 chars)" },
+  "quests.q3":         { fr: "Examiner toutes les pièces dans {n} audiences", en: "Examine all evidence in {n} hearings" },
+  "quests.q4":         { fr: "Interroger un témoin dans {n} audiences", en: "Question a witness in {n} hearings" },
+  "quests.q5":         { fr: "Aligner {n} verdicts avec la vérité du dossier", en: "Align {n} verdicts with the case truth" },
+  "quests.q6":         { fr: "Maintenir une streak de {n} jours", en: "Maintain a {n}-day streak" },
+  "quests.reward":     { fr: "🎁 Quête accomplie : +{xp} XP bonus", en: "🎁 Quest done: +{xp} XP bonus" },
+
+  // ===== Codex search =====
+  "codex.search":      { fr: "🔍 Rechercher dans le codex...", en: "🔍 Search codex..." },
+  "codex.legifrance":  { fr: "↗ Légifrance", en: "↗ Légifrance" },
+  "codex.no_results":  { fr: "Aucune entrée correspondante.", en: "No matching entries." },
+
+  // ===== Weekly summary =====
+  "summary.title":     { fr: "📊 Synthèse de la semaine", en: "📊 Weekly summary" },
+  "summary.verdicts":  { fr: "{n} verdicts rendus", en: "{n} verdicts delivered" },
+  "summary.unlocks":   { fr: "{n} entrées de codex débloquées", en: "{n} codex entries unlocked" },
+  "summary.achievements": { fr: "{n} succès débloqués", en: "{n} achievements unlocked" },
+  "summary.xp":        { fr: "{n} XP gagnés", en: "{n} XP earned" },
+  "summary.top_cat":   { fr: "Catégorie dominante : {cat}", en: "Top category: {cat}" },
+  "summary.empty":     { fr: "Aucune activité cette semaine.", en: "No activity this week." },
+  "summary.dismiss":   { fr: "Vu →", en: "Got it →" },
+
+  // ===== Streak milestones =====
+  "streak.next":       { fr: "Prochain palier : {n} jours", en: "Next milestone: {n} days" },
+  "streak.reward.7":   { fr: "🔥 Streak 7 jours : objet rare offert", en: "🔥 7-day streak: rare item granted" },
+  "streak.reward.30":  { fr: "🔥 Streak 30 jours : objet épique offert", en: "🔥 30-day streak: epic item granted" },
+  "streak.reward.100": { fr: "🔥 Streak 100 jours : thème légendaire débloqué", en: "🔥 100-day streak: legendary theme unlocked" },
+  "streak.reward.365": { fr: "🔥 Streak 365 jours : titre honorifique perpétuel", en: "🔥 365-day streak: lifetime honorary title" },
+
+  // ===== Heatmap =====
+  "heatmap.title":     { fr: "🗓 Activité (12 dernières semaines)", en: "🗓 Activity (last 12 weeks)" },
+  "heatmap.empty":     { fr: "—", en: "—" },
+  "heatmap.day":       { fr: "{n} verdict(s)", en: "{n} verdict(s)" },
+
+  // ===== Volume sliders =====
+  "vol.section":       { fr: "VOLUME AUDIO", en: "AUDIO VOLUME" },
+  "vol.ambient":       { fr: "Ambiance tribunal", en: "Courtroom ambient" },
+  "vol.gavel":         { fr: "Marteau", en: "Gavel" },
+  "vol.tts":           { fr: "Voix off (TTS)", en: "TTS voice" },
+  "vol.master":        { fr: "Volume général", en: "Master volume" },
+
+  // ===== Narrative chapter =====
+  "narrative.title":   { fr: "📖 Chapitre {n}", en: "📖 Chapter {n}" },
+  "narrative.dismiss": { fr: "Continuer →", en: "Continue →" },
 };
 
 let _lang = null;

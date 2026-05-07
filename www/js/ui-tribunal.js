@@ -20,7 +20,8 @@ import { recordVerdictForChallenge, multiplierForCategory, currentChallenge, get
 import { listHistoric, getHistoric } from "./historic-cases.js";
 import { t, getLang } from "./i18n.js";
 import { playHammer, primeAudio, startWhispers, stopWhispers } from "./audio.js";
-import { currentChapter, chapterByDate } from "./narrative.js";
+import { recordVerdictForQuests, getQuests, describeQuest, rewardFor, claimReward } from "./quests.js";
+import { currentChapter, chapterByDate, shouldShowChapter, markChapterSeen } from "./narrative.js";
 import { shareVerdict } from "./share.js";
 import { isSupported as ttsSupported, readPlaidoiries, stop as stopTTS } from "./tts.js";
 import { pickQuiz, score as quizScore } from "./quiz.js";
@@ -66,6 +67,11 @@ async function renderDashboard(root) {
   const settings = Storage.getSettings();
   const profile = Storage.getProfile();
   const today = getTodayDateStr();
+
+  // Display current chapter (one-shot per month)
+  if (shouldShowChapter()) {
+    setTimeout(() => showChapterModal(), 600);
+  }
   const tier = getCurrentTier(profile);
   const tProg = tierProgress(profile);
   const reputation = computeReputation(profile);
@@ -90,7 +96,15 @@ async function renderDashboard(root) {
           tProg.next ? `${profile.totalVerdicts || 0} / ${tProg.next.minVerdicts} verdicts` : "Sommet atteint",
         ]),
       ]),
-      el("div", { class: "dash-streak" }, [`🔥 ${profile.streak || 0} jour${(profile.streak || 0) > 1 ? "s" : ""}  ·  ⭐ ${profile.totalXp || 0} XP`]),
+      el("div", { class: "dash-streak" }, [`🔥 ${profile.streak || 0} ${(profile.streak || 0) > 1 ? "j" : "j"}  ·  ⭐ ${profile.totalXp || 0} XP`]),
+      (() => {
+        const milestones = [7, 30, 100, 365];
+        const cur = profile.streak || 0;
+        const next = milestones.find(m => m > cur);
+        if (!next) return null;
+        const remaining = next - cur;
+        return el("div", { class: "dash-streak-next" }, [`${t("streak.next", { n: next })} (${remaining})`]);
+      })(),
     ]),
   ]));
 
@@ -144,6 +158,18 @@ async function renderDashboard(root) {
   ]);
   grid.appendChild(weeklyCard);
 
+  // CARD 4 bis : Quêtes hebdomadaires
+  const quests = getQuests();
+  const completedCount = quests.completed.length;
+  const questsCard = el("button", { class: "dash-card dash-quests", onclick: () => showQuestsModal(root) }, [
+    el("div", { class: "card-icon" }, ["🎯"]),
+    el("div", { class: "card-title" }, [t("quests.title")]),
+    el("div", { class: "card-body" }, [`${completedCount} / 3`]),
+    el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${(completedCount / 3) * 100}%` } })]),
+    el("div", { class: "card-cta" }, [t("card.weekly.cta")]),
+  ]);
+  grid.appendChild(questsCard);
+
   // CARD 5 : Catégories
   const catCard = el("div", { class: "dash-card dash-categories" }, [
     el("div", { class: "card-icon" }, ["🎭"]),
@@ -184,6 +210,46 @@ async function renderDashboard(root) {
   if (getLang() === "en") {
     container.appendChild(el("p", { class: "muted", style: { textAlign: "center", marginTop: "8px", fontSize: "0.78rem" } }, [t("app.legal_notice")]));
   }
+}
+
+// Modal "Chapitre narratif"
+function showChapterModal() {
+  const ch = currentChapter();
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) close(); } });
+  const modal = el("div", { class: "modal modal-chapter" });
+  modal.appendChild(el("div", { class: "chapter-num" }, [t("narrative.title", { n: ch.id })]));
+  modal.appendChild(el("h2", { class: "chapter-title" }, [ch.title]));
+  modal.appendChild(el("p", { class: "chapter-hook" }, [ch.hook]));
+  const btn = el("button", { class: "btn-primary", onclick: () => close() }, [t("narrative.dismiss")]);
+  modal.appendChild(btn);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  function close() { markChapterSeen(); overlay.remove(); }
+}
+
+// Modal "Quêtes hebdomadaires"
+function showQuestsModal(root) {
+  const quests = getQuests();
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large" });
+  modal.appendChild(el("h2", {}, [t("quests.title")]));
+  modal.appendChild(el("p", { class: "muted" }, [t("quests.intro")]));
+  const list = el("div", { class: "quest-list" });
+  for (const q of quests.defs) {
+    const cur = q.source === "streak" ? Math.min(q.target, quests.progress[q.id] || 0) : (quests.progress[q.id] || 0);
+    const done = quests.completed.includes(q.id);
+    const pct = Math.min(100, (cur / q.target) * 100);
+    list.appendChild(el("div", { class: `quest-item ${done ? "done" : ""}` }, [
+      el("div", { class: "quest-desc" }, [describeQuest(q)]),
+      el("div", { class: "quest-progress mono" }, [done ? t("quests.completed") : t("quests.progress", { cur, target: q.target })]),
+      el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${pct}%` } })]),
+      el("div", { class: "muted", style: { fontSize: "0.78rem" } }, [`+${rewardFor(q)} XP`]),
+    ]));
+  }
+  modal.appendChild(list);
+  modal.appendChild(el("button", { class: "btn-secondary", onclick: () => overlay.remove() }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 }
 
 // Modal "Procès historiques" — accessible depuis le dashboard
@@ -635,6 +701,26 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
   recordOutcome(caseData.defendant?.id, today, caseData.category, verdict, caseData.title);
   recordVerdictForChallenge(caseData.category);
   const newCodexIds = unlockForCategory(caseData.category);
+
+  // ===== Quests =====
+  const allEvidenceExamined = (caseData.evidence || []).length > 0 && (caseData.evidence || []).every(e => e.examined);
+  const askedWitness = questionsCount > 0;
+  const completedQuests = recordVerdictForQuests({
+    category: caseData.category,
+    hasArgument: argument.length >= 60,
+    allEvidenceExamined,
+    askedWitness,
+    alignedWithTruth: evaluation.aligned,
+    streak: newStreak,
+  });
+  // Award XP bonus for each completed quest
+  for (const q of completedQuests) {
+    const bonusXp = claimReward(q.id);
+    if (bonusXp > 0) {
+      Storage.saveProfile({ totalXp: (Storage.getProfile().totalXp || 0) + bonusXp });
+      setTimeout(() => toast(t("quests.reward", { xp: bonusXp }) + " — " + describeQuest(q), "success", 5000), 600);
+    }
+  }
   const promoted = maybePromote(verdictRecord, caseData, newStreak);
   if (promoted) Storage.saveProfile({ precedentsCreated: (Storage.getProfile().precedentsCreated || 0) + 1 });
   const reward = maybeReward(Storage.getProfile());
@@ -660,6 +746,18 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
   const newly = [];
   for (const id of checkAchievements(Storage.getProfile(), ctxAch)) {
     if (!Storage.hasAchievement(id)) { Storage.addAchievement(id); newly.push(id); }
+  }
+
+  // Streak milestone reward
+  const milestones = [7, 30, 100, 365];
+  let streakMilestone = null;
+  for (const m of milestones) {
+    if ((profile.streak || 0) < m && newStreak >= m) { streakMilestone = m; break; }
+  }
+  if (streakMilestone) {
+    const bonus = streakMilestone * 5;
+    Storage.saveProfile({ totalXp: (Storage.getProfile().totalXp || 0) + bonus });
+    setTimeout(() => toast(t(`streak.reward.${streakMilestone}`) + ` (+${bonus} XP)`, "success", 6000), 3500);
   }
 
   toast(t("verdict.gained", { xp, label: t(evaluation.label) || evaluation.label }), evaluation.aligned ? "success" : "info", 4000);

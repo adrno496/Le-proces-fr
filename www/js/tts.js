@@ -32,6 +32,12 @@ export function speak(text, { voice, rate = 0.95, pitch = 1.0, onEnd } = {}) {
   u.lang = "fr-FR";
   u.rate = rate;
   u.pitch = pitch;
+  // Volume from settings
+  try {
+    const settings = JSON.parse(localStorage.getItem("leproces_settings") || "{}");
+    const v = settings.volume || {};
+    u.volume = Math.max(0, Math.min(1, (v.tts ?? 1) * (v.master ?? 1)));
+  } catch { u.volume = 1; }
   if (voice) u.voice = voice;
   if (onEnd) u.onend = onEnd;
   window.speechSynthesis.speak(u);
