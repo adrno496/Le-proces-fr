@@ -1189,8 +1189,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 /* ============================================================
    MODE GRID (Settings)
    ============================================================ */
-.mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-@media (max-width: 540px) { .mode-grid { grid-template-columns: 1fr; } }
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 720px) { .mode-grid { grid-template-columns: 1fr; } }
 .mode-card {
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
@@ -1200,8 +1200,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   color: var(--text-primary);
 }
 .mode-card.selected { border-color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
-.mode-card-name { font-weight: 700; color: var(--gold); margin-bottom: 4px; }
-.mode-card-desc { font-size: 0.82rem; }
+.mode-card-name { font-weight: 700; color: var(--gold); margin-bottom: 2px; font-size: 1rem; }
+.mode-card-short { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px; font-style: italic; }
+.mode-card-desc { font-size: 0.82rem; line-height: 1.5; }
+.onb-mode-short { font-size: 0.78rem; color: var(--text-secondary); margin: 2px 0 4px; font-style: italic; }
 
 /* ============================================================
    QUESTS
@@ -1337,4 +1339,245 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   color: var(--text-secondary);
   line-height: 1.7;
   margin-bottom: 20px;
+}
+
+/* ============================================================
+   12 JURÉS
+   ============================================================ */
+.jury-tally {
+  display: flex; gap: 12px; justify-content: center;
+  font-size: 1.1rem; font-weight: 700; margin: 12px 0;
+  font-family: var(--font-mono);
+}
+.jury-tally-guilty   { color: var(--guilty); }
+.jury-tally-innocent { color: var(--innocent); }
+.jury-tally-undecided{ color: var(--gold); }
+.jury-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.juror-card {
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  animation: juror-fade-in 0.4s both;
+}
+.juror-card.juror-guilty   { border-left: 3px solid var(--guilty); }
+.juror-card.juror-innocent { border-left: 3px solid var(--innocent); }
+.juror-card.juror-undecided{ border-left: 3px solid var(--gold); }
+.juror-emoji { font-size: 1.6rem; }
+.juror-name  { font-weight: 700; margin: 4px 0 2px; }
+.juror-style { font-size: 0.75rem; }
+.juror-line  { font-style: italic; margin: 6px 0; color: var(--text-secondary); font-size: 0.8rem; }
+.juror-vote  { font-weight: 700; margin-top: 6px; padding: 4px; border-radius: 4px; font-size: 0.78rem; }
+.juror-vote.stance-guilty   { background: rgba(168,57,46,0.2); color: var(--guilty); }
+.juror-vote.stance-innocent { background: rgba(74,122,65,0.2); color: var(--innocent); }
+.juror-vote.stance-undecided{ background: rgba(201,169,97,0.15); color: var(--gold); }
+@keyframes juror-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.jury-toggle { width: 100%; margin: 8px 0; }
+
+/* ============================================================
+   DEVINE LA PEINE
+   ============================================================ */
+.modal-guess .guess-desc {
+  background: var(--bg-elevated);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-display);
+  line-height: 1.6;
+  margin: 12px 0;
+}
+.guess-options { display: grid; gap: 8px; margin: 12px 0; }
+.guess-opt { width: 100%; text-align: left; padding: 12px 16px; }
+.guess-opt.correct { border-color: var(--innocent); background: rgba(74,122,65,0.18); }
+.guess-opt.wrong   { border-color: var(--guilty); background: rgba(168,57,46,0.18); }
+.guess-explanation {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-gold);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   LOOT BOX
+   ============================================================ */
+.dash-loot.pulse-glow { animation: loot-pulse 2.5s ease-in-out infinite; }
+@keyframes loot-pulse {
+  0%,100% { box-shadow: 0 0 0 var(--gold-glow); }
+  50%     { box-shadow: 0 4px 20px var(--gold-glow); }
+}
+.loot-overlay { background: rgba(0,0,0,0.85); }
+.modal-loot { text-align: center; max-width: 420px; }
+.loot-emoji { font-size: 4rem; animation: loot-bounce 0.8s ease-out; }
+@keyframes loot-bounce {
+  0%   { transform: scale(0); }
+  60%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.loot-result {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-style: italic;
+  margin: 16px 0;
+}
+
+/* ============================================================
+   GLOSSAIRE FLOTTANT
+   ============================================================ */
+.glossary-term {
+  border-bottom: 1px dotted var(--gold);
+  cursor: help;
+  color: var(--gold-light);
+}
+.glossary-term:hover { background: rgba(201,169,97,0.15); }
+.glossary-popup {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-bottom) + 80px);
+  left: 50%; transform: translateX(-50%);
+  z-index: 350;
+  max-width: min(420px, 90vw);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.glossary-popup.show { opacity: 1; }
+.gp-term { color: var(--gold); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+.gp-def  { color: var(--text-primary); font-family: var(--font-display); line-height: 1.6; font-size: 0.92rem; }
+.gp-close {
+  position: absolute; top: 4px; right: 8px;
+  background: transparent; border: none; color: var(--text-tertiary);
+  cursor: pointer; font-size: 1.1rem;
+}
+
+/* ============================================================
+   QUOTE / TIP / HISTORY TODAY / SEASON
+   ============================================================ */
+.session-quote {
+  text-align: center;
+  margin: 14px 0;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.session-quote .quote-text { font-family: var(--font-display); font-style: italic; color: var(--text-secondary); }
+.session-quote .quote-author { margin-top: 4px; font-size: 0.85rem; }
+.tip-bar {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  padding: 8px;
+  margin-bottom: 12px;
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+}
+.history-today {
+  background: linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.history-today-label { color: var(--gold); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.history-today-date  { color: var(--gold-light); font-family: var(--font-mono); font-size: 1.4rem; margin-top: 4px; }
+.history-today-title { font-family: var(--font-display); font-style: italic; font-size: 1.05rem; margin: 4px 0; }
+.history-today-body  { font-size: 0.9rem; }
+
+.season-banner {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  background: linear-gradient(90deg, var(--bordeaux), var(--bordeaux-light));
+  color: white;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.season-emoji { font-size: 1.3rem; }
+
+/* ============================================================
+   SAGA
+   ============================================================ */
+.dash-saga .card-icon { color: #c9a961; }
+.modal-saga { max-width: 560px; }
+.saga-acts { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+.saga-act {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.saga-act.done    { border-color: var(--innocent); opacity: 0.85; }
+.saga-act.current { border-color: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+.saga-act.locked  { opacity: 0.4; }
+.saga-act-num   { font-family: var(--font-display); font-size: 1.4rem; color: var(--gold); text-align: center; }
+.saga-act-title { font-weight: 600; }
+.saga-act-desc  { font-size: 0.82rem; }
+.saga-act-status { font-size: 1.2rem; }
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+.confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 500;
+}
+
+/* ============================================================
+   UPDATE BANNER
+   ============================================================ */
+.update-banner {
+  position: fixed;
+  bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px);
+  left: 50%; transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex; gap: 10px; align-items: center;
+  z-index: 350;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  max-width: 90vw;
+}
+
+/* ============================================================
+   A11y — Reduce motion
+   ============================================================ */
+[data-reduce-motion] * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+[data-high-contrast] {
+  --bg-deep: #000000;
+  --bg-surface: #0d0d0d;
+  --bg-elevated: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #d8d8d8;
+  --text-tertiary: #b0b0b0;
+  --gold: #ffd700;
+  --bordeaux: #ff4d6d;
+  --innocent: #5fff5f;
+  --guilty: #ff5f5f;
+  --border: #555555;
+  --border-gold: #ffd700;
 }

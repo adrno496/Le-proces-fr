@@ -293,9 +293,12 @@ import {
   computeXpGain, checkAchievements, ACHIEVEMENTS,
 } from "./www/js/case-engine.js";
 
-test("case-engine: CATEGORIES has 11 entries (10 réelles + ubuesque)", () => {
-  assert.equal(CATEGORIES.length, 11);
+test("case-engine: CATEGORIES has 18 entries (8 grand public + 3 légal light + 7 légal avancé)", () => {
+  assert.equal(CATEGORIES.length, 18);
   assert.ok(CATEGORIES.includes("ubuesque"));
+  assert.ok(CATEGORIES.includes("dilemmes"));
+  assert.ok(CATEGORIES.includes("couple_famille"));
+  assert.ok(CATEGORIES.includes("penal"));
 });
 
 test("case-engine: getDailyCategoryFromDate is deterministic", () => {

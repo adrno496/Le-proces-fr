@@ -21,8 +21,20 @@ import { listHistoric, getHistoric } from "./historic-cases.js";
 import { t, getLang } from "./i18n.js";
 import { playHammer, primeAudio, startWhispers, stopWhispers } from "./audio.js";
 import { recordVerdictForQuests, getQuests, describeQuest, rewardFor, claimReward } from "./quests.js";
+import { buildJury, tally, juryVerdict } from "./jury.js";
+import { vibrate, HAPTIC } from "./a11y.js";
+import { pickRandomGuessCase, markGuessSeen, GUESS_CASES } from "./guess-sentence.js";
+import { quoteOfTheSession } from "./citations.js";
+import { todaysEntry as historicTodaysEntry } from "./historic-calendar.js";
+import { decorateText, showGlossaryPopup } from "./glossary.js";
+import { canClaim as canClaimLoot, claim as claimLoot } from "./lootbox.js";
+import { tipOfTheSession } from "./tips.js";
+import { buildChallengeLink, readChallengeFromURL, clearChallengeFromURL } from "./challenge-link.js";
+import { fireConfetti } from "./confetti.js";
+import { SAGAS, getSagaProgress, recordSagaVerdict, getNextSagaChapter } from "./sagas.js";
+import { activeSeason } from "./seasons.js";
 import { currentChapter, chapterByDate, shouldShowChapter, markChapterSeen } from "./narrative.js";
-import { shareVerdict } from "./share.js";
+import { shareVerdict, shareEmojiVerdict } from "./share.js";
 import { isSupported as ttsSupported, readPlaidoiries, stop as stopTTS } from "./tts.js";
 import { pickQuiz, score as quizScore } from "./quiz.js";
 
@@ -38,13 +50,24 @@ class Typewriter {
     this.node.textContent = "";
     const tick = () => {
       if (this.paused) return;
-      if (this.i >= this.text.length) return;
+      if (this.i >= this.text.length) {
+        // Once complete, replace text with glossary-decorated content
+        this.node.textContent = "";
+        const frag = decorateText(this.text, (term, def) => showGlossaryPopup(term, def));
+        if (frag) this.node.appendChild(frag);
+        return;
+      }
       this.node.textContent += this.text[this.i++];
       typewriterTimer = setTimeout(tick, this.speed);
     };
     tick();
   }
-  finish() { this.node.textContent = this.text; this.i = this.text.length; }
+  finish() {
+    this.node.textContent = "";
+    const frag = decorateText(this.text, (term, def) => showGlossaryPopup(term, def));
+    if (frag) this.node.appendChild(frag);
+    this.i = this.text.length;
+  }
 }
 
 function difficultyDots(d) {
@@ -53,10 +76,20 @@ function difficultyDots(d) {
 
 export async function renderTribunal(root) {
   stopTTS();
-  stopWhispers(); // coupe l'ambiance si on revient au dashboard
+  stopWhispers();
   clear(root);
-  if (typeof window !== "undefined" && window._leprocesFreeCase) return renderCaseFlow(root, "free");
-  if (typeof window !== "undefined" && window._leprocesHistoricCase) return renderCaseFlow(root, "historic");
+  // Cas de défi reçu par lien
+  if (typeof window !== "undefined") {
+    const challenge = readChallengeFromURL();
+    if (challenge && !window._leprocesChallengeLoaded) {
+      window._leprocesChallengeLoaded = true;
+      window._leprocesFreeCase = { ...challenge, kind: "challenge", caseNumber: "DÉFI" };
+      clearChallengeFromURL();
+      toast(t("challenge.received") + (challenge.challengerVerdict ? ` (${t("challenge.their_verdict")} ${t(`card.daily.${challenge.challengerVerdict}`)})` : ""), "info", 5000);
+    }
+    if (window._leprocesFreeCase) return renderCaseFlow(root, "free");
+    if (window._leprocesHistoricCase) return renderCaseFlow(root, "historic");
+  }
   return renderDashboard(root);
 }
 
@@ -170,7 +203,39 @@ async function renderDashboard(root) {
   ]);
   grid.appendChild(questsCard);
 
-  // CARD 5 : Catégories
+  // CARD : Saga en cours
+  const saga = SAGAS[0];
+  const sagaProgress = getSagaProgress(saga.id);
+  const sagaCard = el("button", { class: "dash-card dash-saga", onclick: () => showSagaModal(root) }, [
+    el("div", { class: "card-icon" }, ["🎬"]),
+    el("div", { class: "card-title" }, [saga.title]),
+    el("div", { class: "card-body" }, [`Acte ${Math.min(sagaProgress.progress + 1, saga.chapters.length)} / ${saga.chapters.length}`]),
+    el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${(sagaProgress.progress / saga.chapters.length) * 100}%` } })]),
+    el("div", { class: "card-cta" }, [t("saga.cta")]),
+  ]);
+  grid.appendChild(sagaCard);
+
+  // CARD : Loot box quotidien
+  if (canClaimLoot()) {
+    const lootCard = el("button", { class: "dash-card dash-loot pulse-glow", onclick: () => showLootModal(root) }, [
+      el("div", { class: "card-icon" }, ["🎁"]),
+      el("div", { class: "card-title" }, [t("loot.title")]),
+      el("div", { class: "card-body" }, [t("loot.body")]),
+      el("div", { class: "card-cta" }, [t("loot.cta")]),
+    ]);
+    grid.appendChild(lootCard);
+  }
+
+  // CARD 5 : Devine la peine (mode mini-jeu)
+  const guessCard = el("button", { class: "dash-card dash-guess", onclick: () => showGuessSentenceModal(root) }, [
+    el("div", { class: "card-icon" }, ["⚖"]),
+    el("div", { class: "card-title" }, [t("guess.title")]),
+    el("div", { class: "card-body" }, [t("guess.body")]),
+    el("div", { class: "card-cta" }, [t("guess.cta")]),
+  ]);
+  grid.appendChild(guessCard);
+
+  // CARD 6 : Catégories
   const catCard = el("div", { class: "dash-card dash-categories" }, [
     el("div", { class: "card-icon" }, ["🎭"]),
     el("div", { class: "card-title" }, [t("card.categories.title")]),
@@ -199,6 +264,38 @@ async function renderDashboard(root) {
 
   container.appendChild(grid);
 
+  // Banner de saison thématique active
+  const season = activeSeason();
+  if (season) {
+    container.appendChild(el("div", { class: "season-banner" }, [
+      el("span", { class: "season-emoji" }, [season.emoji]),
+      el("span", { class: "season-title" }, [season.title[getLang()] || season.title.fr]),
+    ]));
+  }
+
+  // Tip rotatif
+  container.appendChild(el("div", { class: "tip-bar" }, [tipOfTheSession(getLang())]));
+
+  // Citation rotative en pied de hero
+  const q = quoteOfTheSession();
+  if (q) {
+    container.appendChild(el("blockquote", { class: "session-quote" }, [
+      el("div", { class: "quote-text" }, [`« ${q.quote} »`]),
+      el("div", { class: "quote-author muted" }, [`— ${q.author}`]),
+    ]));
+  }
+
+  // Calendrier historique : "Aujourd'hui dans l'histoire"
+  const histDay = historicTodaysEntry();
+  if (histDay) {
+    container.appendChild(el("div", { class: "history-today" }, [
+      el("div", { class: "history-today-label" }, [t("history_today.label")]),
+      el("div", { class: "history-today-date" }, [`${histDay.year}`]),
+      el("div", { class: "history-today-title" }, [histDay.title]),
+      el("div", { class: "history-today-body muted" }, [histDay.body]),
+    ]));
+  }
+
   // No API key warning
   if (!settings.apiKey) {
     container.appendChild(el("div", { class: "dash-warning" }, [
@@ -225,6 +322,140 @@ function showChapterModal() {
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
   function close() { markChapterSeen(); overlay.remove(); }
+}
+
+// Modal "Saga"
+function showSagaModal(root) {
+  const saga = SAGAS[0];
+  const progress = getSagaProgress(saga.id);
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large modal-saga" });
+  modal.appendChild(el("h2", {}, ["🎬 " + saga.title]));
+  modal.appendChild(el("p", { class: "muted" }, [saga.desc]));
+  const list = el("div", { class: "saga-acts" });
+  saga.chapters.forEach((ch, idx) => {
+    const done = idx < progress.progress;
+    const current = idx === progress.progress;
+    const locked = idx > progress.progress;
+    const act = el("div", { class: `saga-act ${done ? "done" : ""} ${current ? "current" : ""} ${locked ? "locked" : ""}` }, [
+      el("div", { class: "saga-act-num" }, [`${idx + 1}`]),
+      el("div", { class: "saga-act-info" }, [
+        el("div", { class: "saga-act-title" }, [ch.title]),
+        el("div", { class: "saga-act-desc muted" }, [ch.context.slice(0, 120) + "..."]),
+      ]),
+      done ? el("span", { class: "saga-act-status" }, ["✓"])
+           : current ? el("button", { class: "btn-primary", onclick: () => {
+               window._leprocesFreeCase = { ...ch, kind: "saga", sagaId: saga.id, sagaChapterIdx: idx, caseNumber: `SAGA-${idx + 1}` };
+               overlay.remove();
+               renderTribunal(root);
+             }}, [t("saga.play")])
+           : el("span", { class: "saga-act-status muted" }, ["🔒"]),
+    ]);
+    list.appendChild(act);
+  });
+  modal.appendChild(list);
+  modal.appendChild(el("button", { class: "btn-secondary", onclick: () => overlay.remove() }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Modal "Loot box"
+function showLootModal(root) {
+  const result = claimLoot();
+  if (!result) return;
+  vibrate(HAPTIC.success);
+  const overlay = el("div", { class: "modal-overlay loot-overlay", onclick: () => overlay.remove() });
+  const modal = el("div", { class: "modal modal-loot" });
+  modal.appendChild(el("div", { class: "loot-emoji" }, ["🎁"]));
+  modal.appendChild(el("h2", {}, [t("loot.opened")]));
+  modal.appendChild(el("p", { class: "loot-result" }, [result.label]));
+  if (result.entry) modal.appendChild(el("div", { class: "muted" }, [result.entry.body.slice(0, 120) + "..."]));
+  if (result.quote) modal.appendChild(el("div", { class: "muted" }, [`— ${result.quote.author}`]));
+  modal.appendChild(el("button", { class: "btn-primary", onclick: () => { overlay.remove(); renderTribunal(root); } }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Modal "Devine la peine"
+function showGuessSentenceModal(root) {
+  const c = pickRandomGuessCase();
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large modal-guess" });
+  modal.appendChild(el("h2", {}, ["⚖ " + t("guess.title")]));
+  modal.appendChild(el("p", { class: "muted" }, [t("guess.intro")]));
+  modal.appendChild(el("h3", {}, [c.title]));
+  modal.appendChild(el("p", { class: "guess-desc" }, [c.desc]));
+  const optsDiv = el("div", { class: "guess-options" });
+  let answered = false;
+  c.options.forEach((opt, i) => {
+    const btn = el("button", {
+      class: "btn-secondary guess-opt",
+      onclick: () => {
+        if (answered) return;
+        answered = true;
+        const correct = opt.correctIdx;
+        btn.classList.add(correct ? "correct" : "wrong");
+        c.options.forEach((o, j) => {
+          const optBtn = optsDiv.children[j];
+          if (o.correctIdx) optBtn.classList.add("correct");
+        });
+        markGuessSeen(c.id);
+        const profile = Storage.getProfile();
+        if (correct) {
+          Storage.saveProfile({ totalXp: (profile.totalXp || 0) + 15, guessRight: (profile.guessRight || 0) + 1 });
+          vibrate(HAPTIC.success);
+          toast(t("guess.correct"), "success", 4000);
+        } else {
+          vibrate(HAPTIC.error);
+          toast(t("guess.wrong"), "info", 4000);
+        }
+        // Show explanation
+        modal.appendChild(el("div", { class: "guess-explanation" }, [el("strong", {}, ["📖 "]), c.explanation]));
+        modal.appendChild(el("button", { class: "btn-primary", onclick: () => overlay.remove() }, [t("btn.close")]));
+      },
+    }, [opt.label]);
+    optsDiv.appendChild(btn);
+  });
+  modal.appendChild(optsDiv);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// Modal "12 jurés" — délibération dramatisée
+function showJuryModal(caseData) {
+  const jury = buildJury(caseData);
+  const votes = tally(jury);
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large modal-jury" });
+  modal.appendChild(el("h2", {}, ["👥 " + t("jury.title")]));
+  modal.appendChild(el("p", { class: "muted" }, [t("jury.intro")]));
+
+  // Tally bar visible
+  const tallyBox = el("div", { class: "jury-tally" }, [
+    el("span", { class: "jury-tally-guilty" }, [`⚖ ${votes.guilty}`]),
+    el("span", { class: "jury-tally-innocent" }, [`🕊 ${votes.innocent}`]),
+    el("span", { class: "jury-tally-undecided" }, [`🤔 ${votes.undecided}`]),
+  ]);
+  modal.appendChild(tallyBox);
+
+  // Grid of 12 jurors with their statements
+  const grid = el("div", { class: "jury-grid" });
+  jury.forEach((j, idx) => {
+    const card = el("div", { class: `juror-card juror-${j.stance}` , style: { animationDelay: `${idx * 80}ms` } }, [
+      el("div", { class: "juror-emoji" }, [j.emoji]),
+      el("div", { class: "juror-name" }, [j.name]),
+      el("div", { class: "juror-style muted" }, [j.style]),
+      el("div", { class: "juror-line" }, [`« ${j.statement} »`]),
+      el("div", { class: `juror-vote stance-${j.stance}` }, [t(`jury.stance.${j.stance}`)]),
+    ]);
+    grid.appendChild(card);
+  });
+  modal.appendChild(grid);
+
+  modal.appendChild(el("button", { class: "btn-primary", onclick: () => overlay.remove() }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  vibrate(HAPTIC.click);
 }
 
 // Modal "Quêtes hebdomadaires"
@@ -586,6 +817,13 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
     sevLabel.textContent = `${t("verdict.severity")} : ${t(`verdict.severity_${v}`)} (${v})`;
   });
   verdictWrap.append(sevLabel, slider);
+
+  // Bouton "Consulter le jury" — affiche les 12 jurés et leurs avis avant le vote
+  verdictWrap.appendChild(el("button", {
+    class: "btn-secondary jury-toggle",
+    onclick: () => showJuryModal(caseData),
+  }, ["👥 " + t("jury.consult")]));
+
   const argInput = el("textarea", { class: "text-input textarea", maxlength: "500", placeholder: t("verdict.argument_placeholder") });
   verdictWrap.appendChild(argInput);
   const submitBtn = el("button", { class: "btn-primary btn-big hammer-btn", onclick: async () => {
@@ -698,6 +936,11 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
   };
   if (ctx.kind === "daily") await Storage.saveVerdict(today, verdictRecord);
 
+  // Saga progression
+  if (caseData.sagaId != null && caseData.sagaChapterIdx != null) {
+    recordSagaVerdict(caseData.sagaId, caseData.sagaChapterIdx, { verdict, severity, score: evaluation.score });
+  }
+
   recordOutcome(caseData.defendant?.id, today, caseData.category, verdict, caseData.title);
   recordVerdictForChallenge(caseData.category);
   const newCodexIds = unlockForCategory(caseData.category);
@@ -758,6 +1001,16 @@ async function submitVerdict(caseData, today, verdict, severity, argument, quest
     const bonus = streakMilestone * 5;
     Storage.saveProfile({ totalXp: (Storage.getProfile().totalXp || 0) + bonus });
     setTimeout(() => toast(t(`streak.reward.${streakMilestone}`) + ` (+${bonus} XP)`, "success", 6000), 3500);
+  }
+
+  // 🎉 Confettis si verdict exemplaire (score ≥ 85 ET aligné)
+  if (evaluation.aligned && evaluation.score >= 85) {
+    setTimeout(() => fireConfetti({ count: 100 }), 200);
+    vibrate(HAPTIC.milestone);
+  } else if (evaluation.aligned) {
+    vibrate(HAPTIC.success);
+  } else {
+    vibrate(HAPTIC.verdict);
   }
 
   toast(t("verdict.gained", { xp, label: t(evaluation.label) || evaluation.label }), evaluation.aligned ? "success" : "info", 4000);
@@ -851,9 +1104,24 @@ function renderVerdictRecap(container, caseData, verdict, root, kind) {
         toast(t("toast.verdict_shared"), "success");
       } catch { toast(t("toast.share_failed"), "error"); }
     }}, [t("btn.share")]),
+    el("button", { class: "btn-secondary", onclick: async () => {
+      const result = await shareEmojiVerdict(caseData, verdict);
+      Storage.saveProfile({ shared: true });
+      if (result === "copied") toast(t("share.copied"), "success");
+      else if (result === "shared") toast(t("toast.verdict_shared"), "success");
+      else toast(t("toast.share_failed"), "error");
+    }}, ["📋 Emojis"]),
     el("button", { class: "btn-secondary", onclick: () => navigate("history") }, [t("btn.archives")]),
     el("button", { class: "btn-secondary", onclick: () => startFreeAudience(root) }, [t("btn.free_audience")]),
     el("button", { class: "btn-secondary", onclick: () => renderTribunal(root) }, [t("btn.dashboard")]),
+    el("button", { class: "btn-secondary", onclick: async () => {
+      const link = buildChallengeLink(caseData, verdict);
+      if (navigator.share) {
+        try { await navigator.share({ title: t("challenge.share.title"), text: t("challenge.share.text"), url: link }); return; } catch {}
+      }
+      try { await navigator.clipboard.writeText(link); toast(t("challenge.copied"), "success"); }
+      catch { toast(link, "info", 6000); }
+    }}, ["⚔ " + t("challenge.btn")]),
   ]);
   recap.appendChild(actions);
 

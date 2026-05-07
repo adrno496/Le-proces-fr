@@ -363,12 +363,13 @@ export function renderSettings(root) {
 
   // ===== Section Expert =====
   const expertSec = el("section", { class: "settings-section" });
-  // ===== Mode Découverte (Novice / Standard / Expert) =====
+  // ===== Profil utilisateur (4 modes) =====
   const modeSec = el("section", { class: "settings-section" });
   modeSec.appendChild(el("h2", { class: "section-title" }, [t("mode.section")]));
+  modeSec.appendChild(el("p", { class: "muted" }, [t("mode.section.intro")]));
   const modeGrid = el("div", { class: "mode-grid" });
-  for (const m of ["novice", "standard", "expert"]) {
-    const isSel = (settings.mode || "standard") === m;
+  for (const m of ["neophyte", "curieux", "etudiant", "expert"]) {
+    const isSel = (settings.mode || "etudiant") === m;
     modeGrid.appendChild(el("button", {
       class: `mode-card ${isSel ? "selected" : ""}`,
       onclick: () => {
@@ -378,6 +379,7 @@ export function renderSettings(root) {
       },
     }, [
       el("div", { class: "mode-card-name" }, [t(`mode.${m}`)]),
+      el("div", { class: "mode-card-short" }, [t(`mode.${m}.short`)]),
       el("div", { class: "mode-card-desc muted" }, [t(`mode.${m}.desc`)]),
     ]));
   }

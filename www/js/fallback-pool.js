@@ -771,6 +771,258 @@ export const FALLBACK_POOL = {
   ],
 
   // ============================================================
+  // DILEMMES MORAUX (5) — registre récit, sans jargon
+  // ============================================================
+  dilemmes: [
+    {
+      title: "Mentir pour épargner — la vérité fait-elle toujours du bien ?",
+      context: "Léa apprend que sa meilleure amie a été trompée. Elle a hésité une semaine, puis a menti pour préserver son anniversaire qui approchait. Trois mois plus tard, l'amie découvre la vérité.",
+      prosecutionSpeech: "Léa savait. Elle a choisi le confort plutôt que l'amitié vraie. Mentir, même 'pour le bien', c'est traiter l'autre comme incapable de gérer sa vie. Son amie aurait pu décider en conscience. Léa lui a volé ce choix. Maintenant elle paie pour avoir cru pouvoir tout contrôler. Le mensonge n'est pas une douceur, c'est une prison qu'on construit pour deux.",
+      defenseSpeech: "Léa a passé une semaine à pleurer, à peser. Elle n'a pas menti pour elle. Elle a juste voulu offrir une fenêtre de joie à quelqu'un qu'elle aimait. Si on attend le moment parfait, il ne vient jamais. Le tort de Léa, c'est d'avoir hésité — pas d'avoir aimé son amie au point de porter seule un secret lourd.",
+      difficulty: 4,
+    },
+    {
+      title: "Voler du pain pour sa fille — le besoin justifie-t-il le geste ?",
+      context: "Karim, sans emploi depuis 8 mois, vole une baguette dans une supérette. Sa fille de 6 ans n'avait rien mangé depuis 24 h. Le gérant porte plainte.",
+      prosecutionSpeech: "Voler, c'est voler. Si chaque difficulté justifiait un délit, plus aucune règle ne tiendrait. Des associations existent : Restos du Cœur, CCAS. Karim ne les a pas sollicitées. Il a choisi le geste rapide plutôt que la démarche utile. La société ne peut pas faire de la précarité un permis. Sinon où s'arrête-t-on ?",
+      defenseSpeech: "Une enfant qui n'a pas mangé depuis 24 h. Quel parent attendrait les horaires d'ouverture du CCAS ? L'état de nécessité existe précisément pour ça. Karim a pris du pain, pas du vin ni des cigarettes. La supérette a perdu 4,80 €. La société, elle, gagne quelque chose à reconnaître l'humanité dans la justice.",
+      difficulty: 4,
+    },
+    {
+      title: "Dénoncer son frère — la fraternité ou la sécurité d'autrui ?",
+      context: "Tom découvre que son frère Marc a réparé une voiture sans remettre les freins en état complet, parce que le client ne pouvait pas payer. Trois mois plus tard, accrochage léger. Tom doit-il porter plainte ?",
+      prosecutionSpeech: "Tom a un devoir civique. Marc a livré une voiture dangereuse. L'accrochage n'est qu'un avant-goût — le prochain pourrait être grave. Le silence familial protège un coupable et met d'autres familles en danger. La fraternité ne peut couvrir la mise en danger d'autrui.",
+      defenseSpeech: "Tom n'est ni juge ni policier. Il est frère. Marc a fait un choix discutable mais humain : aider quelqu'un sans moyens. Tom peut alerter Marc, exiger qu'il rappelle le client, contribuer à la régularisation — sans procédure judiciaire qui détruirait une famille.",
+      difficulty: 5,
+    },
+    {
+      title: "Le portefeuille trouvé — argent gardé, papiers rendus ?",
+      context: "Nora trouve un portefeuille dans le métro avec 280 € en liquide et tous les papiers. Elle dépose les papiers à la police mais garde l'argent.",
+      prosecutionSpeech: "Trouver n'est pas posséder. L'argent appartient au propriétaire identifié sur les papiers. Nora a parfaitement compris la situation puisqu'elle a rendu les pièces. Garder l'argent, c'est un vol par soustraction. Le fait qu'elle se le justifie ('il a l'air friqué') aggrave : c'est un calcul moral pour s'autoriser un délit.",
+      defenseSpeech: "Nora a fait l'effort de rendre les papiers — elle aurait pu jeter le tout. Le 'don implicite' de 280 € est une compensation morale du geste citoyen. Punir Nora, c'est punir celle qui a fait au moins quelque chose, et inviter les autres à tout jeter.",
+      difficulty: 3,
+    },
+    {
+      title: "Sauver un seul ou cinq — le choix impossible",
+      context: "Julien, conducteur de tram, voit que ses freins ne répondent plus. Devant lui, cinq ouvriers travaillent. S'il bifurque, il tuera un employé seul. Il bifurque. Procès civil de la famille de l'employé.",
+      prosecutionSpeech: "On ne tue pas un innocent pour en sauver d'autres — c'est le fondement du droit. La règle n'est pas 'maximisons les vies sauvées', sinon on autoriserait pire. Julien a pris une décision active de tuer une personne. La famille de l'employé mérite reconnaissance et indemnisation.",
+      defenseSpeech: "Julien avait 4 secondes. Pas 4 minutes pour philosopher. L'état de nécessité est reconnu. Choisir d'épargner cinq vies plutôt qu'une, c'est défendable même si tragique. Indemnisation par l'employeur oui, mais Julien ne peut pas être tenu pénalement responsable d'avoir tenté l'inhumain dans des conditions inhumaines.",
+      difficulty: 5,
+    },
+  ],
+
+  // ============================================================
+  // COUPLE & FAMILLE (5) — registre récit
+  // ============================================================
+  couple_famille: [
+    {
+      title: "Le 5e anniversaire oublié — ras-le-bol ou pardon ?",
+      context: "Sophie attend depuis 5 ans que Marc se souvienne de leur anniversaire de rencontre. Cette année encore, rien. Elle est partie 3 jours chez sa sœur sans laisser de mot. Marc s'est senti puni sans avertissement.",
+      prosecutionSpeech: "Sophie a raison d'être blessée, mais sa réaction est excessive. Partir sans un mot, c'est punir Marc en l'absence de conversation. Si elle veut être respectée, elle doit aussi respecter — au minimum un message. Marc a paniqué, appelé sa famille, hôpitaux. Sophie a infligé un châtiment sans procès.",
+      defenseSpeech: "Sophie a passé 5 ans à 'rappeler gentiment'. Le 6e oubli, c'est un message clair : 'tu n'es pas une priorité'. Partir 3 jours, c'est se retrouver soi quand l'autre vous efface. Si Marc s'est inquiété, c'est qu'il aime — mais il n'a découvert qu'elle existait que parce qu'elle est partie.",
+      difficulty: 3,
+    },
+    {
+      title: "Garde du chien — qui aimait le plus l'animal ?",
+      context: "Léo et Camille se séparent après 4 ans. Personne ne veut quitter leur chien Bouba. Léo l'a acheté, Camille l'a éduqué. Léo travaille de jour, Camille de nuit.",
+      prosecutionSpeech: "Camille a éduqué Bouba seule pendant 4 ans : Léo voyageait pour son travail. Camille connaît les habitudes, les peurs, les jeux de Bouba. Léo veut récupérer ce qu'il a payé, mais un chien n'est pas une console. Le critère doit être l'intérêt de l'animal — comme on le fait pour les enfants.",
+      defenseSpeech: "Léo a sauvé Bouba en refuge. C'est lui qui paie nourriture, vétérinaire. Camille avait du temps pour l'éducation parce que Léo travaillait pour les deux. Une garde alternée 1 semaine sur 2 préserverait Bouba ET la justice.",
+      difficulty: 3,
+    },
+    {
+      title: "Ma mère ou ma femme — qui Noël accueille-t-il ?",
+      context: "Antoine et Sarah, mariés depuis 6 ans. Chaque Noël, ils alternent les familles. Cette année, Antoine veut que sa mère, veuve récente, vienne chez eux. Sarah refuse : 'C'est l'année de mes parents.'",
+      prosecutionSpeech: "Sarah a raison sur le principe : les règles du couple doivent tenir. Si on les casse pour les deuils, plus rien ne tient. Antoine voit sa mère 4 fois par mois, Sarah voit ses parents 6 fois par an, à 800 km. La règle d'alternance protégeait précisément la femme qui voit moins sa famille.",
+      defenseSpeech: "Une mère veuve qui passe son premier Noël seule — c'est de la cruauté pure de respecter une 'règle d'alternance'. Sarah peut inviter ses parents aussi, ou décaler à février. Le contexte change tout : il s'agit d'un être humain en deuil, pas d'un caprice. Refuser, c'est se draper dans la règle pour fuir la compassion.",
+      difficulty: 4,
+    },
+    {
+      title: "Lire les messages de son ado — sécurité ou trahison ?",
+      context: "Carine s'inquiète : sa fille Léa, 14 ans, est triste depuis des semaines. Elle décide de lire ses WhatsApp en cachette. Elle découvre du harcèlement scolaire grave. Léa apprend la lecture.",
+      prosecutionSpeech: "Lire les messages d'un ado de 14 ans, c'est une violation. Léa a une vie privée. Carine a transformé une relation déjà fragile en climat de surveillance. Maintenant Léa ne lui parlera plus jamais. La vraie question n'était pas 'qu'est-ce qu'il y a dans son téléphone ?' mais 'pourquoi je n'arrive plus à lui parler ?'.",
+      defenseSpeech: "Une mère qui voit sa fille s'éteindre et ne fait rien serait coupable d'inaction. Carine a tenté de parler. Léa s'est fermée. Lire les messages, c'est imparfait — mais grâce à ça, le harcèlement va s'arrêter. Léa va d'abord détester sa mère, puis comprendre. La parentalité ne se réduit pas au respect de la vie privée d'un adolescent qui souffre en silence.",
+      difficulty: 5,
+    },
+    {
+      title: "Le testament découvert — partage ou volonté du défunt ?",
+      context: "Le grand-père est décédé. Dans un tiroir, un testament daté de 6 mois plus tôt qui lègue tout à la petite-fille Maéline (la seule qui lui rendait visite).",
+      prosecutionSpeech: "La volonté du défunt est sacrée. Maéline était présente. Les autres se sont absentés. Le testament est l'expression libre d'un homme qui voulait reconnaître la fidélité affective. Les héritiers absents découvrent maintenant l'addition de leurs choix. C'est dur mais juste.",
+      defenseSpeech: "Un homme âgé, isolé, se laisse forcément attacher à la personne unique qui le visite. Les autres petits-enfants, jeunes parents avec emplois, n'ont pas pu venir. Avantager Maéline reproduit une injustice : celle qui pouvait venir gagne tout. Un partage 60-40 honorerait la fidélité sans punir la distance.",
+      difficulty: 4,
+    },
+  ],
+
+  // ============================================================
+  // ADO vs PARENTS (5) — registre récit
+  // ============================================================
+  ado_parents: [
+    {
+      title: "Le piercing à 15 ans — autonomie ou imprudence ?",
+      context: "Lila, 15 ans, veut un piercing au nez. Sa mère refuse, son père s'en fiche. Lila prend rendez-vous seule avec un faux mot signé. Tempête à la découverte.",
+      prosecutionSpeech: "Lila a 15 ans, pas 18. Elle vit chez ses parents, avec leurs règles. La mère a dit non. Faire un faux mot, c'est tromper l'autorité parentale qui existe précisément pour protéger un mineur de décisions impulsives. Le piercing peut s'infecter, marquer la peau, regretter dans 6 mois.",
+      defenseSpeech: "Lila a 15 ans, c'est l'âge où on apprend à se définir. Le piercing au nez n'est pas un tatouage permanent. Le 'non' maternel n'était pas argumenté. Lila a contourné une règle absurde. Au pire, sanction symbolique, pas un drame familial qui détruira la confiance pour 5 ans.",
+      difficulty: 3,
+    },
+    {
+      title: "Couvre-feu à 22h — pour qui les règles ?",
+      context: "Théo, 17 ans, rentre à 1h d'une fête organisée chez un ami. La règle familiale est 22h. Ses parents ont été inquiets, l'attendent.",
+      prosecutionSpeech: "Une règle, c'est une règle. Si à chaque exception 'spéciale' on cède, il n'y a plus de règle. Théo aurait pu prévenir, négocier en amont — il l'a déjà fait. Là, il est rentré quand ça l'arrangeait. La sanction (week-end privé de sortie) est proportionnée et formatrice.",
+      defenseSpeech: "Théo a 17 ans, 6 mois avant la majorité. Lui imposer le couvre-feu d'un enfant de 13 ans, c'est dénier sa quasi-adulteté. Il n'a pas bu, n'a pas conduit, n'a pas menti — il est rentré sain et sauf. La sanction infantilise et alimentera la révolte au lieu d'instaurer la confiance.",
+      difficulty: 3,
+    },
+    {
+      title: "L'écran avant 12 ans — privation ou libération ?",
+      context: "Hugo, 10 ans, demande un téléphone parce que tous ses copains en ont. Sa mère refuse jusqu'à 12 ans. Hugo se sent exclu, ne participe plus aux groupes WhatsApp.",
+      prosecutionSpeech: "L'isolement social d'Hugo est réel. Il manque les invitations, les blagues du jour, les groupes de devoirs. La règle 'pas avant 12 ans' est une vision idéaliste qui ne tient pas la réalité. Un téléphone basique, contrôlé, est mille fois mieux qu'un enfant qui se sent exclu de tout.",
+      defenseSpeech: "L'isolement allégué est exagéré : Hugo voit ses copains à l'école. Avant 12 ans, le cerveau gère mal les notifications, la dopamine. Les études convergent : 12 ans est un seuil raisonnable. Céder maintenant pour un faux problème social, c'est offrir une vraie addiction pour des années.",
+      difficulty: 3,
+    },
+    {
+      title: "La chambre fouillée — sécurité parentale ou intrusion ?",
+      context: "Inès, 16 ans, trouve sa chambre fouillée. Sa mère cherchait un grimoire de cours qu'elle avait elle-même prêté. Inès est furieuse : 'C'est MA chambre.'",
+      prosecutionSpeech: "Une chambre d'ado, c'est l'espace de construction de soi. La fouiller, même pour récupérer un cahier, casse la confiance pour des années. Demander d'abord à Inès aurait pris 2 minutes — la voie respectueuse.",
+      defenseSpeech: "La mère a cherché 30 secondes dans un endroit visible. Cette 'intimité de l'ado' qui interdirait à un parent de prendre un objet à lui dans sa propre maison est une mode parentale récente, pas un droit. La famille fonctionne sur la confiance ET la flexibilité.",
+      difficulty: 2,
+    },
+    {
+      title: "Le sport à abandonner — passion ou pression ?",
+      context: "Maxime, 13 ans, fait du judo depuis 8 ans, quasiment champion départemental. Cette année il veut arrêter pour faire du théâtre. Père : 'Tu jettes 8 ans.'",
+      prosecutionSpeech: "Maxime est à 1 an d'un palier (ceinture noire) qui restera à vie. Arrêter maintenant, c'est jeter ce qu'on est si près de finir. Le théâtre attendra 1 an. La constance se construit comme ça : finir ce qu'on commence.",
+      defenseSpeech: "Maxime a 13 ans. Le judo l'a structuré. Mais il a entendu son corps : il a besoin d'autre chose. Forcer une année de plus, c'est risquer le dégoût durable. Le théâtre est aussi exigeant. Le père doit lâcher son rêve à lui.",
+      difficulty: 4,
+    },
+  ],
+
+  // ============================================================
+  // VIE AU BOULOT (5)
+  // ============================================================
+  boulot: [
+    {
+      title: "Le déjeuner volé du frigo — collègue ou enquête ?",
+      context: "Pendant 3 semaines, le sandwich de Mehdi disparaît. Il colle un piège à encre dans son sandwich. Le collègue identifié (mains tachées) porte plainte au DRH pour 'humiliation publique'.",
+      prosecutionSpeech: "Voler un sandwich pendant 3 semaines, c'est mal — mais répondre par un piège, c'est créer une humiliation publique délibérée. Mehdi pouvait demander une enquête RH, mettre une caméra. Il a choisi la vengeance théâtrale.",
+      defenseSpeech: "Trois semaines de vol systématique. Le piège n'a marqué que la main d'un voleur — c'est exactement la preuve qui manquait. Si le voleur n'avait pas volé, l'encre serait restée dans le sandwich. La théâtralité est entièrement créée par le coupable lui-même.",
+      difficulty: 3,
+    },
+    {
+      title: "Réunion à 19h — droit à la déconnexion ou esprit d'équipe ?",
+      context: "Le manager a calé une réunion 'urgente' à 19h. Camille refuse, prétextant ses enfants. Le manager : 'Ça arrive à tout le monde, montre l'exemple.'",
+      prosecutionSpeech: "Une réunion à 19h n'est pas illégale, mais pose problème. La 'flexibilité' à sens unique est une dérive. Camille a un argument valide. Si le manager veut tester l'engagement, il a d'autres outils.",
+      defenseSpeech: "Une réunion exceptionnelle à 19h, ça arrive. Camille pouvait proposer une visio depuis chez elle. Refuser net et saisir l'inspection sans dialogue préalable, c'est une rigidité qui ne facilite pas la vie d'équipe.",
+      difficulty: 3,
+    },
+    {
+      title: "L'open-space sans casque",
+      context: "Quentin écoute de la musique sur enceinte (volume modéré) à son poste. Trois collègues s'en plaignent. Quentin : 'Je peux pas mettre de casque, j'entends rien d'urgent.'",
+      prosecutionSpeech: "Un open-space, c'est un espace partagé. Une enceinte, même modérée, impose un fond sonore aux 7 collègues. Le casque existe et permet d'entendre les notifications urgentes.",
+      defenseSpeech: "L'open-space n'est pas un monastère. Le volume est modéré (38 dB). Trois plaintes sur 7, c'est minoritaire. La solution est managériale : zones, pas sanction unilatérale.",
+      difficulty: 2,
+    },
+    {
+      title: "L'augmentation refusée à congé maternité",
+      context: "Sarah, en congé maternité, apprend que tous ses collègues ont eu 5 % d'augmentation. Elle, non. Le manager : 'On évalue sur l'année, tu n'as pas été là 5 mois.'",
+      prosecutionSpeech: "Le congé maternité ne peut pas pénaliser. C'est la loi. Le manager applique une logique purement quantitative qui contredit 30 ans de jurisprudence. Si on accepte ça, toutes les femmes seront punies pour leur grossesse.",
+      defenseSpeech: "L'entreprise n'a pas refusé l'augmentation pour son sexe. Elle évalue sur la performance annuelle. Sarah a été là 7 mois. Une augmentation au prorata, peut-être. Mais l'égalité n'est pas l'identité — l'absence se constate.",
+      difficulty: 4,
+    },
+    {
+      title: "Le mensonge sur le CV",
+      context: "Karim a indiqué un Master qu'il n'a pas terminé. Embauché 18 mois sur un poste où il excelle, son employeur découvre la fraude. Il propose un licenciement.",
+      prosecutionSpeech: "Le CV menteur, c'est un vice du consentement à l'embauche. La performance ne 'rachète' pas la fraude initiale. Si on accepte cela, tous les CV deviendront des œuvres de fiction.",
+      defenseSpeech: "Karim a appris sur le terrain. 18 mois d'excellence, c'est la preuve que les compétences existent. Le tort initial est réel, mais la performance le compense largement. Une sanction symbolique serait juste.",
+      difficulty: 4,
+    },
+  ],
+
+  // ============================================================
+  // RESTO & SERVICE (3)
+  // ============================================================
+  resto: [
+    {
+      title: "L'addition 'arrondie' du serveur",
+      context: "Table de 6, addition 187 €. Le serveur arrondit à 200 € en disant 'pour le service'. Le client refuse, le serveur insiste.",
+      prosecutionSpeech: "Le service est compris dans le prix en France. L'addition est 187 € — point. Le serveur ne peut pas 'arrondir' unilatéralement. C'est une demande de pourboire déguisée en obligation.",
+      defenseSpeech: "Le serveur a porté 6 plats × 3 services pendant 2h30 un samedi soir. L'arrondi à 13 € (7 %) est une demande légère et culturellement courante. Le faire de manière conflictuelle pour 13 € sur 187 € traduit plus une posture qu'une vraie justice.",
+      difficulty: 2,
+    },
+    {
+      title: "Plat refusé après 2 bouchées",
+      context: "Léa commande des spaghettis carbonara. Après 2 bouchées : 'Trop salés.' Le restaurateur facture quand même. Léa refuse.",
+      prosecutionSpeech: "Manger 2 bouchées et refuser après, c'est la règle d'or : on signale au plus vite. Léa a fait son travail. Refuser la modification, c'est ignorer la satisfaction du client.",
+      defenseSpeech: "Le 'trop salé' est subjectif. Sept clients la même semaine ont commandé le même plat sans plainte. Le plat est entamé, donc invendable. Le restaurateur ne peut pas absorber tous les caprices subjectifs.",
+      difficulty: 2,
+    },
+    {
+      title: "Le pourboire imposé '12 % service'",
+      context: "Restaurant ajoute automatiquement 12 % de pourboire à toutes les additions. Le client refuse de payer cette ligne.",
+      prosecutionSpeech: "Un pourboire imposé n'est pas un pourboire. Le service est compris dans le prix HT en France. Ajouter 12 % automatiquement est une pratique commerciale trompeuse.",
+      defenseSpeech: "Les conditions étaient affichées clairement à l'entrée et sur le menu. Le client a accepté en s'attablant. Beaucoup de pays (US) le font sans débat. Refuser après avoir mangé est plus malhonnête.",
+      difficulty: 3,
+    },
+  ],
+
+  // ============================================================
+  // ANIMAUX & HUMAINS (3)
+  // ============================================================
+  animaux: [
+    {
+      title: "Le chien qui aboie 8h/jour",
+      context: "Le chien des voisins, seul à la maison toute la journée, aboie sans arrêt. Mme G. travaille de chez elle et devient folle.",
+      prosecutionSpeech: "Un chien qui aboie 8h/jour, c'est un trouble caractérisé. Les propriétaires ont la responsabilité de leur animal. Soit ils prennent un dog-sitter, soit garderie canine. Refuser de gérer, c'est imposer aux voisins le poids de leur choix de vie.",
+      defenseSpeech: "Mes clients travaillent toute la journée. Le chien souffre de séparation, c'est un fait. L'alternative : refuge — beaucoup plus cruel. Une médiation (collier, dog-sitter) est plus juste qu'une sanction.",
+      difficulty: 3,
+    },
+    {
+      title: "Le chat qui chasse",
+      context: "Le chat de M. T. ramène 2-3 oiseaux/semaine. Le voisin, ornithologue amateur, demande qu'il soit mis en cage permanente.",
+      prosecutionSpeech: "L'ornithologue a un grief écologique réel : les chats domestiques tuent des millions d'oiseaux/an. Une mise en intérieur ou en enclos est une solution moderne. M. T. ne peut pas dire 'c'est sa nature' alors qu'il l'a domestiqué.",
+      defenseSpeech: "Un chat est un chat. La mise en cage permanente est cruelle. M. T. peut accepter un collier à clochette. L'ornithologue peut mettre des filets sur ses mangeoires.",
+      difficulty: 2,
+    },
+    {
+      title: "Le voisin qui nourrit les pigeons",
+      context: "Mme R. nourrit 50 pigeons/jour sur son balcon. La copropriété demande l'arrêt. Mme R. : 'Je sauve des oiseaux affamés.'",
+      prosecutionSpeech: "Nourrir 50 pigeons quotidiennement crée une concentration anormale. L'urine corrode les façades, les fientes polluent. La ville interdit explicitement le nourrissage des pigeons.",
+      defenseSpeech: "Mme R. ne fait pas de mal volontairement. Une mise en demeure douce, l'aide d'une association, suffirait. La sanction lourde infantilise une personne âgée qui a un attachement émotionnel.",
+      difficulty: 2,
+    },
+  ],
+
+  // ============================================================
+  // VIE QUOTIDIENNE (4)
+  // ============================================================
+  quotidien: [
+    {
+      title: "Le siège bébé refusé dans le bus",
+      context: "Mère avec poussette monte. Conducteur : 'Le bus est plein, attendez le suivant.' Suivant dans 25 min, pluie, bébé fatigué.",
+      prosecutionSpeech: "Le conducteur a un règlement à appliquer. Si le bus est saturé, il ne peut pas faire monter une poussette qui bloque le couloir. La sécurité prime. La compassion individuelle ne peut pas mettre en danger le service.",
+      defenseSpeech: "Le bus avait 4 places assises libres. Une poussette pliée tient debout. Le conducteur a fait du zèle. Une mère avec un bébé sous la pluie, c'est une priorité humaine. La RATP a explicitement 'priorité poussettes'.",
+      difficulty: 2,
+    },
+    {
+      title: "Place handicapée occupée 'juste 5 min'",
+      context: "Henri, 70 ans, en déambulateur, ne peut pas se garer : sa place handicapée est occupée par un livreur 'pour 5 min'. Henri appelle les ASVP.",
+      prosecutionSpeech: "Une place handicapée n'est jamais libre. Le livreur connaît les règles. La verbalisation est mécanique et juste. La justice doit protéger les plus faibles, sans concession.",
+      defenseSpeech: "Le livreur est de bonne foi : 4 minutes max. Il proposait de bouger. La rigidité absolue ('jamais 5 min') ignore que les villes vivent. Une amende de 35 € pour un service rendu (livraison médicaments) est disproportionnée.",
+      difficulty: 2,
+    },
+    {
+      title: "Le file d'attente doublée",
+      context: "À la boulangerie, 8 personnes font la queue. Une dame se met directement au comptoir : 'Juste pour une baguette, je suis pressée.' Le 2e proteste.",
+      prosecutionSpeech: "La file d'attente, c'est le pacte social minimum. La dame brise le contrat tacite. Sa pressée-tude n'est pas plus respectable que celle des 7 autres.",
+      defenseSpeech: "La dame s'est excusée. Personne dans la file n'a dit non — sauf le 2e qui s'est saisi du sujet. Si la majorité acceptait par bienveillance, c'est qu'elle est légitime.",
+      difficulty: 1,
+    },
+    {
+      title: "Le vélo dans le métro à l'heure de pointe",
+      context: "Théo monte avec son vélo dans une rame bondée à 18h30. Les usagers râlent. Il : 'Le règlement RATP autorise les vélos pliables.' Son vélo est un VTT non pliable.",
+      prosecutionSpeech: "Théo connaît la règle (pliables uniquement) et la contourne. À l'heure de pointe, son VTT prend la place de 5 personnes. Si chacun fait pareil, le métro devient impraticable.",
+      defenseSpeech: "Les transports écologiques se développent. Théo a fait 8 km à vélo. Lui demander de redescendre à 18h30 quand il est prêt à se serrer contre la porte, c'est punir la mobilité douce. La RATP doit faire évoluer son règlement.",
+      difficulty: 2,
+    },
+  ],
+
+  // ============================================================
   // UBUESQUE (10) — registre comique-grave, hommage au tribunal absurde
   // ============================================================
   ubuesque: [

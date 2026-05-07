@@ -10,6 +10,7 @@ import { applyTheme } from "./themes.js";
 import { t, setLang, getLang } from "./i18n.js";
 import { shouldShowOnboarding, showOnboarding } from "./onboarding.js";
 import { showSummaryIfDue } from "./weekly-summary.js";
+import { applyReducedMotion, applyHighContrast, installUpdateBanner } from "./a11y.js";
 
 const PANELS = {
   tribunal: { id: "tribunal", labelKey: "nav.tribunal", icon: "⚖", render: renderTribunal },
@@ -148,6 +149,9 @@ async function bootstrap() {
   renderHardRefreshButton();
   const settings = Storage.getSettings();
   applyTheme(settings.theme || "dark");
+  applyReducedMotion(settings.reduceMotion);
+  applyHighContrast(settings.highContrast);
+  installUpdateBanner({ t, onUpdate: () => window.location.reload() });
   navigate("tribunal");
   if (shouldShowOnboarding()) {
     setTimeout(() => showOnboarding({ onComplete: () => navigate("tribunal") }), 400);

@@ -33,5 +33,25 @@
   <nav id="bottom-nav" class="bottom-nav"></nav>
   <div id="toast-root" class="toast-root"></div>
   <script type="module" src="js/app.js"></script>
+  <script>
+    // Register service worker for offline + update notifications
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").then(reg => {
+          // Listen for new versions
+          reg.addEventListener("updatefound", () => {
+            const newSW = reg.installing;
+            if (!newSW) return;
+            newSW.addEventListener("statechange", () => {
+              if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+                // New version available
+                window.dispatchEvent(new CustomEvent("sw-update-available", { detail: { sw: newSW } }));
+              }
+            });
+          });
+        }).catch(err => console.warn("[sw] register failed:", err));
+      });
+    }
+  </script>
 </body>
 </html>

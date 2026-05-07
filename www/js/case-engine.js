@@ -10,13 +10,49 @@ import { citeForCategory } from "./jurisprudence.js";
 import { pickOrCreateDefendant, flavorForReturning } from "./parties.js";
 import { FALLBACK_POOL, pickFallbackCase } from "./fallback-pool.js";
 
-export const CATEGORIES = [
-  "penal", "civil", "famille", "travail", "consommation",
-  "voisinage", "routier", "numerique", "environnement", "propriete_intellectuelle",
-  "ubuesque",
+// Catégories grand public (toujours visibles, pour Néophyte+)
+export const CASUAL_CATEGORIES = [
+  "dilemmes", "couple_famille", "ado_parents", "boulot", "resto", "animaux", "quotidien", "ubuesque",
 ];
 
+// Catégories juridiques light (Curieux+)
+export const LIGHT_LEGAL_CATEGORIES = [
+  "voisinage", "routier", "consommation",
+];
+
+// Catégories juridiques avancées (Étudiant+)
+export const ADVANCED_LEGAL_CATEGORIES = [
+  "penal", "civil", "famille", "travail", "numerique", "environnement", "propriete_intellectuelle",
+];
+
+export const CATEGORIES = [
+  ...CASUAL_CATEGORIES,
+  ...LIGHT_LEGAL_CATEGORIES,
+  ...ADVANCED_LEGAL_CATEGORIES,
+];
+
+// Catégories visibles selon le mode utilisateur
+export function categoriesForMode(mode) {
+  switch (mode) {
+    case "neophyte": return CASUAL_CATEGORIES;
+    case "curieux":  return [...CASUAL_CATEGORIES, ...LIGHT_LEGAL_CATEGORIES];
+    case "etudiant":
+    case "expert":
+    default:         return CATEGORIES;
+  }
+}
+
 export const CATEGORY_LABELS = {
+  // Casual
+  dilemmes: "Dilemmes moraux",
+  couple_famille: "Couple & famille",
+  ado_parents: "Ado vs parents",
+  boulot: "Vie au boulot",
+  resto: "Resto & service",
+  animaux: "Animaux & humains",
+  quotidien: "Vie quotidienne",
+  ubuesque: "Ubuesque",
+  // Légal
   penal: "Pénal",
   civil: "Civil",
   famille: "Famille",
@@ -27,13 +63,14 @@ export const CATEGORY_LABELS = {
   numerique: "Numérique",
   environnement: "Environnement",
   propriete_intellectuelle: "Propriété intellectuelle",
-  ubuesque: "Ubuesque",
 };
 
 export const CATEGORY_ICONS = {
-  penal: "⚔", civil: "📄", famille: "👨‍👩‍👧", travail: "💼", consommation: "🛒",
+  dilemmes: "🤔", couple_famille: "💔", ado_parents: "👶", boulot: "💼",
+  resto: "🍔", animaux: "🐕", quotidien: "🚌", ubuesque: "🎭",
+  penal: "⚔", civil: "📄", famille: "👨‍👩‍👧", travail: "🏢", consommation: "🛒",
   voisinage: "🏘", routier: "🚗", numerique: "💾", environnement: "🌿",
-  propriete_intellectuelle: "©", ubuesque: "🎭",
+  propriete_intellectuelle: "©",
 };
 
 function hashStr(s) {
@@ -45,8 +82,11 @@ function hashStr(s) {
   return Math.abs(h);
 }
 
-export function getDailyCategoryFromDate(dateStr) {
-  return CATEGORIES[hashStr(dateStr) % CATEGORIES.length];
+export function getDailyCategoryFromDate(dateStr, mode) {
+  const settings = Storage.getSettings();
+  const m = mode || settings.mode || "etudiant";
+  const cats = categoriesForMode(m);
+  return cats[hashStr(dateStr) % cats.length];
 }
 
 
@@ -105,13 +145,15 @@ export function evaluateVerdict(caseData, userVerdict, userSeverity) {
 async function buildSystemPrompt(category) {
   const { getLang } = await import("./i18n.js");
   const lang = getLang();
-  const mode = Storage.getSettings().mode || "standard";
-  const lengthHint = mode === "novice" ? "Plaidoiries de 70-90 mots, vocabulaire simple. Évite le jargon."
-                   : mode === "expert" ? "Plaidoiries de 160-200 mots, vocabulaire technique précis."
-                   : "Plaidoiries de 120-150 mots.";
-  const lengthHintEN = mode === "novice" ? "Pleadings of 70-90 words, simple vocabulary. Avoid jargon."
-                     : mode === "expert" ? "Pleadings of 160-200 words, precise technical vocabulary."
-                     : "Pleadings of 120-150 words.";
+  const mode = Storage.getSettings().mode || "etudiant";
+  const lengthHint = mode === "neophyte" ? "Plaidoiries de 60-80 mots, ton récit, langage du quotidien, ZÉRO vocabulaire juridique. Cite des situations humaines, pas des articles de loi."
+                   : mode === "curieux"  ? "Plaidoiries de 90-110 mots, langage accessible. Cite UN article de loi maximum, et explique-le simplement."
+                   : mode === "expert"   ? "Plaidoiries de 180-220 mots, vocabulaire technique précis, jurisprudence Cassation citée si pertinent."
+                   :                       "Plaidoiries de 120-150 mots, registre prétoire correct."; // etudiant
+  const lengthHintEN = mode === "neophyte" ? "Pleadings of 60-80 words, narrative tone, everyday language, NO legal jargon. Reference human situations, not statutes."
+                     : mode === "curieux"  ? "Pleadings of 90-110 words, accessible language. Cite ONE law reference max, explain it simply."
+                     : mode === "expert"   ? "Pleadings of 180-220 words, precise technical vocabulary, cited case law when relevant."
+                     :                       "Pleadings of 120-150 words, courtroom register."; // etudiant
   if (lang === "en") {
     return `You are a legal-fiction writer for a realistic court mobile game.
 Generate a plausible court case in the category: ${category}.
@@ -338,9 +380,9 @@ export async function getDailyCase({ forceRegenerate = false } = {}) {
     const cached = await Storage.getCachedCase(today);
     if (cached) return { ...cached, fromCache: true, caseNumber: caseNumber(today) };
   }
-  const category = getDailyCategoryFromDate(today);
   const profile = Storage.getProfile();
   const settings = Storage.getSettings();
+  const category = getDailyCategoryFromDate(today, settings.mode);
   // Career-gated difficulty
   const maxDiff = maxAllowedDifficulty(profile);
   const special = rollSpecial(profile);
@@ -384,7 +426,8 @@ export async function generateFreeCase({ category } = {}) {
     e.code = "RATE_LIMIT";
     throw e;
   }
-  const cat = category || CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+  const cats = categoriesForMode(settings.mode);
+  const cat = category || cats[Math.floor(Math.random() * cats.length)];
   const profile = Storage.getProfile();
   const seed = `free-${Date.now()}`;
   const baseCase = settings.apiKey

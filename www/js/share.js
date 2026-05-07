@@ -117,6 +117,46 @@ function wrapText(ctx, text, cx, y, maxWidth, lineHeight) {
   for (const l of lines) { ctx.fillText(l, cx, yy); yy += lineHeight; }
 }
 
+// Wordle-style emoji summary (no spoilers, just shape).
+// Three rows: alignment, severity, lawyers' quality.
+export function buildEmojiShare(caseData, verdict) {
+  const aligned = verdict.evaluation?.aligned;
+  const score = verdict.evaluation?.score || 0;
+  // Row 1: alignment with truth (3 emojis representing aligned / defendable / off)
+  const alignRow = aligned && score >= 85 ? "🟩🟩🟩"
+                 : aligned && score >= 65 ? "🟩🟩⬜"
+                 : aligned                ? "🟩⬜⬜"
+                 : score >= 50            ? "🟨🟨⬜"
+                 : "⬜⬜⬜";
+  // Row 2: severity (5 squares)
+  const sev = verdict.severity || 0;
+  const sevRow = "🟫".repeat(sev) + "⬜".repeat(5 - sev);
+  // Row 3: lawyers stars
+  const pq = caseData.prosecutionQuality || 3;
+  const dq = caseData.defenseQuality || 3;
+  const lawyersRow = `⚔${"★".repeat(pq)}${"☆".repeat(5 - pq)} 🛡${"★".repeat(dq)}${"☆".repeat(5 - dq)}`;
+  return [
+    `The Judge — ${caseData.date || ""}`,
+    alignRow,
+    sevRow,
+    lawyersRow,
+    `Score : ${score}/100`,
+    `https://thejudge.app`,
+  ].join("\n");
+}
+
+// Share via Web Share API or fallback to clipboard
+export async function shareEmojiVerdict(caseData, verdict) {
+  const text = buildEmojiShare(caseData, verdict);
+  if (navigator.share) {
+    try { await navigator.share({ text }); return "shared"; } catch {}
+  }
+  if (navigator.clipboard) {
+    try { await navigator.clipboard.writeText(text); return "copied"; } catch {}
+  }
+  return null;
+}
+
 export async function shareVerdict(caseData, verdict, profile) {
   const blob = await generateVerdictCard(caseData, verdict, profile);
   if (!blob) return false;

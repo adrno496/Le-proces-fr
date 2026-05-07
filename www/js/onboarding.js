@@ -24,7 +24,7 @@ export function showOnboarding({ onComplete } = {}) {
     { key: "3", emoji: "🏛", chosenMode: null },
     { key: "4", emoji: "🎯", needsMode: true },
   ];
-  let chosenMode = "standard";
+  let chosenMode = "etudiant";
 
   const card = document.createElement("div");
   card.className = "onb-card";
@@ -61,16 +61,19 @@ export function showOnboarding({ onComplete } = {}) {
     if (s.needsMode) {
       const grid = document.createElement("div");
       grid.className = "onb-mode-grid";
-      ["novice", "standard", "expert"].forEach(m => {
+      ["neophyte", "curieux", "etudiant", "expert"].forEach(m => {
         const btn = document.createElement("button");
         btn.className = "onb-mode-btn" + (chosenMode === m ? " selected" : "");
         const h = document.createElement("div");
         h.className = "onb-mode-name";
         h.textContent = t(`mode.${m}`);
+        const sh = document.createElement("div");
+        sh.className = "onb-mode-short";
+        sh.textContent = t(`mode.${m}.short`);
         const d = document.createElement("div");
         d.className = "onb-mode-desc";
         d.textContent = t(`mode.${m}.desc`);
-        btn.append(h, d);
+        btn.append(h, sh, d);
         btn.onclick = () => { chosenMode = m; render(); };
         grid.appendChild(btn);
       });
