@@ -289,11 +289,42 @@ async function renderDashboard(root) {
   // Calendrier historique : "Aujourd'hui dans l'histoire"
   const histDay = historicTodaysEntry();
   if (histDay) {
+    const moreBox = el("div", { class: "history-today-more-content hidden" });
+    const moreBtn = el("button", { class: "history-today-more-btn" }, [t("history_today.more")]);
+    moreBtn.addEventListener("click", async () => {
+      if (!Storage.getSettings().apiKey) {
+        return toast(t("history_today.need_key"), "error", 4000);
+      }
+      moreBtn.disabled = true;
+      const orig = moreBtn.textContent;
+      moreBtn.textContent = t("history_today.consulting");
+      moreBox.classList.remove("hidden");
+      moreBox.textContent = "...";
+      try {
+        const { callAI } = await import("./ai-client.js");
+        const lang = getLang();
+        const systemPrompt = lang === "en"
+          ? "You are a legal historian, pedagogical and concise. Develop the historical legal event in 5-7 clear sentences: context, importance, legal consequences, what a judge today should remember. No markdown."
+          : "Tu es historien du droit, pédagogique et concis. Développe l'événement juridique historique en 5-7 phrases claires : contexte, importance, conséquences juridiques, ce qu'un juge aujourd'hui doit en retenir. Pas de markdown.";
+        const userMsg = lang === "en"
+          ? `Event: "${histDay.title}" (${histDay.year}).\nSummary: ${histDay.body}\nTell me more for a deeper understanding.`
+          : `Événement : « ${histDay.title} » (${histDay.year}).\nRésumé : ${histDay.body}\nDis-m'en plus pour mieux comprendre.`;
+        const { content } = await callAI([{ role: "user", content: userMsg }], { systemPrompt, maxTokens: 600 });
+        moreBox.textContent = content;
+        moreBtn.textContent = t("history_today.deepened");
+      } catch (err) {
+        moreBox.textContent = "⚠ " + (err.message || "Erreur");
+        moreBtn.disabled = false;
+        moreBtn.textContent = orig;
+      }
+    });
     container.appendChild(el("div", { class: "history-today" }, [
       el("div", { class: "history-today-label" }, [t("history_today.label")]),
       el("div", { class: "history-today-date" }, [`${histDay.year}`]),
       el("div", { class: "history-today-title" }, [histDay.title]),
       el("div", { class: "history-today-body muted" }, [histDay.body]),
+      moreBtn,
+      moreBox,
     ]));
   }
 

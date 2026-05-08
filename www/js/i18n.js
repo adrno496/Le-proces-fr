@@ -490,6 +490,7 @@ const STRINGS = {
   "codex.search":      { fr: "🔍 Rechercher dans le codex...", en: "🔍 Search codex..." },
   "codex.legifrance":  { fr: "↗ Légifrance", en: "↗ Légifrance" },
   "codex.no_results":  { fr: "Aucune entrée correspondante.", en: "No matching entries." },
+  "codex.all":         { fr: "Toutes", en: "All" },
 
   // ===== Weekly summary =====
   "summary.title":     { fr: "📊 Synthèse de la semaine", en: "📊 Weekly summary" },
@@ -655,6 +656,10 @@ const STRINGS = {
 
   // ===== Today in history =====
   "history_today.label": { fr: "Aujourd'hui dans l'histoire du droit", en: "Today in legal history" },
+  "history_today.more": { fr: "📖 En savoir plus", en: "📖 Learn more" },
+  "history_today.consulting": { fr: "⏳ Consultation...", en: "⏳ Consulting..." },
+  "history_today.deepened": { fr: "✓ Approfondi", en: "✓ Deepened" },
+  "history_today.need_key": { fr: "Configurez une clé API pour activer « En savoir plus ».", en: "Configure an API key to enable “Learn more”." },
 
   // ===== Challenge =====
   "challenge.btn":         { fr: "Défier un ami", en: "Challenge a friend" },

@@ -33,14 +33,39 @@ export function renderCodex(root) {
     class: "text-input codex-search-input",
     placeholder: t("codex.search"),
   });
-  const list = el("div", { class: "codex-list" });
-  search.addEventListener("input", e => render(e.target.value));
   container.appendChild(search);
+
+  // Catégories défilantes (chips horizontales)
+  const allCodes = [...new Set(CODEX_ENTRIES.map(e => e.code))];
+  let activeCode = "__all__";
+  let currentQuery = "";
+  const chipsBar = el("div", { class: "codex-chips" });
+  function renderChips() {
+    while (chipsBar.firstChild) chipsBar.removeChild(chipsBar.firstChild);
+    const mkChip = (code, label) => {
+      const count = code === "__all__"
+        ? CODEX_ENTRIES.length
+        : CODEX_ENTRIES.filter(e => e.code === code).length;
+      const chip = el("button", {
+        class: `codex-chip ${activeCode === code ? "active" : ""}`,
+        onclick: () => { activeCode = code; render(currentQuery); },
+      }, [`${label} `, el("span", { class: "muted" }, [`(${count})`])]);
+      chipsBar.appendChild(chip);
+    };
+    mkChip("__all__", t("codex.all") || "Toutes");
+    allCodes.forEach(c => mkChip(c, c));
+  }
+  renderChips();
+  container.appendChild(chipsBar);
+
+  const list = el("div", { class: "codex-list" });
+  search.addEventListener("input", e => { currentQuery = e.target.value; render(currentQuery); });
   container.appendChild(list);
 
   function render(query = "") {
     while (list.firstChild) list.removeChild(list.firstChild);
-    const filtered = searchCodex(query);
+    let filtered = searchCodex(query);
+    if (activeCode !== "__all__") filtered = filtered.filter(e => e.code === activeCode);
     if (!filtered.length) {
       list.appendChild(el("p", { class: "muted" }, [t("codex.no_results")]));
       return;

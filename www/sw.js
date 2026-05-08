@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v10"; // bumped: 100 historic cases + codex étoffé (~290 entrées)
+const CACHE_NAME = "thejudge-v12"; // bumped: dashboard refonte visuelle + En savoir plus histoire du droit
 const PRECACHE = [
   "./",
   "index.html",
