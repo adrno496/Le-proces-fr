@@ -161,7 +161,7 @@ export async function shareVerdict(caseData, verdict, profile) {
   const blob = await generateVerdictCard(caseData, verdict, profile);
   if (!blob) return false;
   const file = new File([blob], "verdict.png", { type: "image/png" });
-  const data = { files: [file], title: "Mon verdict — Le Procès", text: `Ma sentence dans l'affaire « ${caseData.title} ».` };
+  const data = { files: [file], title: "Mon verdict — The Judge", text: `Ma sentence dans l'affaire « ${caseData.title} ».` };
   if (navigator.canShare && navigator.canShare(data)) {
     try { await navigator.share(data); return true; } catch { /* user cancelled */ }
   }

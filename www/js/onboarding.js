@@ -19,10 +19,12 @@ export function showOnboarding({ onComplete } = {}) {
 
   let step = 0;
   const steps = [
-    { key: "1", emoji: "⚖", chosenMode: null },
-    { key: "2", emoji: "📖", chosenMode: null },
-    { key: "3", emoji: "🏛", chosenMode: null },
-    { key: "4", emoji: "🎯", needsMode: true },
+    { key: "1", emoji: "⚖" },
+    { key: "2", emoji: "📖" },
+    { key: "3", emoji: "🏛", showFeatures: true },
+    { key: "4", emoji: "📈" },
+    { key: "5", emoji: "🔒" },
+    { key: "6", emoji: "🎯", needsMode: true },
   ];
   let chosenMode = "etudiant";
 
@@ -57,6 +59,35 @@ export function showOnboarding({ onComplete } = {}) {
     body.className = "onb-body";
     body.textContent = t(`onb.step.${s.key}.body`);
     card.appendChild(body);
+
+    if (s.showFeatures) {
+      const features = [
+        { icon: "⚖", title: t("onb.feat.daily.title"), body: t("onb.feat.daily.body") },
+        { icon: "🎲", title: t("onb.feat.free.title"),  body: t("onb.feat.free.body") },
+        { icon: "🎬", title: t("onb.feat.saga.title"),  body: t("onb.feat.saga.body") },
+        { icon: "📜", title: t("onb.feat.hist.title"),  body: t("onb.feat.hist.body") },
+        { icon: "📚", title: t("onb.feat.codex.title"), body: t("onb.feat.codex.body") },
+        { icon: "🎯", title: t("onb.feat.guess.title"), body: t("onb.feat.guess.body") },
+      ];
+      const grid = document.createElement("div");
+      grid.className = "onb-feat-grid";
+      features.forEach(f => {
+        const item = document.createElement("div");
+        item.className = "onb-feat-item";
+        const ic = document.createElement("div");
+        ic.className = "onb-feat-icon"; ic.textContent = f.icon;
+        const tx = document.createElement("div");
+        tx.className = "onb-feat-text";
+        const tt = document.createElement("div");
+        tt.className = "onb-feat-title"; tt.textContent = f.title;
+        const bb = document.createElement("div");
+        bb.className = "onb-feat-body"; bb.textContent = f.body;
+        tx.append(tt, bb);
+        item.append(ic, tx);
+        grid.appendChild(item);
+      });
+      card.appendChild(grid);
+    }
 
     if (s.needsMode) {
       const grid = document.createElement("div");

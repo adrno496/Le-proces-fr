@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v15"; // bumped: audit complet — fix dup codex ids, JSON.parse safe, Escape ferme modales, tests +6
+const CACHE_NAME = "thejudge-v18"; // bumped: nom Android → "The Judge" + share label
 const PRECACHE = [
   "./",
   "index.html",
