@@ -1,6 +1,5 @@
 // Judge reputation: derived from verdict patterns. Labels are translated.
 
-import { Storage } from "./storage.js";
 import { t } from "./i18n.js";
 
 export function computeReputation(profile) {

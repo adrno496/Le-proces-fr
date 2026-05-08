@@ -117,8 +117,22 @@ async function renderDashboard(root) {
   const container = el("div", { class: "panel panel-tribunal panel-dashboard" });
   root.appendChild(container);
 
-  // Header banner
+  // Header banner — avec toggle clair/sombre rapide
+  const themeToggle = el("button", {
+    class: "dash-theme-toggle",
+    title: t("dash.theme_toggle"),
+    "aria-label": t("dash.theme_toggle"),
+    onclick: async () => {
+      const cur = Storage.getSettings().theme || "dark";
+      const next = cur === "light" ? "dark" : "light";
+      Storage.saveSettings({ theme: next });
+      const { applyTheme } = await import("./themes.js");
+      applyTheme(next);
+      renderTribunal(root);
+    },
+  }, [(settings.theme || "dark") === "light" ? "🌙" : "☀"]);
   container.appendChild(el("div", { class: "dash-hero" }, [
+    themeToggle,
     el("img", { src: "icons/logo.png", alt: "", class: "dash-logo" }),
     el("div", { class: "dash-hero-text" }, [
       el("h1", {}, [t("profile.master", { name: profile.username || t("settings.username_default") })]),
@@ -204,14 +218,14 @@ async function renderDashboard(root) {
   ]);
   grid.appendChild(questsCard);
 
-  // CARD : Saga en cours
-  const saga = SAGAS[0];
-  const sagaProgress = getSagaProgress(saga.id);
-  const sagaCard = el("button", { class: "dash-card dash-saga", onclick: () => showSagaModal(root) }, [
+  // CARD : Sagas — accès à toutes les sagas multi-actes
+  const totalActs = SAGAS.reduce((s, sg) => s + sg.chapters.length, 0);
+  const completedActs = SAGAS.reduce((s, sg) => s + Math.min(getSagaProgress(sg.id).progress, sg.chapters.length), 0);
+  const sagaCard = el("button", { class: "dash-card dash-saga", onclick: () => showSagasListModal(root) }, [
     el("div", { class: "card-icon" }, ["🎬"]),
-    el("div", { class: "card-title" }, [saga.title]),
-    el("div", { class: "card-body" }, [`Acte ${Math.min(sagaProgress.progress + 1, saga.chapters.length)} / ${saga.chapters.length}`]),
-    el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${(sagaProgress.progress / saga.chapters.length) * 100}%` } })]),
+    el("div", { class: "card-title" }, [t("saga.section_title")]),
+    el("div", { class: "card-body" }, [t("saga.section_summary", { count: SAGAS.length, done: completedActs, total: totalActs })]),
+    el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${(completedActs / totalActs) * 100}%` } })]),
     el("div", { class: "card-cta" }, [t("saga.cta")]),
   ]);
   grid.appendChild(sagaCard);
@@ -394,9 +408,43 @@ function showTwistModal(twist, caseData, container) {
   }
 }
 
+// Modal "Sagas list" — affiche toutes les sagas disponibles avec progression
+function showSagasListModal(root) {
+  const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
+  const modal = el("div", { class: "modal modal-large modal-saga" });
+  modal.appendChild(el("h2", {}, ["🎬 " + t("saga.section_title")]));
+  modal.appendChild(el("p", { class: "muted" }, [t("saga.section_intro")]));
+  const list = el("div", { class: "sagas-list" });
+  SAGAS.forEach((saga) => {
+    const progress = getSagaProgress(saga.id);
+    const done = progress.progress >= saga.chapters.length;
+    const pct = Math.round((progress.progress / saga.chapters.length) * 100);
+    const item = el("button", {
+      class: `saga-item ${done ? "done" : ""}`,
+      onclick: () => { overlay.remove(); showSagaModal(root, saga.id); },
+    }, [
+      el("div", { class: "saga-item-icon" }, [done ? "✓" : "🎬"]),
+      el("div", { class: "saga-item-info" }, [
+        el("div", { class: "saga-item-title" }, [saga.title]),
+        el("div", { class: "saga-item-desc muted" }, [saga.desc]),
+        el("div", { class: "saga-item-progress" }, [
+          el("div", { class: "weekly-mini-bar" }, [el("div", { class: "weekly-mini-fill", style: { width: `${pct}%` } })]),
+          el("span", { class: "saga-item-pct" }, [`${progress.progress} / ${saga.chapters.length}`]),
+        ]),
+      ]),
+      el("span", { class: "saga-item-arrow" }, ["›"]),
+    ]);
+    list.appendChild(item);
+  });
+  modal.appendChild(list);
+  modal.appendChild(el("button", { class: "btn-secondary", onclick: () => overlay.remove() }, [t("btn.close")]));
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
 // Modal "Saga"
-function showSagaModal(root) {
-  const saga = SAGAS[0];
+function showSagaModal(root, sagaId) {
+  const saga = sagaId ? (SAGAS.find(s => s.id === sagaId) || SAGAS[0]) : SAGAS[0];
   const progress = getSagaProgress(saga.id);
   const overlay = el("div", { class: "modal-overlay", onclick: e => { if (e.target.classList.contains("modal-overlay")) overlay.remove(); } });
   const modal = el("div", { class: "modal modal-large modal-saga" });
@@ -731,7 +779,13 @@ function renderCaseHeader(container, caseData, today, root, ctx) {
       el("span", { class: "case-meta-item" }, [`${t("case.difficulty")} ${difficultyDots(caseData.difficulty || 3)}`]),
       caseData.multiplier && caseData.multiplier !== 1 ? el("span", { class: "case-meta-item gold" }, [`× ${caseData.multiplier} XP`]) : null,
     ]),
-    el("div", { class: "case-context" }, [caseData.context]),
+    (() => {
+      const ctxNode = el("div", { class: "case-context" });
+      const frag = decorateText(caseData.context, (term, def) => showGlossaryPopup(term, def));
+      if (frag) ctxNode.appendChild(frag);
+      else ctxNode.textContent = caseData.context;
+      return ctxNode;
+    })(),
   ]);
   container.appendChild(header);
 

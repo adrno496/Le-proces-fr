@@ -175,7 +175,7 @@ export const CODEX_ENTRIES = [
   { id: "cc-2224",    code: "Civil", label: "Article 2224 (Prescription)", body: "Les actions personnelles ou mobilières se prescrivent par cinq ans à compter du jour où le titulaire a connu les faits." },
   { id: "cc-2232",    code: "Civil", label: "Article 2232 (Délai butoir)", body: "Le report du point de départ, la suspension ou l'interruption de la prescription ne peut avoir pour effet de porter le délai de la prescription extinctive au-delà de vingt ans." },
   { id: "cc-1304",    code: "Civil", label: "Article 1304 (Conditions)", body: "L'obligation est conditionnelle lorsqu'elle dépend d'un événement futur et incertain." },
-  { id: "cc-1641",    code: "Civil", label: "Article 1641 bis (Garantie biens d'occasion)", body: "Le vendeur est tenu de la garantie à raison des défauts cachés y compris pour les biens d'occasion sauf clause expresse." },
+  { id: "cc-1641-bis", code: "Civil", label: "Article 1641 bis (Garantie biens d'occasion)", body: "Le vendeur est tenu de la garantie à raison des défauts cachés y compris pour les biens d'occasion sauf clause expresse." },
 
   // Famille supplémentaire
   { id: "cc-371-1",   code: "Famille", label: "Article 371-1 (Autorité parentale)", body: "L'autorité parentale est un ensemble de droits et de devoirs ayant pour finalité l'intérêt de l'enfant. Elle appartient aux parents jusqu'à la majorité." },
@@ -210,7 +210,7 @@ export const CODEX_ENTRIES = [
 
   // Routier supplémentaire
   { id: "cr-l234-1",  code: "Routier", label: "Article L234-1 (Conduite en état d'ivresse)", body: "Le fait de conduire un véhicule sous l'empire d'un état alcoolique caractérisé est puni de deux ans d'emprisonnement et 4 500 euros d'amende." },
-  { id: "cr-l324-2",  code: "Routier", label: "Article L324-2 (Défaut d'assurance)", body: "Le fait de conduire un véhicule sans être couvert par une assurance est puni de 3 750 euros d'amende et de la suspension du permis." },
+  { id: "cr-l324-2-bis", code: "Routier", label: "Article L324-2 (Défaut d'assurance — détaillé)", body: "Le fait de conduire un véhicule sans être couvert par une assurance est puni de 3 750 euros d'amende et de la suspension du permis." },
   { id: "cr-r412-6",  code: "Routier", label: "Article R412-6 (Téléphone au volant)", body: "L'usage d'un téléphone tenu en main par le conducteur est interdit. Sanction : 135 € + retrait de 3 points." },
   { id: "cr-r413-14", code: "Routier", label: "Article R413-14 (Excès de vitesse)", body: "Le dépassement de la vitesse maximale autorisée constitue une contravention dont la classe varie selon le dépassement." },
 

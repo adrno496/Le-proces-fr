@@ -656,6 +656,7 @@ const STRINGS = {
 
   // ===== Today in history =====
   "history_today.label": { fr: "Aujourd'hui dans l'histoire du droit", en: "Today in legal history" },
+  "dash.theme_toggle": { fr: "Basculer mode clair / sombre", en: "Toggle light / dark mode" },
   "history_today.more": { fr: "📖 En savoir plus", en: "📖 Learn more" },
   "history_today.consulting": { fr: "⏳ Consultation...", en: "⏳ Consulting..." },
   "history_today.deepened": { fr: "✓ Approfondi", en: "✓ Deepened" },
@@ -672,6 +673,9 @@ const STRINGS = {
   // ===== Saga =====
   "saga.cta":              { fr: "Continuer →", en: "Continue →" },
   "saga.play":             { fr: "Jouer cet acte", en: "Play this act" },
+  "saga.section_title":    { fr: "Affaires multi-actes", en: "Multi-act cases" },
+  "saga.section_summary":  { fr: "{count} sagas · {done}/{total} actes", en: "{count} sagas · {done}/{total} acts" },
+  "saga.section_intro":    { fr: "Chaque saga regroupe 5 actes liés. Vos verdicts façonnent la trajectoire du personnage.", en: "Each saga groups 5 connected acts. Your verdicts shape the character's path." },
 
   // ===== Rebondissement IA =====
   "twist.generic":         { fr: "⚡ REBONDISSEMENT", en: "⚡ PLOT TWIST" },

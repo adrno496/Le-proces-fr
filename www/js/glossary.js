@@ -96,37 +96,78 @@ export const GLOSSARY = {
 let _termRegex = null;
 function buildRegex() {
   if (_termRegex) return _termRegex;
-  // Sort longest first to avoid partial matches
   const terms = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
   const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   _termRegex = new RegExp(`\\b(${escaped.join("|")})\\b`, "gi");
   return _termRegex;
 }
 
+// Regex pour détecter une référence d'article : « article 311-1 », « article L1232-1 », « article R415-7 », « art. 1240 », etc.
+// Capture le numéro d'article (avec lettre L/R/A/D optionnelle, chiffres, tirets, alinéas).
+const ARTICLE_REGEX = /\b(?:articles?|art\.)\s+([LRAD]?\.?\s?\d+(?:[-\s]\d+)*(?:\s?bis|ter|quater)?)\b/gi;
+
+// Cherche dans le codex une entrée correspondant à un numéro d'article.
+function findCodexByArticle(articleNum) {
+  const norm = articleNum.replace(/\s+/g, "").replace(/\./g, "").toUpperCase();
+  // Lazy import to avoid circular deps in tests
+  let entries = null;
+  try {
+    if (typeof window !== "undefined" && window._leprocesCodexEntries) {
+      entries = window._leprocesCodexEntries;
+    }
+  } catch {}
+  if (!entries) return null;
+  return entries.find(e => {
+    const id = e.id.replace(/[-_]/g, "").toUpperCase();
+    const label = e.label.replace(/\s+/g, "").toUpperCase();
+    return id.includes(norm) || label.includes(norm);
+  }) || null;
+}
+
 // Decorate a text node : returns a fragment with <span class="glossary-term">...</span> for matched terms.
 export function decorateText(text, onClick) {
   if (typeof document === "undefined") return null;
   const frag = document.createDocumentFragment();
-  const regex = buildRegex();
-  let lastIndex = 0;
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-    }
+
+  // 1ère passe : marquer toutes les correspondances (glossaire + articles)
+  const matches = [];
+  const termRegex = buildRegex();
+  let m;
+  termRegex.lastIndex = 0;
+  while ((m = termRegex.exec(text)) !== null) {
+    const term = m[0].toLowerCase();
+    const def = GLOSSARY[term] || GLOSSARY[Object.keys(GLOSSARY).find(k => k.toLowerCase() === term)];
+    if (def) matches.push({ start: m.index, end: m.index + m[0].length, label: m[0], def, type: "term" });
+  }
+  ARTICLE_REGEX.lastIndex = 0;
+  while ((m = ARTICLE_REGEX.exec(text)) !== null) {
+    const num = m[1];
+    const codex = findCodexByArticle(num);
+    const def = codex ? codex.body : `Article ${num} — référence légale (cliquez pour rechercher dans le codex).`;
+    matches.push({ start: m.index, end: m.index + m[0].length, label: m[0], def, type: "article", codex });
+  }
+  // Trier et déduper (priorité au plus long en cas de chevauchement)
+  matches.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+  const filtered = [];
+  let lastEnd = 0;
+  for (const mt of matches) {
+    if (mt.start >= lastEnd) { filtered.push(mt); lastEnd = mt.end; }
+  }
+
+  let cursor = 0;
+  for (const mt of filtered) {
+    if (mt.start > cursor) frag.appendChild(document.createTextNode(text.slice(cursor, mt.start)));
     const span = document.createElement("span");
-    span.className = "glossary-term";
-    span.textContent = match[0];
+    span.className = mt.type === "article" ? "glossary-term glossary-article" : "glossary-term";
+    span.textContent = mt.label;
     span.tabIndex = 0;
     span.setAttribute("role", "button");
-    const term = match[0].toLowerCase();
-    const def = GLOSSARY[term] || GLOSSARY[Object.keys(GLOSSARY).find(k => k.toLowerCase() === term)];
-    span.addEventListener("click", (e) => { e.stopPropagation(); onClick?.(match[0], def); });
-    span.addEventListener("keydown", (e) => { if (e.key === "Enter") onClick?.(match[0], def); });
+    span.addEventListener("click", (e) => { e.stopPropagation(); onClick?.(mt.label, mt.def, mt); });
+    span.addEventListener("keydown", (e) => { if (e.key === "Enter") onClick?.(mt.label, mt.def, mt); });
     frag.appendChild(span);
-    lastIndex = match.index + match[0].length;
+    cursor = mt.end;
   }
-  if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+  if (cursor < text.length) frag.appendChild(document.createTextNode(text.slice(cursor)));
   return frag;
 }
 

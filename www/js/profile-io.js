@@ -40,8 +40,10 @@ export async function downloadProfileJSON() {
 
 export async function importProfile(file) {
   const text = await file.text();
-  const data = JSON.parse(text);
-  if (!data.localStorage) throw new Error("Invalid profile file");
+  let data;
+  try { data = JSON.parse(text); }
+  catch { throw new Error("Fichier corrompu : JSON invalide."); }
+  if (!data || !data.localStorage) throw new Error("Invalid profile file");
   if (typeof localStorage !== "undefined") {
     for (const [k, v] of Object.entries(data.localStorage)) {
       try { localStorage.setItem(k, v); } catch {}

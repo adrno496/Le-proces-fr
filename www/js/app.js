@@ -161,6 +161,11 @@ export function refreshHardRefreshButton() {
 async function bootstrap() {
   await Storage.init();
   Storage.resetSessionCost();
+  // Exposer les entrées du codex au glossaire (résolution articles cliquables)
+  try {
+    const { CODEX_ENTRIES } = await import("./codex.js");
+    if (typeof window !== "undefined") window._leprocesCodexEntries = CODEX_ENTRIES;
+  } catch {}
   // Initialize language (auto-detect from browser if not set)
   setLang(Storage.getSettings().language || getLang());
   renderBottomNav();
@@ -185,6 +190,14 @@ if (typeof window !== "undefined") {
       const root = document.getElementById("panel-root");
       if (root) root.innerHTML = `<div class="error-screen"><h2>Erreur de démarrage</h2><pre>${err.message}</pre></div>`;
     });
+  });
+  // Touche Échap : ferme la dernière modale ouverte / popup glossaire
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const popup = document.getElementById("glossary-popup");
+    if (popup) { popup.remove(); return; }
+    const overlays = document.querySelectorAll(".modal-overlay");
+    if (overlays.length) overlays[overlays.length - 1].remove();
   });
   // expose for debugging
   window.LeProces = { Storage, navigate, toast };

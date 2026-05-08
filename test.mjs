@@ -373,4 +373,66 @@ test("case-engine: ACHIEVEMENTS list has 12 visible entries (and 30+ hidden)", (
   assert.ok(hidden.length >= 30, `expected >=30 hidden, got ${hidden.length}`);
 });
 
+// ===== Volume guards on user-visible corpora (avoid silent regressions) =====
+test("corpus: fallback-pool has 18 categories and >=300 cases total", async () => {
+  const { FALLBACK_POOL } = await import("./www/js/fallback-pool.js");
+  const cats = Object.keys(FALLBACK_POOL);
+  assert.equal(cats.length, 18, `expected 18 categories, got ${cats.length}`);
+  const total = cats.reduce((s, k) => s + FALLBACK_POOL[k].length, 0);
+  assert.ok(total >= 300, `expected >=300 fallback cases, got ${total}`);
+});
+
+test("corpus: historic cases >=100", async () => {
+  const { HISTORIC_CASES } = await import("./www/js/historic-cases.js");
+  assert.ok(HISTORIC_CASES.length >= 100, `expected >=100 historic, got ${HISTORIC_CASES.length}`);
+  // unique ids
+  const ids = HISTORIC_CASES.map(c => c.id);
+  assert.equal(new Set(ids).size, ids.length, "duplicate historic ids");
+});
+
+test("corpus: guess-sentence has >=100 cases", async () => {
+  const { GUESS_CASES } = await import("./www/js/guess-sentence.js");
+  assert.ok(GUESS_CASES.length >= 100, `expected >=100 guess cases, got ${GUESS_CASES.length}`);
+  const ids = GUESS_CASES.map(c => c.id);
+  assert.equal(new Set(ids).size, ids.length, "duplicate guess ids");
+  // each case has exactly 1 correct option
+  for (const g of GUESS_CASES) {
+    const correct = g.options.filter(o => o.correctIdx === true).length;
+    assert.equal(correct, 1, `case ${g.id} should have exactly 1 correct option`);
+  }
+});
+
+test("corpus: sagas have unique ids and 5 chapters each", async () => {
+  const { SAGAS } = await import("./www/js/sagas.js");
+  assert.ok(SAGAS.length >= 11, `expected >=11 sagas, got ${SAGAS.length}`);
+  const ids = SAGAS.map(s => s.id);
+  assert.equal(new Set(ids).size, ids.length, "duplicate saga ids");
+  for (const s of SAGAS) {
+    assert.equal(s.chapters.length, 5, `${s.id} should have 5 chapters`);
+  }
+});
+
+test("corpus: codex entries have unique ids", async () => {
+  const { CODEX_ENTRIES } = await import("./www/js/codex.js");
+  const ids = CODEX_ENTRIES.map(e => e.id);
+  assert.equal(new Set(ids).size, ids.length, "duplicate codex ids");
+  assert.ok(CODEX_ENTRIES.length >= 200, `expected >=200 codex entries, got ${CODEX_ENTRIES.length}`);
+});
+
+test("glossary: decorateText detects article references", async () => {
+  // Force browser-like document for the test
+  if (typeof globalThis.document === "undefined") {
+    const { JSDOM } = await import("jsdom").catch(() => ({ JSDOM: null }));
+    if (!JSDOM) return; // skip if jsdom unavailable
+    const dom = new JSDOM();
+    globalThis.document = dom.window.document;
+    globalThis.window = dom.window;
+  }
+  const { decorateText } = await import("./www/js/glossary.js");
+  const frag = decorateText("Voir l'article 1240 du Code civil.", () => {});
+  if (!frag) return; // jsdom-less env
+  const html = (() => { const d = document.createElement("div"); d.appendChild(frag); return d.innerHTML; })();
+  assert.ok(html.includes("glossary-article"), "article 1240 should be detected as clickable");
+});
+
 console.log("\n✓ All tests defined.");

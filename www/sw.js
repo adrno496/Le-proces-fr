@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v12"; // bumped: dashboard refonte visuelle + En savoir plus histoire du droit
+const CACHE_NAME = "thejudge-v15"; // bumped: audit complet — fix dup codex ids, JSON.parse safe, Escape ferme modales, tests +6
 const PRECACHE = [
   "./",
   "index.html",
@@ -13,6 +13,7 @@ const PRECACHE = [
   "icons/favicon-192.png",
   "icons/favicon-512.png",
   "icons/apple-touch-icon.png",
+  "icons/fond.png",
   "sounds/marteau.mp3",
   "sounds/whispers.mp3",
 ];
