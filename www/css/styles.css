@@ -518,6 +518,28 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .estimate-verdict { text-align: center; font-size: 1.05rem; margin: 12px 0 4px; font-weight: 600; }
 .estimate-note { text-align: center; color: var(--text-tertiary); font-size: 0.8rem; }
 
+.freemium-banner {
+  background: var(--bg-surface);
+  border: 1px solid var(--innocent);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.freemium-banner-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--innocent);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.freemium-banner-text { display: flex; flex-direction: column; gap: 2px; }
+.freemium-banner-text strong { color: var(--text-primary); font-size: 0.95rem; }
+.freemium-banner-text .muted { font-size: 0.8rem; }
+
 .avatar-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
 .avatar-btn {
   background: var(--bg-surface);

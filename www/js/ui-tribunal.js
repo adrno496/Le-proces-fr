@@ -8,6 +8,7 @@ import {
   getDailyCase, generateFreeCase, askWitness, evaluateVerdict,
   computeXpGain, checkAchievements, ACHIEVEMENTS, CATEGORY_LABELS, CATEGORY_ICONS,
 } from "./case-engine.js";
+import { hasAI } from "./ai-client.js";
 import { getTodayDateStr, formatDate, caseNumber } from "./format.js";
 import { getCurrentTier, checkPromotion, tierProgress } from "./career.js";
 import { unlockForCategory, entryById } from "./codex.js";
@@ -170,7 +171,7 @@ async function renderDashboard(root) {
     el("div", { class: "card-body" }, [
       verdictToday
         ? `${t("card.daily.judged")} · ${verdictToday.verdict === "guilty" ? t("card.daily.guilty") : t("card.daily.innocent")}`
-        : settings.apiKey ? t("card.daily.ai") : t("card.daily.offline"),
+        : hasAI(settings) ? t("card.daily.ai") : t("card.daily.offline"),
     ]),
     el("div", { class: "card-cta" }, [verdictToday ? t("card.daily.review") : t("card.daily.cta")]),
   ]);
@@ -342,8 +343,8 @@ async function renderDashboard(root) {
     ]));
   }
 
-  // No API key warning
-  if (!settings.apiKey) {
+  // No AI configured warning (neither bundled nor BYOK)
+  if (!hasAI(settings)) {
     container.appendChild(el("div", { class: "dash-warning" }, [
       el("strong", {}, ["ℹ " + t("nav.settings")]),
       el("p", {}, [t("app.no_key_msg")]),
@@ -899,7 +900,7 @@ function renderEvidenceWitnessAndVerdict(container, caseData, today, root, ctx) 
     try {
       const settings = Storage.getSettings();
       let answer;
-      if (settings.apiKey) {
+      if (hasAI(settings)) {
         const enrichedCase = { ...caseData, witnessProfile: activeWitness };
         const res = await askWitness(enrichedCase, q, qaState);
         answer = res.answer;

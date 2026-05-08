@@ -98,6 +98,16 @@ export function renderSettings(root) {
     clear(apiKeyContainer);
     if (!selectedProvider) return;
     const p = PROVIDERS[selectedProvider];
+    if (p.bundled) {
+      apiKeyContainer.appendChild(el("div", { class: "freemium-banner" }, [
+        el("div", { class: "freemium-banner-icon" }, ["✓"]),
+        el("div", { class: "freemium-banner-text" }, [
+          el("strong", {}, ["Aucune configuration nécessaire"]),
+          el("div", { class: "muted" }, [p.apiHint || ""]),
+        ]),
+      ]));
+      return;
+    }
     apiKeyContainer.appendChild(el("div", { class: "step-label" }, [t("settings.step.api_key", { provider: p.name })]));
     const input = el("input", {
       type: "password",
@@ -208,9 +218,10 @@ export function renderSettings(root) {
   // Step 5: save
   const saveBtn = el("button", { class: "btn-primary btn-big", onclick: async () => {
     if (!selectedProvider) return toast(t("settings.step.provider"), "error");
-    if (!apiKey) return toast(t("settings.step.api_key", { provider: "" }), "error");
     if (!selectedModel) return toast(t("settings.step.model"), "error");
-    Storage.saveSettings({ provider: selectedProvider, model: selectedModel, apiKey });
+    const isBundled = PROVIDERS[selectedProvider]?.bundled;
+    if (!isBundled && !apiKey) return toast(t("settings.step.api_key", { provider: "" }), "error");
+    Storage.saveSettings({ provider: selectedProvider, model: selectedModel, apiKey: isBundled ? "" : apiKey });
     toast(t("settings.saved"), "success");
     setTimeout(() => navigate("tribunal"), 400);
   }}, [t("settings.save")]);

@@ -4,7 +4,24 @@ import { Storage } from "./storage.js";
 import { getTodayDateStr } from "./format.js";
 import { t } from "./i18n.js";
 
+// Cloudflare Worker proxy URL for the bundled "freemium" provider.
+// After deploying worker/, replace YOUR_ACCOUNT below with the URL returned by `wrangler deploy`.
+export const FREEMIUM_PROXY_URL = "https://leproces-proxy.proces.workers.dev";
+
 export const PROVIDERS = {
+  freemium: {
+    name: "Le Procès — Gratuit",
+    logo: "🎁",
+    baseUrl: FREEMIUM_PROXY_URL + "/v1",
+    apiUrl: null,
+    apiHint: "Aucune configuration · 30 messages/jour offerts",
+    format: "openai",
+    bundled: true,
+    models: [
+      { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B (rapide)", contextWindow: 128000, priceIn: 0, priceOut: 0, speed: "ultra-rapide", quality: "bon", free: true },
+      { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B (qualité)", contextWindow: 128000, priceIn: 0, priceOut: 0, speed: "rapide", quality: "excellent", free: true },
+    ],
+  },
   groq: {
     name: "Groq",
     logo: "⚡",
@@ -83,8 +100,22 @@ export function getModel(providerId, modelId) {
   return p.models.find(m => m.id === modelId) || null;
 }
 
+// True if the user has a working AI configured — either a bundled (no-key) provider, or BYOK with a key.
+export function hasAI(settings) {
+  if (!settings || !settings.provider || !settings.model) return false;
+  const p = PROVIDERS[settings.provider];
+  if (!p) return false;
+  if (p.bundled) return true;
+  return Boolean(settings.apiKey);
+}
+
 export function buildHeaders(providerId, apiKey) {
   switch (providerId) {
+    case "freemium":
+      return {
+        "Content-Type": "application/json",
+        "X-Device-Id": Storage.getDeviceId(),
+      };
     case "anthropic":
       return {
         "Content-Type": "application/json",
@@ -173,12 +204,13 @@ export function errorMessage(status) {
 
 export async function callAI(messages, { systemPrompt, maxTokens = 1000, signal } = {}) {
   const settings = Storage.getSettings();
-  if (!settings.apiKey) throw new Error(t("ai.error.no_key"));
   if (!settings.provider || !settings.model) throw new Error(t("ai.error.no_model"));
 
   const provider = PROVIDERS[settings.provider];
   const model = getModel(settings.provider, settings.model);
   if (!provider || !model) throw new Error("Provider/modèle inconnu.");
+
+  if (!provider.bundled && !settings.apiKey) throw new Error(t("ai.error.no_key"));
 
   const { url, body } = buildRequestBody(settings.provider, settings.model, messages, systemPrompt, maxTokens);
   const headers = buildHeaders(settings.provider, settings.apiKey);
@@ -211,16 +243,27 @@ export async function callAI(messages, { systemPrompt, maxTokens = 1000, signal 
 
   if (!res.ok) {
     let detail = "";
+    let parsedError = null;
     try {
       const txt = await res.text();
       // OpenRouter renvoie souvent du JSON {error: {message, code}} — on extrait
       try {
         const j = JSON.parse(txt);
+        parsedError = j.error || null;
         if (j.error?.message) detail = j.error.message;
         else if (j.message) detail = j.message;
         else detail = txt.slice(0, 400);
       } catch { detail = txt.slice(0, 400); }
     } catch {}
+    // Hint spécifique freemium quota
+    if (settings.provider === "freemium" && parsedError?.code === "quota_exceeded") {
+      const e = new Error(detail || "Quota gratuit atteint. Réessaie demain ou ajoute ta clé API dans Réglages.");
+      e.status = 429;
+      e.code = "quota_exceeded";
+      e.quota = parsedError.quota;
+      e.reset = parsedError.reset;
+      throw e;
+    }
     // Hint spécifique OpenRouter free models
     let extraHint = "";
     if (settings.provider === "openrouter" && model?.free) {

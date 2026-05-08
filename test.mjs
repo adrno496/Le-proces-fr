@@ -139,8 +139,8 @@ import {
   estimateCostFor100Messages, errorMessage, callAI,
 } from "./www/js/ai-client.js";
 
-test("ai: PROVIDERS has 5 providers", () => {
-  assert.deepEqual(Object.keys(PROVIDERS).sort(), ["anthropic", "groq", "mistral", "openai", "openrouter"]);
+test("ai: PROVIDERS has 6 providers including freemium", () => {
+  assert.deepEqual(Object.keys(PROVIDERS).sort(), ["anthropic", "freemium", "groq", "mistral", "openai", "openrouter"]);
 });
 
 test("ai: every model has price fields", () => {
@@ -233,8 +233,9 @@ test("ai: getModel returns null for unknown", () => {
   assert.ok(getModel("groq", "llama-3.1-8b-instant"));
 });
 
-test("ai: callAI throws when no API key configured", async () => {
+test("ai: callAI throws when no API key configured for BYOK provider", async () => {
   Storage._resetAll();
+  Storage.saveSettings({ provider: "groq", model: "llama-3.1-8b-instant", apiKey: "" });
   await assert.rejects(() => callAI([{ role: "user", content: "hi" }]), /clé API/i);
 });
 
@@ -433,6 +434,56 @@ test("glossary: decorateText detects article references", async () => {
   if (!frag) return; // jsdom-less env
   const html = (() => { const d = document.createElement("div"); d.appendChild(frag); return d.innerHTML; })();
   assert.ok(html.includes("glossary-article"), "article 1240 should be detected as clickable");
+});
+
+test("storage: getDeviceId is idempotent and UUID-shaped", () => {
+  Storage._resetAll();
+  const id1 = Storage.getDeviceId();
+  const id2 = Storage.getDeviceId();
+  assert.equal(id1, id2, "should return same id across calls");
+  assert.match(id1, /^[a-f0-9-]{36}$/, "should be a UUID v4");
+});
+
+test("storage: getDeviceId regenerates after reset", () => {
+  Storage._resetAll();
+  const id1 = Storage.getDeviceId();
+  Storage._resetAll();
+  const id2 = Storage.getDeviceId();
+  assert.notEqual(id1, id2, "fresh reset should produce a new id");
+});
+
+test("ai-client: freemium provider is registered with bundled flag", async () => {
+  const { PROVIDERS } = await import("./www/js/ai-client.js");
+  assert.ok(PROVIDERS.freemium, "freemium provider should exist");
+  assert.equal(PROVIDERS.freemium.bundled, true);
+  assert.equal(PROVIDERS.freemium.format, "openai");
+  const ids = PROVIDERS.freemium.models.map(m => m.id);
+  assert.ok(ids.includes("llama-3.1-8b-instant"));
+  assert.ok(ids.includes("llama-3.3-70b-versatile"));
+  for (const m of PROVIDERS.freemium.models) {
+    assert.equal(m.priceIn, 0);
+    assert.equal(m.priceOut, 0);
+    assert.equal(m.free, true);
+  }
+});
+
+test("ai-client: hasAI returns true for bundled provider without key", async () => {
+  const { hasAI } = await import("./www/js/ai-client.js");
+  assert.equal(hasAI({ provider: "freemium", model: "llama-3.1-8b-instant", apiKey: "" }), true);
+  assert.equal(hasAI({ provider: "groq", model: "llama-3.1-8b-instant", apiKey: "" }), false);
+  assert.equal(hasAI({ provider: "groq", model: "llama-3.1-8b-instant", apiKey: "k" }), true);
+  assert.equal(hasAI(null), false);
+  assert.equal(hasAI({}), false);
+  assert.equal(hasAI({ provider: "unknown", model: "x", apiKey: "k" }), false);
+});
+
+test("ai-client: buildHeaders for freemium sends X-Device-Id, no Authorization", async () => {
+  Storage._resetAll();
+  const { buildHeaders } = await import("./www/js/ai-client.js");
+  const h = buildHeaders("freemium", "");
+  assert.equal(h["Content-Type"], "application/json");
+  assert.match(h["X-Device-Id"], /^[a-f0-9-]{36}$/);
+  assert.equal(h["Authorization"], undefined);
 });
 
 console.log("\n✓ All tests defined.");

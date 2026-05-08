@@ -2,7 +2,7 @@
 // underlying truth + lawyer quality + scoring of judge alignment.
 
 import { Storage } from "./storage.js";
-import { callAI } from "./ai-client.js";
+import { callAI, hasAI } from "./ai-client.js";
 import { getTodayDateStr, dayOfYear, caseNumber } from "./format.js";
 import { maxAllowedDifficulty } from "./career.js";
 import { reputationFlavor } from "./reputation.js";
@@ -387,7 +387,7 @@ export async function getDailyCase({ forceRegenerate = false } = {}) {
   // Career-gated difficulty
   const maxDiff = maxAllowedDifficulty(profile);
   const special = rollSpecial(profile);
-  const baseCase = settings.apiKey
+  const baseCase = hasAI(settings)
     ? await generateCase(category, today)
     : getFallbackCase(category, today);
   if (baseCase.difficulty > maxDiff) baseCase.difficulty = maxDiff;
@@ -433,7 +433,7 @@ export async function generateFreeCase({ category } = {}) {
   const cat = category || cats[Math.floor(Math.random() * cats.length)];
   const profile = Storage.getProfile();
   const seed = `free-${Date.now()}`;
-  const baseCase = settings.apiKey
+  const baseCase = hasAI(settings)
     ? await generateCase(cat, getTodayDateStr())
     : getFallbackCase(cat, seed);
   if (baseCase.difficulty > maxAllowedDifficulty(profile)) baseCase.difficulty = maxAllowedDifficulty(profile);

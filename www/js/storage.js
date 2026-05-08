@@ -20,7 +20,21 @@ const KEYS = {
   quests: "leproces_quests",
   summary_seen: "leproces_summary_seen",
   narrative_seen: "leproces_narrative_seen",
+  device_id: "leproces_device_id",
 };
+
+// UUID v4 — works in browser (crypto.randomUUID) and Node ≥ 16 with global crypto.
+function generateUuid() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback for older runtimes — RFC4122 v4 via Math.random.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 function lsGet(key) {
   if (IS_BROWSER) {
@@ -332,6 +346,16 @@ export const Storage = {
   },
   setKey(name, value) {
     return lsSet(KEYS[name] || name, value);
+  },
+
+  // Device ID — persistent UUID generated once, used for freemium proxy rate limiting.
+  getDeviceId() {
+    let id = lsGet(KEYS.device_id);
+    if (typeof id !== "string" || id.length < 8) {
+      id = generateUuid();
+      lsSet(KEYS.device_id, id);
+    }
+    return id;
   },
 
   // Free audience rate-limit (prevent runaway IA cost)

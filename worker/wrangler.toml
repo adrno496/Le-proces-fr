@@ -1,0 +1,17 @@
+name = "leproces-proxy"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# KV binding for per-device daily quota counter.
+# Run: npx wrangler kv namespace create QUOTA
+# Then paste the returned id below.
+[[kv_namespaces]]
+binding = "QUOTA"
+id = "6cd35d04c705412b9b1967dcfbc998ec"
+
+[vars]
+DAILY_QUOTA = "30"
+
+# Secret (do NOT commit). Set via:
+#   npx wrangler secret put GROQ_API_KEY
+# Get a key at https://console.groq.com/keys (free, no credit card).
