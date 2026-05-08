@@ -330,29 +330,163 @@ export const CODEX_ENTRIES = [
   { id: "esp-droit_eur", code: "Branche", label: "Droit de l'Union européenne", body: "Corpus juridique propre à l'UE, composé du droit primaire (traités) et dérivé (règlements, directives)." },
   { id: "esp-droit_social", code: "Branche", label: "Droit social", body: "Englobe le droit du travail et le droit de la sécurité sociale." },
   { id: "esp-droit_const", code: "Branche", label: "Droit constitutionnel", body: "Branche régissant l'organisation des pouvoirs publics et garantissant les droits fondamentaux." },
+
+  // ====== Étoffement vers 300 entrées — articles cités dans le pool 300 + procès historiques ======
+  // Pénal supplémentaire
+  { id: "cp-226-1",   code: "Pénal", label: "Article 226-1 (Atteinte vie privée)", body: "Est puni d'un an et 45 000 € le fait de porter atteinte à l'intimité de la vie privée d'autrui en captant ou diffusant, sans consentement, l'image d'une personne dans un lieu privé." },
+  { id: "cp-222-33-2-2", code: "Pénal", label: "Article 222-33-2-2 (Cyberharcèlement)", body: "Le harcèlement par moyens numériques (publications, messages répétés portant atteinte aux conditions de vie de la victime) est puni de 2 à 3 ans selon les circonstances aggravantes." },
+  { id: "cp-434-10", code: "Pénal", label: "Article 434-10 (Délit de fuite)", body: "Le fait pour un conducteur, sachant qu'il vient de causer un accident, de ne pas s'arrêter et tenter d'échapper à la responsabilité, est puni de 3 ans et 75 000 €." },
+  { id: "cp-322-2",  code: "Pénal", label: "Article 322-2 (Dégradation aggravée)", body: "La dégradation d'un bien classé monument historique ou patrimoine est punie de 7 500 € à 7 ans selon la gravité et les circonstances." },
+  { id: "cp-432-12", code: "Pénal", label: "Article 432-12 (Prise illégale d'intérêts)", body: "Le fait par une personne dépositaire de l'autorité publique de prendre un intérêt dans une entreprise dont elle a la surveillance est puni de 5 ans." },
+  { id: "cp-313-3",  code: "Pénal", label: "Article 313-3 (Abus de faiblesse)", body: "L'abus frauduleux de l'état d'ignorance ou de la situation de faiblesse d'une personne particulièrement vulnérable est puni de 3 ans." },
+
+  // Civil supplémentaire — voisinage et propriété
+  { id: "cc-544",    code: "Civil", label: "Article 544 (Droit de propriété)", body: "La propriété est le droit de jouir et disposer des choses de la manière la plus absolue, pourvu qu'on n'en fasse pas un usage prohibé par les lois." },
+  { id: "cc-651",    code: "Civil", label: "Article 651 (Servitude légale)", body: "La loi assujettit les propriétaires à différentes obligations l'un à l'égard de l'autre, indépendamment de toute convention." },
+  { id: "cc-671",    code: "Civil", label: "Article 671 (Distance plantations)", body: "Il n'est permis d'avoir des arbres haute tige qu'à 2 m de la limite séparative, et 50 cm pour les autres plantations." },
+  { id: "cc-673",    code: "Civil", label: "Article 673 (Élagage forcé)", body: "Celui sur la propriété duquel avancent les branches des arbres du voisin peut contraindre celui-ci à les couper. Les fruits tombés naturellement lui appartiennent." },
+  { id: "cc-691",    code: "Civil", label: "Article 691 (Servitudes continues)", body: "Les servitudes continues non apparentes et les servitudes discontinues, apparentes ou non, ne peuvent s'établir que par titres, non par possession." },
+  { id: "cc-706",    code: "Civil", label: "Article 706 (Extinction servitude)", body: "La servitude est éteinte par le non-usage pendant trente ans." },
+  { id: "cc-1137",   code: "Civil", label: "Article 1137 (Dol)", body: "Le dol est le fait pour un contractant d'obtenir le consentement de l'autre par des manœuvres ou des mensonges. Constitue également un dol la dissimulation intentionnelle." },
+  { id: "cc-trouble_voisinage", code: "Civil", label: "Trouble anormal de voisinage", body: "Création prétorienne (jurisprudence constante depuis 1844) : nul ne doit causer à autrui un trouble anormal de voisinage. Critères : anormalité, durée, caractère continu." },
+
+  // Famille supplémentaire
+  { id: "cc-373-2", code: "Famille", label: "Article 373-2 (Autorité parentale conjointe)", body: "La séparation des parents est sans incidence sur les règles de dévolution de l'exercice de l'autorité parentale. Chaque parent doit maintenir des relations personnelles avec l'enfant et respecter les liens de l'autre." },
+  { id: "cc-371-4", code: "Famille", label: "Article 371-4 (Liens grands-parents)", body: "L'enfant a le droit d'entretenir des relations personnelles avec ses ascendants. Seul l'intérêt de l'enfant peut faire obstacle à l'exercice de ce droit." },
+  { id: "cc-389-3", code: "Famille", label: "Article 389-3 (Administration légale)", body: "L'administrateur légal représente le mineur dans tous les actes civils, sauf les cas dans lesquels la loi ou l'usage autorise les mineurs à agir eux-mêmes." },
+  { id: "cc-413-2", code: "Famille", label: "Article 413-2 (Émancipation)", body: "Le mineur, même non marié, pourra être émancipé lorsqu'il aura atteint l'âge de seize ans révolus. Émancipation prononcée par le juge des tutelles à la demande des parents." },
+
+  // Travail supplémentaire — articles cités
+  { id: "ct-l1132-1", code: "Travail", label: "Article L1132-1 (Discrimination)", body: "Aucune personne ne peut être écartée d'une procédure de recrutement ou de l'accès à un stage en raison de son origine, sexe, mœurs, orientation, identité de genre, âge, situation de famille, grossesse, etc." },
+  { id: "ct-l1221-6", code: "Travail", label: "Article L1221-6 (Information loyale)", body: "Les informations demandées au candidat à un emploi ne peuvent avoir comme finalité que d'apprécier sa capacité à occuper l'emploi proposé. Question sur projets familiaux interdite." },
+  { id: "ct-l1222-4", code: "Travail", label: "Article L1222-4 (Information préalable contrôle)", body: "Aucune information concernant personnellement un salarié ne peut être collectée par un dispositif qui n'a pas été porté préalablement à sa connaissance." },
+  { id: "ct-l3171-4", code: "Travail", label: "Article L3171-4 (Preuve heures)", body: "En cas de litige sur la durée du travail, l'employeur doit fournir au juge les éléments de nature à justifier les horaires effectivement réalisés par le salarié." },
+  { id: "ct-l5213-6", code: "Travail", label: "Article L5213-6 (Aménagement handicap)", body: "L'employeur prend les mesures appropriées pour permettre au travailleur handicapé d'accéder à un emploi correspondant à sa qualification, sauf si ces mesures impliquent une charge disproportionnée." },
+  { id: "ct-l1237-13", code: "Travail", label: "Article L1237-13 (Indemnité rupture conventionnelle)", body: "La rupture conventionnelle prévoit une indemnité spécifique au moins égale à l'indemnité de licenciement. Délai de rétractation 15 jours. Homologation administrative." },
+  { id: "css-l461-1", code: "Travail", label: "Article L461-1 SS (Maladie pro hors tableau)", body: "Une maladie peut être reconnue d'origine professionnelle hors tableau si IPP ≥ 25 % et lien direct et essentiel avec le travail établi par le CRRMP." },
+
+  // Consommation supplémentaire
+  { id: "ccons-l213-1", code: "Conso.", label: "Article L213-1 (Tromperie)", body: "Est puni d'un emprisonnement de 2 ans et 300 000 € quiconque trompe le contractant sur la nature, l'origine, les qualités substantielles d'une marchandise." },
+  { id: "ccons-l215-1", code: "Conso.", label: "Article L215-1 (Reconduction tacite)", body: "Pour les contrats de prestation de services à reconduction tacite, le professionnel doit informer le consommateur de la possibilité de ne pas reconduire au plus tôt 3 mois et au plus tard 1 mois avant le terme." },
+  { id: "ccons-l217-3", code: "Conso.", label: "Article L217-3 (Garantie biens reconditionnés)", body: "La garantie légale de conformité s'applique aux biens reconditionnés et aux biens d'occasion vendus par un professionnel — durée minimum 12 mois pour reconditionné, 24 mois pour neuf." },
+  { id: "ccons-l223-1", code: "Conso.", label: "Article L223-1 (Bloctel)", body: "Tout consommateur peut s'inscrire gratuitement sur Bloctel pour s'opposer à être démarché par téléphone. Démarchage des inscrits = sanction administrative." },
+  { id: "ccons-l121-4", code: "Conso.", label: "Article L121-4 (Pratiques trompeuses)", body: "Est trompeuse la pratique commerciale fondée sur des allégations fausses ou de nature à induire en erreur le consommateur sur les caractéristiques du bien, son prix, sa disponibilité, ou les qualités du professionnel." },
+  { id: "cmf-l312-1-3", code: "Bancaire", label: "Article L312-1-3 CMF (Frais clients fragiles)", body: "Les frais d'incidents bancaires des clients en situation de fragilité financière sont plafonnés à 25 € par mois (clients) ou 20 € par mois (offre spécifique)." },
+
+  // Numérique / RGPD supplémentaire
+  { id: "loi-2024-deepfake", code: "Numérique", label: "Loi du 21 mai 2024 (Deepfakes intimes)", body: "La diffusion d'un contenu visuel ou sonore généré par traitement algorithmique reproduisant à caractère sexuel l'image d'une personne sans son consentement est punie de 2 ans et 60 000 € (3 ans et 75 000 € si en ligne)." },
+  { id: "lil-82",     code: "Numérique", label: "Article 82 LIL (Cookies)", body: "Tout abonné ou utilisateur d'un service de communication électronique doit être informé et donner son consentement préalable à toute action visant à stocker ou accéder à des informations dans son équipement, sauf exception fonctionnelle." },
+  { id: "loi-1881-29", code: "Presse", label: "Loi 1881 (Diffamation)", body: "Toute allégation ou imputation d'un fait qui porte atteinte à l'honneur ou à la considération d'une personne est une diffamation. Procédure spéciale : prescription 3 mois, citation précise obligatoire." },
+
+  // Routier supplémentaire
+  { id: "cr-r412-6-1", code: "Routier", label: "Article R412-6-1 (Téléphone tenu en main)", body: "L'usage d'un téléphone tenu en main par le conducteur d'un véhicule en circulation est interdit. Sanction : 135 € + retrait de 3 points." },
+  { id: "cr-r412-7",  code: "Routier", label: "Article R412-7 (Couloirs réservés)", body: "Les conducteurs doivent emprunter les voies appropriées et respecter les voies réservées (bus, taxis, vélos). Infraction = 135 €." },
+  { id: "cr-r415-11", code: "Routier", label: "Article R415-11 (Priorité piéton)", body: "Le conducteur est tenu de céder le passage au piéton engagé régulièrement dans la traversée d'une chaussée ou manifestant clairement l'intention de le faire. Sanction : 135 € + 6 points." },
+  { id: "cr-r417-10", code: "Routier", label: "Article R417-10 (Stationnement gênant)", body: "Tout stationnement gênant ou abusif sur la voie publique est puni d'une amende de 4ᵉ classe (135 €). Stationnement très gênant : 5ᵉ classe (135 €)." },
+  { id: "cr-r417-11", code: "Routier", label: "Article R417-11 (Place handicapé)", body: "Le stationnement sur une place réservée aux personnes handicapées sans titre est puni d'une amende forfaitaire de 135 €, mise en fourrière possible." },
+
+  // Environnement supplémentaire
+  { id: "cenv-l216-6-spr", code: "Environnement", label: "Article L216-6 (Pollution eaux — détaillé)", body: "Le déversement, l'écoulement, le rejet de substances polluantes dans les eaux superficielles ou souterraines est puni de 2 ans et 75 000 €. Aggravation possible si destruction d'espèces aquatiques." },
+  { id: "cenv-l218-22", code: "Environnement", label: "Article L218-22 (Pollution maritime)", body: "Toute infraction aux conventions internationales sur la pollution maritime (MARPOL) est punie de peines proportionnées à la gravité — jusqu'à 1 an et 50 000 € pour navire, plus en cas de marée noire." },
+  { id: "cenv-l541-3", code: "Environnement", label: "Article L541-3 (Décharges sauvages)", body: "Le préfet peut mettre en demeure le détenteur ou le propriétaire du terrain où sont entreposés des déchets de procéder à leur élimination. Astreinte journalière possible." },
+  { id: "cenv-l541-46", code: "Environnement", label: "Article L541-46 (Sanctions déchets)", body: "Le dépôt sauvage de déchets est puni jusqu'à 75 000 € et 2 ans de prison. Aggravations possibles selon la quantité, la dangerosité, la zone protégée." },
+  { id: "cenv-charte-5", code: "Environnement", label: "Charte environnement art. 5 (Précaution)", body: "Lorsque la réalisation d'un dommage, bien qu'incertaine en l'état des connaissances, pourrait affecter de manière grave et irréversible l'environnement, les autorités publiques veillent à l'application de mesures provisoires et proportionnées." },
+  { id: "loi-2019-pesticides", code: "Environnement", label: "Arrêté 27 déc. 2019 (Pesticides)", body: "L'utilisation de produits phytosanitaires est interdite à proximité des habitations : 5 m minimum (10 m pour produits classés CMR1). Distances réduites possibles avec engagement charte." },
+  { id: "loi-natura2000", code: "Environnement", label: "Sites Natura 2000", body: "Les sites Natura 2000 font l'objet de protections spéciales. Tout projet susceptible d'affecter le site doit faire l'objet d'une évaluation des incidences, sous peine d'annulation des autorisations." },
+  { id: "code-urb-l130-1", code: "Environnement", label: "Article L130-1 Code urbanisme (EBC)", body: "Les espaces boisés classés (EBC) interdisent tout changement d'affectation ou tout mode d'occupation du sol de nature à compromettre la conservation des boisements. Abattage soumis à déclaration ou autorisation." },
+
+  // Propriété intellectuelle supplémentaire
+  { id: "cpi-l111-1-bis", code: "Prop. intel.", label: "Article L111-1 CPI (création originale)", body: "La protection naît de la seule création — pas besoin de dépôt. La preuve d'antériorité (enveloppe Soleau, dépôt SACD) sert à établir la date de création." },
+  { id: "cpi-l122-4", code: "Prop. intel.", label: "Article L122-4 CPI (Reproduction interdite)", body: "Toute représentation ou reproduction intégrale ou partielle, faite sans le consentement de l'auteur ou de ses ayants droit, est illicite. Constitue une contrefaçon." },
+  { id: "cpi-l713-3", code: "Prop. intel.", label: "Article L713-3 CPI (Risque confusion)", body: "Sont interdits, sauf autorisation du propriétaire, l'usage d'un signe identique pour des produits ou services identiques, et l'usage d'un signe similaire si risque de confusion dans l'esprit du public." },
+  { id: "cpi-l713-5", code: "Prop. intel.", label: "Article L713-5 CPI (Marques renommées)", body: "L'usage d'une marque jouissant d'une renommée pour des produits non similaires engage la responsabilité civile de son auteur s'il en tire un profit indu ou cause un préjudice à la marque." },
+  { id: "cpi-l716-1", code: "Prop. intel.", label: "Article L716-1 CPI (Action contrefaçon)", body: "L'atteinte aux droits du propriétaire d'une marque constitue une contrefaçon engageant la responsabilité civile de son auteur. Sanction pénale : 3 ans + 300 000 €." },
+  { id: "cpi-fairuse",  code: "Prop. intel.", label: "Notion : Fair Use", body: "Doctrine américaine permettant l'usage limité de matériel protégé sans autorisation : 4 critères (but, nature, quantité, effet sur le marché). Pas d'équivalent français strict — exceptions limitatives." },
+
+  // Loi RGPD/numérique étoffée
+  { id: "rgpd-shrems2", code: "RGPD", label: "Arrêt Schrems II (CJUE 2020)", body: "Invalide le Privacy Shield UE-USA. Tout transfert de données vers les USA exige des garanties supplémentaires (clauses types + analyse de risque). Catalyseur du Data Privacy Framework 2023." },
+  { id: "loi-dsa",      code: "Numérique", label: "DSA — Digital Services Act (2022)", body: "Règlement européen imposant aux plateformes des obligations renforcées : modération transparente, signalement rapide des contenus illicites, protection des mineurs, audit. Sanction jusqu'à 6 % du CA mondial." },
+  { id: "loi-dma",      code: "Numérique", label: "DMA — Digital Markets Act (2022)", body: "Règlement ciblant les « contrôleurs d'accès » (gatekeepers) : interdictions d'auto-favoritisme, obligation d'interopérabilité, libre choix des moteurs/navigateurs. Sanction jusqu'à 10 % du CA mondial." },
+  { id: "loi-aiact",    code: "Numérique", label: "AI Act (2024)", body: "Règlement européen sur l'IA. Approche par risques : systèmes interdits (scoring social), haut risque (encadrés), risque limité (transparence). Sanctions jusqu'à 7 % du CA mondial." },
+  { id: "lcen-6-2",     code: "Numérique", label: "LCEN art. 6-II (Identification utilisateurs)", body: "Les hébergeurs et FAI doivent conserver les données d'identification des contributeurs et les communiquer sur demande judiciaire (durée : 1 an)." },
+
+  // Procédure étoffée
+  { id: "cpp-revision-485", code: "Procédure", label: "Article 622 CPP (Révision pénale)", body: "La révision d'une décision pénale définitive est recevable lorsqu'un fait nouveau ou un élément inconnu de la juridiction au jour du procès est susceptible d'établir l'innocence du condamné." },
+  { id: "cpp-cppcomparu", code: "Procédure", label: "Article 393 CPP (Convocation immédiate)", body: "Le procureur peut, après garde à vue, faire comparaître l'auteur d'un délit immédiatement devant le tribunal correctionnel. Procédure rapide mais cadrée." },
+  { id: "cpp-coopetition", code: "Procédure", label: "Coopération internationale pénale", body: "Les conventions d'extradition (européennes, bilatérales) régissent la remise d'auteurs présumés à un État requérant. Conditions : double incrimination, principe de spécialité, garanties procédurales." },
+
+  // Constitutionnel et droits fondamentaux
+  { id: "constit-1",    code: "Constitutionnel", label: "Article 1 Constitution (République indivisible)", body: "La France est une République indivisible, laïque, démocratique et sociale. Elle assure l'égalité devant la loi sans distinction d'origine, de race ou de religion." },
+  { id: "constit-34",   code: "Constitutionnel", label: "Article 34 (Domaine de la loi)", body: "La loi fixe les règles concernant les droits civiques, les libertés publiques, le statut des personnes, les crimes et délits, leur procédure, et les peines." },
+  { id: "ddhc-16",      code: "Constitutionnel", label: "Article 16 DDHC (Séparation des pouvoirs)", body: "Toute Société dans laquelle la garantie des Droits n'est pas assurée, ni la séparation des Pouvoirs déterminée, n'a point de Constitution." },
+
+  // CESDH étoffée
+  { id: "cesdh-7",     code: "CESDH", label: "Article 7 CESDH (Légalité des peines)", body: "Nul ne peut être condamné pour une action ou omission qui ne constituait pas une infraction au moment où elle a été commise (nullum crimen sine lege)." },
+  { id: "cesdh-13",    code: "CESDH", label: "Article 13 CESDH (Recours effectif)", body: "Toute personne dont les droits reconnus dans la Convention ont été violés a droit à l'octroi d'un recours effectif devant une instance nationale." },
+  { id: "cesdh-prot7-4", code: "CESDH", label: "Article 4 Protocole 7 (Non bis in idem)", body: "Nul ne peut être poursuivi ou puni pénalement par les juridictions du même État pour une infraction pour laquelle il a déjà été acquitté ou condamné par un jugement définitif." },
+
+  // Affaires étoffé
+  { id: "ccom-l420-1", code: "Affaires", label: "Article L420-1 (Ententes)", body: "Sont prohibées les actions concertées, conventions, ententes, expresses ou tacites, lorsqu'elles ont pour objet ou peuvent avoir pour effet d'empêcher, restreindre ou fausser le jeu de la concurrence sur un marché." },
+  { id: "ccom-l420-2", code: "Affaires", label: "Article L420-2 (Abus de position dominante)", body: "Est prohibée l'exploitation abusive par une entreprise d'une position dominante sur le marché intérieur ou une partie substantielle de celui-ci." },
+  { id: "tfue-101",    code: "Affaires", label: "Article 101 TFUE (Ententes UE)", body: "Sont incompatibles avec le marché intérieur tous accords entre entreprises ayant pour objet ou pour effet d'empêcher, de restreindre ou de fausser le jeu de la concurrence." },
+  { id: "tfue-102",    code: "Affaires", label: "Article 102 TFUE (Abus position dominante UE)", body: "Est incompatible avec le marché intérieur l'exploitation abusive par une ou plusieurs entreprises d'une position dominante." },
+  { id: "loi-sapin2", code: "Affaires", label: "Loi Sapin 2 (2016)", body: "Loi sur la transparence, la lutte contre la corruption et la modernisation économique. Crée l'AFA (Agence française anticorruption). Obligation d'inéligibilité auto pour élus condamnés pour corruption." },
+  { id: "loi-vigilance", code: "Affaires", label: "Loi vigilance (2017)", body: "Loi imposant aux grandes entreprises d'établir un plan de vigilance identifiant les risques d'atteintes graves aux droits humains et à l'environnement causées par leurs activités, filiales et sous-traitants." },
+
+  // Notions complémentaires utiles aux 300 cas
+  { id: "notion-emprise", code: "Notion", label: "Emprise (violences conjugales)", body: "Ascendant psychologique exercé par un partenaire sur l'autre, paralysant la volonté. Reconnue par la Cass. crim. 2006 pour la légitime défense différée. Évolution majeure en droit pénal des violences." },
+  { id: "notion-presomption", code: "Notion", label: "Présomption d'innocence", body: "Toute personne suspectée ou poursuivie est présumée innocente tant que sa culpabilité n'a pas été établie. Article 9-1 du Code civil et 9 DDHC. Dimension pénale et civile (réputation)." },
+  { id: "notion-ert", code: "Notion", label: "ERT — Enrichissement sans cause", body: "Théorie civile (article 1303 CC) : celui qui s'enrichit aux dépens d'autrui sans cause légale doit indemniser. Action subsidiaire — uniquement si pas d'autre fondement." },
+  { id: "notion-mauvais-foi", code: "Notion", label: "Bonne foi (article 1104)", body: "Les contrats doivent être négociés, formés et exécutés de bonne foi. Disposition d'ordre public — toute clause contraire est nulle. Pierre angulaire du droit moderne des contrats." },
+  { id: "notion-force-majeure", code: "Notion", label: "Force majeure (1218 CC)", body: "Événement extérieur, imprévisible et irrésistible empêchant l'exécution d'une obligation, et exonérant le débiteur. Trois critères cumulatifs strictement appliqués par la jurisprudence." },
+  { id: "notion-intuitupersonae", code: "Notion", label: "Intuitu personae", body: "Considération de la personne du contractant — certains contrats dépendent de l'identité de la partie (mandat, prestation artistique). La cession ou substitution est interdite sans accord." },
+  { id: "notion-discernement", code: "Notion", label: "Discernement (article 122-1 CP)", body: "N'est pas pénalement responsable la personne qui était atteinte d'un trouble psychique ayant aboli son discernement. Atténuation possible si le trouble a altéré (sans abolir) le discernement." },
+  { id: "notion-faute-lourde", code: "Notion", label: "Faute lourde", body: "Faute d'une particulière gravité dénotant l'incompétence ou l'incurie de son auteur. Différente de la faute simple — entraîne en droit du travail la perte d'indemnités, en droit civil l'écart des clauses limitatives." },
+  { id: "notion-individualisation", code: "Notion", label: "Individualisation des peines", body: "Principe constitutionnel (Conseil constit. 2007) : la peine doit être adaptée à la personnalité de l'auteur et aux circonstances de l'infraction. Limite l'automaticité des peines plancher." },
+  { id: "notion-vigilance", code: "Notion", label: "Devoir de vigilance", body: "Obligation pour grandes entreprises (loi 2017) d'identifier et prévenir les atteintes graves aux droits humains, à la santé et à l'environnement dans leur chaîne d'approvisionnement. Sanctions civiles." },
+
+  // Maximes et adages étoffés
+  { id: "adage-error", code: "Adage", label: "Errare humanum est, perseverare diabolicum", body: "Il est humain de se tromper, mais persévérer dans l'erreur est diabolique. Justification de la révision des erreurs judiciaires." },
+  { id: "adage-summa", code: "Adage", label: "Summum jus, summa injuria", body: "L'application stricte du droit peut produire l'injustice ultime. Principe inspirant l'équité comme correctif." },
+  { id: "adage-iuranovit", code: "Adage", label: "Iura novit curia", body: "Le tribunal connaît le droit — les parties doivent invoquer les faits, le juge applique le droit pertinent, même non invoqué expressément." },
+  { id: "adage-deminimis", code: "Adage", label: "De minimis non curat praetor", body: "Le préteur ne s'occupe pas des bagatelles — la justice n'a pas à connaître des affaires trop minimes pour mériter sa saisine." },
+  { id: "adage-fraus", code: "Adage", label: "Fraus omnia corrumpit", body: "La fraude corrompt tout. Aucun acte juridique frauduleux ne peut produire d'effets — la fraude écarte toutes les protections normalement accordées." },
+
+  // Histoire du droit étoffée
+  { id: "hist-beccaria", code: "Histoire", label: "Beccaria (1764)", body: "« Des délits et des peines » fonde le droit pénal moderne : légalité, proportionnalité, abolition de la torture. Influence majeure sur les codes pénaux français et européens." },
+  { id: "hist-1958",    code: "Histoire", label: "Constitution 1958 (Ve République)", body: "Constitution rédigée sous De Gaulle, pose les bases d'un exécutif fort. Modifications majeures : 1962 (suffrage universel direct), 2000 (quinquennat), 2008 (modernisation institutions)." },
+  { id: "hist-tpie",    code: "Histoire", label: "TPIY / TPIR (1993-1994)", body: "Tribunaux pénaux internationaux pour l'ex-Yougoslavie et le Rwanda. Précédents avant CPI. Premier procès d'un chef d'État ex (Milošević) et premiers verdicts pour génocide post-Nuremberg." },
+  { id: "hist-cpi",     code: "Histoire", label: "Cour pénale internationale (2002)", body: "Statut de Rome instituant la CPI. Compétence : crimes de guerre, crimes contre l'humanité, génocide, agression. Subsidiaire — n'agit qu'en cas de défaillance des juridictions nationales." },
+  { id: "hist-rgpd-2018", code: "Histoire", label: "Règlement RGPD (2018)", body: "Règlement européen 2016/679 entré en vigueur en mai 2018. Refonte massive du droit des données personnelles : consentement, droits des personnes, sanctions jusqu'à 4 % du CA mondial." },
+
+  // Notions transverses pour catégories grand public (animaux, voisinage, etc.)
+  { id: "notion-bien-etre-animal", code: "Notion", label: "Bien-être animal (L214-3 Code rural)", body: "Tout animal étant un être sensible doit être placé par son propriétaire dans des conditions compatibles avec les impératifs biologiques de son espèce. Mauvais traitements punis (L215-11)." },
+  { id: "notion-jouissance-paisible", code: "Notion", label: "Jouissance paisible des lieux", body: "Le bailleur doit assurer au locataire la jouissance paisible des lieux loués (article 6 loi 1989). Inclut protection contre troubles de voisinage et obligations de maintenance." },
+  { id: "notion-decence", code: "Notion", label: "Logement décent", body: "Décret 2002-120 fixe les critères : superficie minimale, équipements (chauffage, eau, électricité), absence d'humidité grave. Locataire peut exiger remise en état." },
+  { id: "notion-saisie", code: "Notion", label: "Saisie immobilière", body: "Procédure d'exécution forcée permettant la vente d'un bien immobilier pour rembourser un créancier. Encadrée par le Code des procédures civiles d'exécution. Délais et publications obligatoires." },
 ];
 
 // Codex entry pulled from a category-tag mapping (chaque verdict débloque potentiellement une entrée).
 const TAG_TO_ENTRIES = {
-  penal:        ["cp-311-1", "cp-122-7", "cp-121-3", "cp-122-5", "cp-222-13", "cp-321-1", "cp-433-5", "cp-441-1", "cp-223-6", "cp-313-1", "cp-132-72", "cp-225-1", "cp-227-1", "cp-322-1", "cp-432-11", "cp-433-2", "cp-222-22", "cp-223-1", "cp-323-1", "cp-450-1", "cpp-1", "cpp-138", "cpp-144", "ddhc-7", "ddhc-8", "ddhc-9", "concept-doute", "concept-charge", "concept-non-bis", "concept-contradictoire", "adage-nullum", "adage-actori", "proc-comparution", "proc-flagrance", "proc-instruction", "proc-garde"],
-  civil:        ["cc-1240", "cc-1242", "cc-1103", "cc-1112-1", "cc-1641", "cc-1359", "cc-815", "cc-832", "cc-9", "cc-1101", "cc-1109", "cc-1131", "cc-1217", "cc-2224", "cc-2232", "cc-1304", "cpc-15", "cpc-9", "cpc-700", "concept-prop", "concept-resjudicata", "concept-prescr", "adage-pacta", "adage-audi", "concept-causalite"],
-  famille:      ["cc-373-2-11", "cc-371-2", "cc-360", "cc-361", "cc-901", "cc-909", "cc-371-1", "cc-388-1", "cc-228", "cc-203", "cc-271", "concept-equite", "hist-leonetti", "hist-veil", "hist-pacs", "hist-mariage_pour_tous"],
-  travail:      ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1226-2", "ct-l1237-11", "ct-l3121-1", "ct-l3121-27", "ct-l1235-3", "ct-l3221-2", "ct-l1153-1", "ct-l1233-3", "ct-l4121-1", "concept-prop", "esp-droit_social"],
-  consommation: ["ccons-l217-7", "ccons-l212-1", "ccons-l221-18", "ccons-l216-1", "ccons-l341-1", "ccons-l312-1", "ccons-l132-1", "ccons-l111-1", "ccons-l622-3", "ccons-l242-1"],
-  voisinage:    ["ccons-l113-8", "loi-2021-29", "cc-1242"],
-  routier:      ["cr-r415-5", "cr-r415-7", "cr-l231-1", "cr-l235-1", "cr-l324-2", "cr-l234-1", "cr-r412-6", "cr-r413-14"],
-  numerique:    ["rgpd-6", "rgpd-7", "rgpd-17", "rgpd-32", "rgpd-33", "rgpd-83", "rgpd-35", "cp-226-4-1", "cp-323-1", "cmf-l133-19", "lcen-6", "lcen-9"],
-  environnement: ["cenv-l216-6", "cenv-l411-1", "cc-1247", "cenv-l512-1", "cenv-l341-1", "cenv-l229-5"],
-  propriete_intellectuelle: ["cpi-l335-3", "cpi-l112-1", "cpi-l122-5", "cpi-l713-2", "cpi-l111-1", "cpi-l132-1", "cpi-l611-10"],
+  penal:        ["cp-311-1", "cp-122-7", "cp-121-3", "cp-122-5", "cp-222-13", "cp-321-1", "cp-433-5", "cp-441-1", "cp-223-6", "cp-313-1", "cp-132-72", "cp-225-1", "cp-227-1", "cp-322-1", "cp-432-11", "cp-433-2", "cp-222-22", "cp-223-1", "cp-323-1", "cp-450-1", "cp-226-1", "cp-222-33-2-2", "cp-434-10", "cp-322-2", "cp-432-12", "cp-313-3", "cpp-1", "cpp-138", "cpp-144", "cpp-revision-485", "cpp-cppcomparu", "ddhc-7", "ddhc-8", "ddhc-9", "concept-doute", "concept-charge", "concept-non-bis", "concept-contradictoire", "adage-nullum", "adage-actori", "proc-comparution", "proc-flagrance", "proc-instruction", "proc-garde", "notion-presomption", "notion-discernement", "notion-individualisation", "notion-emprise"],
+  civil:        ["cc-1240", "cc-1242", "cc-1103", "cc-1112-1", "cc-1641", "cc-1359", "cc-815", "cc-832", "cc-9", "cc-1101", "cc-1109", "cc-1131", "cc-1217", "cc-2224", "cc-2232", "cc-1304", "cc-544", "cc-651", "cc-691", "cc-706", "cc-1137", "cc-trouble_voisinage", "cpc-15", "cpc-9", "cpc-700", "concept-prop", "concept-resjudicata", "concept-prescr", "adage-pacta", "adage-audi", "concept-causalite", "notion-mauvais-foi", "notion-force-majeure", "notion-ert"],
+  famille:      ["cc-373-2-11", "cc-371-2", "cc-360", "cc-361", "cc-901", "cc-909", "cc-371-1", "cc-388-1", "cc-228", "cc-203", "cc-271", "cc-373-2", "cc-371-4", "cc-389-3", "cc-413-2", "concept-equite", "hist-leonetti", "hist-veil", "hist-pacs", "hist-mariage_pour_tous"],
+  travail:      ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1226-2", "ct-l1237-11", "ct-l3121-1", "ct-l3121-27", "ct-l1235-3", "ct-l3221-2", "ct-l1153-1", "ct-l1233-3", "ct-l4121-1", "ct-l1132-1", "ct-l1221-6", "ct-l1222-4", "ct-l3171-4", "ct-l5213-6", "ct-l1237-13", "css-l461-1", "concept-prop", "esp-droit_social", "notion-vigilance", "loi-vigilance"],
+  consommation: ["ccons-l217-7", "ccons-l212-1", "ccons-l221-18", "ccons-l216-1", "ccons-l341-1", "ccons-l312-1", "ccons-l132-1", "ccons-l111-1", "ccons-l622-3", "ccons-l242-1", "ccons-l213-1", "ccons-l215-1", "ccons-l217-3", "ccons-l223-1", "ccons-l121-4", "cmf-l312-1-3"],
+  voisinage:    ["ccons-l113-8", "loi-2021-29", "cc-1242", "cc-671", "cc-673", "cc-691", "cc-706", "cc-trouble_voisinage", "notion-jouissance-paisible"],
+  routier:      ["cr-r415-5", "cr-r415-7", "cr-l231-1", "cr-l235-1", "cr-l324-2", "cr-l234-1", "cr-r412-6", "cr-r413-14", "cr-r412-6-1", "cr-r412-7", "cr-r415-11", "cr-r417-10", "cr-r417-11", "cp-434-10"],
+  numerique:    ["rgpd-6", "rgpd-7", "rgpd-17", "rgpd-32", "rgpd-33", "rgpd-83", "rgpd-35", "cp-226-4-1", "cp-323-1", "cp-222-33-2-2", "cmf-l133-19", "lcen-6", "lcen-9", "lcen-6-2", "lil-82", "loi-2024-deepfake", "loi-1881-29", "loi-dsa", "loi-dma", "loi-aiact", "rgpd-shrems2"],
+  environnement: ["cenv-l216-6", "cenv-l411-1", "cc-1247", "cenv-l512-1", "cenv-l341-1", "cenv-l229-5", "cenv-l216-6-spr", "cenv-l218-22", "cenv-l541-3", "cenv-l541-46", "cenv-charte-5", "loi-2019-pesticides", "loi-natura2000", "code-urb-l130-1"],
+  propriete_intellectuelle: ["cpi-l335-3", "cpi-l112-1", "cpi-l122-5", "cpi-l713-2", "cpi-l111-1", "cpi-l132-1", "cpi-l611-10", "cpi-l111-1-bis", "cpi-l122-4", "cpi-l713-3", "cpi-l713-5", "cpi-l716-1", "cpi-fairuse"],
   // Catégories grand public — citent des notions et adages
   dilemmes:        ["concept-equite", "concept-doute", "concept-charge", "adage-nullum", "ddhc-2", "cesdh-3"],
   couple_famille:  ["cc-228", "cc-203", "cc-371-1", "concept-equite", "hist-mariage_pour_tous"],
   ado_parents:     ["cc-371-1", "cc-388-1", "concept-equite"],
   boulot:          ["ct-l1121-1", "ct-l1232-1", "ct-l1152-1", "ct-l1153-1", "ct-l3221-2"],
   resto:           ["ccons-l111-1", "ccons-l212-1"],
-  animaux:         ["cc-1242", "ccons-l113-8"],
+  animaux:         ["cc-1242", "ccons-l113-8", "notion-bien-etre-animal"],
   quotidien:       ["concept-equite", "ddhc-2", "ddhc-11"],
-  ubuesque:     ["concept-equite", "concept-aliquid", "concept-fumus", "adage-falsus"],
+  ubuesque:     ["concept-equite", "concept-aliquid", "concept-fumus", "adage-falsus", "adage-summa", "adage-deminimis"],
 };
 
 export function getCodex() {

@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v8"; // bumped: TTS premium voice + OpenAI HD + OpenRouter fix
+const CACHE_NAME = "thejudge-v10"; // bumped: 100 historic cases + codex étoffé (~290 entrées)
 const PRECACHE = [
   "./",
   "index.html",
