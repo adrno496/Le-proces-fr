@@ -130,6 +130,14 @@ export function renderSettings(root) {
       class: "api-link",
       href: p.apiUrl, target: "_blank", rel: "noopener noreferrer",
     }, [`${t("settings.api_key.get")} ${p.apiHint}`]));
+    if (selectedProvider === "openrouter") {
+      apiKeyContainer.appendChild(el("a", {
+        class: "api-link",
+        href: "https://openrouter.ai/settings/privacy",
+        target: "_blank", rel: "noopener noreferrer",
+        style: { display: "block", color: "var(--gold)", fontSize: "0.85rem", marginTop: "4px" },
+      }, ["⚙ " + t("settings.api_key.openrouter_privacy")]));
+    }
 
     const testBtn = el("button", { class: "btn-secondary", onclick: async () => {
       if (!apiKey) return toast(t("settings.api_key.placeholder"), "error");
@@ -324,11 +332,44 @@ export function renderSettings(root) {
       },
     }, [settings.ttsEnabled ? t("settings.tts.on") : t("settings.tts.off")]);
     audioSec.appendChild(ttsToggle);
+
+    // Choix du moteur TTS
+    audioSec.appendChild(el("div", { class: "step-label", style: { marginTop: "12px" } }, [t("settings.tts.engine")]));
+    const engineRow = el("div", { class: "tts-engine-row" });
+    const engines = [
+      { id: "premium", label: t("settings.tts.engine.premium"), desc: t("settings.tts.engine.premium.desc") },
+      { id: "system",  label: t("settings.tts.engine.system"),  desc: t("settings.tts.engine.system.desc") },
+      { id: "openai",  label: t("settings.tts.engine.openai"),  desc: t("settings.tts.engine.openai.desc"),
+        disabled: settings.provider !== "openai" },
+    ];
+    const currentEngine = settings.ttsEngine || "premium";
+    for (const e of engines) {
+      const isSel = currentEngine === e.id;
+      const btn = el("button", {
+        class: `tts-engine-card ${isSel ? "selected" : ""} ${e.disabled ? "disabled" : ""}`,
+        disabled: e.disabled,
+        onclick: () => {
+          if (e.disabled) {
+            toast(t("settings.tts.engine.openai.required"), "info", 4000);
+            return;
+          }
+          Storage.saveSettings({ ttsEngine: e.id });
+          toast(t("settings.saved"), "success", 1500);
+          renderSettings(root);
+        },
+      }, [
+        el("div", { class: "tts-engine-name" }, [e.label]),
+        el("div", { class: "tts-engine-desc muted" }, [e.desc]),
+      ]);
+      engineRow.appendChild(btn);
+    }
+    audioSec.appendChild(engineRow);
+
     const voices = frenchVoices();
     if (voices.length) {
-      audioSec.appendChild(el("div", { class: "muted" }, [t("settings.tts.voices", { n: voices.length })]));
+      audioSec.appendChild(el("div", { class: "muted", style: { marginTop: "10px" } }, [t("settings.tts.voices", { n: voices.length })]));
     } else {
-      audioSec.appendChild(el("div", { class: "muted" }, [t("settings.tts.no_voice")]));
+      audioSec.appendChild(el("div", { class: "muted", style: { marginTop: "10px" } }, [t("settings.tts.no_voice")]));
     }
     container.appendChild(audioSec);
   }

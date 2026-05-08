@@ -160,8 +160,9 @@ test("ai: buildHeaders per provider", () => {
   assert.equal(ah["x-api-key"], "ak-x");
   assert.equal(ah["anthropic-version"], "2023-06-01");
   const orh = buildHeaders("openrouter", "or-x");
-  assert.equal(orh["X-Title"], "Le Procès");
+  assert.equal(orh["X-Title"], "The Judge");
   assert.equal(orh.Authorization, "Bearer or-x");
+  assert.ok(orh["HTTP-Referer"]); // dynamic, just check it exists
 });
 
 test("ai: buildRequestBody differs for Anthropic vs OpenAI-compat", () => {

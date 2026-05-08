@@ -113,22 +113,36 @@ function renderHardRefreshButton() {
       btn.classList.add("spinning");
       toast(t("refresh.toast") + " " + t("refresh.note"), "info", 2500);
       try {
-        // Clear Cache Storage API (PWA / Service Worker caches)
+        // 1. Clear Cache Storage API (PWA / Service Worker caches)
         if ("caches" in window) {
           const keys = await caches.keys();
           await Promise.all(keys.map(k => caches.delete(k)));
         }
-        // Unregister all Service Workers
+        // 2. Unregister all Service Workers
         if ("serviceWorker" in navigator) {
           const regs = await navigator.serviceWorker.getRegistrations();
           await Promise.all(regs.map(r => r.unregister()));
         }
+        // 3. Force re-fetch of the most critical assets bypassing HTTP cache (Vercel CDN)
+        const criticalAssets = [
+          "./", "index.html",
+          "css/styles.css",
+          "js/app.js",
+          "manifest.webmanifest",
+          "sw.js",
+        ];
+        await Promise.all(criticalAssets.map(url =>
+          fetch(url, { cache: "reload", credentials: "same-origin" }).catch(() => {})
+        ));
       } catch (e) { console.warn("[hard-refresh] partial:", e); }
       toast(t("refresh.done"), "success", 1500);
       setTimeout(() => {
         // Bust HTTP cache by appending a versioning query param
+        // The query string forces browser AND CDN to consider this a different URL
         const url = new URL(window.location.href);
         url.searchParams.set("_v", String(Date.now()));
+        url.hash = ""; // Clear any hash too
+        // Replace = no entry in history, simulate hard reload
         window.location.replace(url.toString());
       }, 700);
     },

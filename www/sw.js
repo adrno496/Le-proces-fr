@@ -1,7 +1,7 @@
 // Service Worker for The Judge — offline-first cache + update notification.
 // Bumping CACHE_NAME on each release invalidates the old cache.
 
-const CACHE_NAME = "thejudge-v5"; // bumped: codex moved to navbar (replaces costs)
+const CACHE_NAME = "thejudge-v8"; // bumped: TTS premium voice + OpenAI HD + OpenRouter fix
 const PRECACHE = [
   "./",
   "index.html",
@@ -36,15 +36,18 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-  // Only cache GET requests of same origin
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return; // bypass external (AI APIs etc.)
 
-  // Network-first for HTML (so updates ship instantly when online)
+  // BYPASS COMPLET si la requête contient le cache-buster du hard refresh
+  // → on tape directement le réseau, ignore tout cache
+  if (url.searchParams.has("_v")) return;
+
+  // Network-first for HTML (updates ship instantly when online)
   if (request.mode === "navigate" || request.headers.get("accept")?.includes("text/html")) {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE_NAME).then((c) => c.put(request, copy));
@@ -55,7 +58,24 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first for everything else (CSS, JS, images, sounds)
+  // For JS/CSS : stale-while-revalidate — sert depuis cache mais re-fetch en arrière-plan
+  if (/\.(js|css|webmanifest)$/.test(url.pathname)) {
+    event.respondWith(
+      caches.match(request).then(cached => {
+        const fetchPromise = fetch(request).then(res => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(request, copy));
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Cache-first for the rest (images, sounds — peu changeants)
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;

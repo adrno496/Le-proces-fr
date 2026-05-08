@@ -48,6 +48,7 @@ const DEFAULT_SETTINGS = {
   motto: "",
   ttsEnabled: false,
   ttsVoice: null,
+  ttsEngine: "premium",
   notifsEnabled: false,
   notifHour: 18,
   notifMinute: 0,

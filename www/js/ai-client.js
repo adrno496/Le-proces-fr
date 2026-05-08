@@ -61,14 +61,18 @@ export const PROVIDERS = {
     logo: "🔀",
     baseUrl: "https://openrouter.ai/api/v1",
     apiUrl: "https://openrouter.ai/keys",
-    apiHint: "openrouter.ai · Modèles gratuits inclus",
+    apiHint: "openrouter.ai · Activer la confidentialité pour les modèles gratuits",
     format: "openai",
     models: [
+      // Modèles gratuits — vérifiés mai 2026. Si l'un est retiré, OpenRouter en proposera d'autres :free.
       { id: "google/gemini-2.0-flash-exp:free", name: "Gemini 2.0 Flash (FREE)", contextWindow: 1000000, priceIn: 0, priceOut: 0, speed: "ultra-rapide", quality: "très bon", free: true },
       { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Llama 3.3 70B (FREE)", contextWindow: 131072, priceIn: 0, priceOut: 0, speed: "rapide", quality: "excellent", free: true },
+      { id: "qwen/qwen-2.5-72b-instruct:free", name: "Qwen 2.5 72B (FREE)", contextWindow: 32000, priceIn: 0, priceOut: 0, speed: "rapide", quality: "très bon", free: true },
+      { id: "deepseek/deepseek-r1:free", name: "DeepSeek R1 (FREE)", contextWindow: 128000, priceIn: 0, priceOut: 0, speed: "moyen", quality: "excellent", free: true },
+      // Payants
       { id: "anthropic/claude-haiku-4-5", name: "Claude Haiku 4.5", contextWindow: 200000, priceIn: 0.80, priceOut: 4.00, speed: "ultra-rapide", quality: "excellent", free: false },
       { id: "openai/gpt-4o-mini", name: "GPT-4o Mini", contextWindow: 128000, priceIn: 0.15, priceOut: 0.60, speed: "rapide", quality: "très bon", free: false },
-      { id: "mistral/mistral-small", name: "Mistral Small", contextWindow: 32000, priceIn: 0.10, priceOut: 0.30, speed: "ultra-rapide", quality: "bon", free: false },
+      { id: "mistralai/mistral-small-latest", name: "Mistral Small", contextWindow: 32000, priceIn: 0.10, priceOut: 0.30, speed: "ultra-rapide", quality: "bon", free: false },
     ],
   },
 };
@@ -88,13 +92,19 @@ export function buildHeaders(providerId, apiKey) {
         "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true",
       };
-    case "openrouter":
+    case "openrouter": {
+      // OpenRouter requires HTTP-Referer + X-Title for analytics & free-tier validation.
+      // We use the actual origin so it matches the deployed URL (Vercel / GH Pages / localhost).
+      const referer = (typeof window !== "undefined" && window.location && window.location.origin)
+        ? window.location.origin
+        : "https://thejudge.app";
       return {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://leproces.app",
-        "X-Title": "Le Procès",
+        "HTTP-Referer": referer,
+        "X-Title": "The Judge",
       };
+    }
     default:
       return {
         "Content-Type": "application/json",
@@ -188,14 +198,37 @@ export async function callAI(messages, { systemPrompt, maxTokens = 1000, signal 
   } catch (e) {
     clearTimeout(timer);
     if (e.name === "AbortError") throw new Error(errorMessage(0));
+    // CORS ou DNS : erreur typique TypeError "Failed to fetch"
+    if (e instanceof TypeError) {
+      const hint = settings.provider === "openrouter"
+        ? t("ai.error.openrouter_cors")
+        : t("ai.error.connect");
+      throw new Error(hint);
+    }
     throw new Error(t("ai.error.connect"));
   }
   clearTimeout(timer);
 
   if (!res.ok) {
     let detail = "";
-    try { detail = (await res.text()).slice(0, 200); } catch {}
-    const e = new Error(errorMessage(res.status));
+    try {
+      const txt = await res.text();
+      // OpenRouter renvoie souvent du JSON {error: {message, code}} — on extrait
+      try {
+        const j = JSON.parse(txt);
+        if (j.error?.message) detail = j.error.message;
+        else if (j.message) detail = j.message;
+        else detail = txt.slice(0, 400);
+      } catch { detail = txt.slice(0, 400); }
+    } catch {}
+    // Hint spécifique OpenRouter free models
+    let extraHint = "";
+    if (settings.provider === "openrouter" && model?.free) {
+      if (res.status === 402 || res.status === 403 || /privacy|free|policy|enable/i.test(detail)) {
+        extraHint = " — " + t("ai.error.openrouter_free_policy");
+      }
+    }
+    const e = new Error(errorMessage(res.status) + extraHint + (detail ? `\n${detail}` : ""));
     e.status = res.status;
     e.detail = detail;
     throw e;

@@ -143,6 +143,14 @@ const STRINGS = {
   "ai.error.no_model":    { fr: "Aucun modèle sélectionné.", en: "No model selected." },
   "ai.error.connect":     { fr: "Connexion impossible à l'IA. Vérifiez votre réseau.", en: "Cannot reach AI. Check your network." },
   "ai.error.network":     { fr: "Erreur réseau ({status}).", en: "Network error ({status})." },
+  "ai.error.openrouter_free_policy": {
+    fr: "Pour les modèles GRATUITS d'OpenRouter, activez la confidentialité dans votre compte : openrouter.ai/settings/privacy → cochez « Enable training on prompts ».",
+    en: "Free OpenRouter models require enabling data sharing : openrouter.ai/settings/privacy → tick \"Enable training on prompts\".",
+  },
+  "ai.error.openrouter_cors": {
+    fr: "Connexion à OpenRouter impossible. Vérifiez votre réseau, ou que votre clé n'a pas atteint le quota free quotidien (50 req/jour).",
+    en: "Cannot reach OpenRouter. Check your network, or that your key hasn't hit the daily free quota (50 req/day).",
+  },
 
   // ===== Career tiers =====
   "career.0.name":  { fr: "Stagiaire au tribunal",       en: "Court Intern" },
@@ -220,6 +228,10 @@ const STRINGS = {
   "settings.api_key.testing":   { fr: "Test en cours...", en: "Testing..." },
   "settings.api_key.valid":     { fr: "✓ Clé valide", en: "✓ Key valid" },
   "settings.api_key.get":       { fr: "🔗 Obtenir une clé →", en: "🔗 Get a key →" },
+  "settings.api_key.openrouter_privacy": {
+    fr: "Activer la confidentialité pour les modèles gratuits (obligatoire) →",
+    en: "Enable data sharing for free models (required) →",
+  },
 
   "settings.username":          { fr: "Nom du juge", en: "Judge's name" },
   "settings.username_default":  { fr: "Votre Honneur", en: "Your Honor" },
@@ -233,6 +245,14 @@ const STRINGS = {
   "settings.tts.off":           { fr: "🔇 Activer la lecture audio des plaidoiries", en: "🔇 Turn on speech-to-text playback" },
   "settings.tts.voices":        { fr: "{n} voix française(s) détectée(s) sur ce système.", en: "{n} voice(s) detected on this system." },
   "settings.tts.no_voice":      { fr: "Aucune voix française détectée — la lecture utilisera la voix système par défaut.", en: "No matching voice — playback will use the system default." },
+  "settings.tts.engine":        { fr: "Moteur de voix", en: "Voice engine" },
+  "settings.tts.engine.premium":      { fr: "🎙 Premium (auto)", en: "🎙 Premium (auto)" },
+  "settings.tts.engine.premium.desc": { fr: "Sélectionne la meilleure voix native disponible (Google, Microsoft Neural, Apple Siri…). Gratuit, hors-ligne.", en: "Picks the best native voice (Google, Microsoft Neural, Apple Siri…). Free, offline." },
+  "settings.tts.engine.system":       { fr: "🤖 Système (basique)", en: "🤖 System (basic)" },
+  "settings.tts.engine.system.desc":  { fr: "Voix par défaut du navigateur. Plus robotique mais universelle.", en: "Browser default voice. More robotic but universal." },
+  "settings.tts.engine.openai":       { fr: "✨ OpenAI HD", en: "✨ OpenAI HD" },
+  "settings.tts.engine.openai.desc":  { fr: "Voix neuronale ultra-naturelle. ~0,02$ par audience. Nécessite une clé OpenAI.", en: "Ultra-natural neural voice. ~$0.02 per hearing. Requires OpenAI key." },
+  "settings.tts.engine.openai.required": { fr: "Sélectionnez OpenAI comme provider IA pour activer ce moteur.", en: "Select OpenAI as your AI provider to enable this engine." },
 
   "settings.notifs.intro":      { fr: "Recevez un rappel quotidien à l'heure de votre choix.", en: "Get a daily reminder at the time you choose." },
   "settings.notifs.hour":       { fr: "Heure :", en: "Time:" },
